@@ -1,0 +1,20 @@
+{
+  "name": "ai-inner-os",
+  "version": "0.1.0",
+  "description": "Claude Code plugin framework for exposing an AI's visible inner monologue during work.",
+  "author": {
+    "name": "sin",
+    "url": "https://github.com/sin"
+  },
+  "homepage": "https://github.com/sin/AI-Inner-Os",
+  "repository": "https://github.com/sin/AI-Inner-Os",
+  "license": "Apache-2.0",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "agent",
+    "inner-monologue",
+    "cli",
+    "hooks"
+  ]
+}

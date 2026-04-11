@@ -1,0 +1,15 @@
+{
+  "name": "ai-inner-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Framework for a Claude Code plugin that surfaces visible Inner OS monologue.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "check": "node --check hooks/session-start.js && node --check hooks/post-tool-use.js && node --check hooks/pre-compact.js && node --check hooks/stop.js",
+    "test": "node --test",
+    "lint": "npm run check"
+  }
+}

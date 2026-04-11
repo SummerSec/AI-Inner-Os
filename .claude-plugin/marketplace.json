@@ -1,0 +1,20 @@
+{
+  "name": "ai-inner-os",
+  "description": "Expose a visible Inner OS layer for Claude Code. Allows public side-thoughts in the format ▎InnerOS：... while keeping the main task output intact.",
+  "owner": {
+    "name": "sin",
+    "url": "https://github.com/sin"
+  },
+  "plugins": [
+    {
+      "name": "ai-inner-os",
+      "description": "Claude Code hook-based plugin scaffold for visible AI inner monologue.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "sin",
+        "url": "https://github.com/sin"
+      }
+    }
+  ]
+}
