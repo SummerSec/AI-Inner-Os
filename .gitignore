@@ -2,3 +2,4 @@ node_modules/
 state/*.json
 state/*.log
 !.gitkeep
+.claude/
