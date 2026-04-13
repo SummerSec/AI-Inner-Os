@@ -29,6 +29,12 @@ claude plugin install ai-inner-os
 
 安装后重启会话即可生效，无需手动配置。
 
+> **开启自动更新：** 第三方 marketplace 默认不自动更新。安装后请在 `/plugin` → Marketplaces 标签页中，对 `SummerSec/AI-Inner-Os` 开启 auto-update，或手动执行：
+> ```bash
+> claude plugin marketplace update SummerSec/AI-Inner-Os
+> claude plugin update ai-inner-os
+> ```
+
 ### Codex CLI
 
 ```bash
