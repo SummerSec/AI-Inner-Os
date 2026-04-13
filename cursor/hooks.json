@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeToolUse": [
+      {
+        "command": "node cursor/hooks/before-tool-use.js",
+        "timeout": 5
+      }
+    ],
+    "afterToolUse": [
+      {
+        "command": "node cursor/hooks/after-tool-use.js",
+        "timeout": 5
+      }
+    ]
+  }
+}

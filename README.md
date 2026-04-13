@@ -1,81 +1,115 @@
-# AI-Inner-Os
+# AI Inner OS
 
-`AI-Inner-Os` 是一个面向 `Claude Code`、`Codex` 等 AI CLI 工具的插件项目。
+> 让 AI 在终端工作时"活起来"——把内心独白展示出来。
 
-它的核心目标，是把 AI 在工作过程中的“内心独白”展示出来：让 AI 在执行任务时产生的过程性表达、吐槽、自言自语、思路碎片，不再只停留在黑盒里，而是能够被实时看到。
+<p align="center">
+  <img src="docs/pic/inneros.jpg" width="600" />
+</p>
 
-这个项目关注的不是让模型变得更聪明，而是让 AI 的工作过程变得更可见、更有表达感、更具陪伴感。它希望把原本只有最终结果的 CLI 交互，变成一种可以看到 AI “边想边说”的体验。
+AI Inner OS 是一个 Claude Code 插件。它通过 hook 注入，让 AI 在正常完成任务的同时，可以额外输出一层可见的自由独白：
 
-## 项目定位
+```
+▎InnerOS：这仓库现在还像毛坯房，先把承重墙立起来再说。
+```
 
-- 这是一个 `CLI 插件`
-- 服务对象是 `Claude Code`、`Codex` 等 AI Agent 工具
-- 核心能力是 `展示 AI 的内心独白与过程表达`
-- 目标体验是让 AI 在终端工作时“活起来”
+不预设人格，不限制语气。AI 可以吐槽、得意、焦虑、冷笑、跳跃联想——或者什么都不说。独白是否出现，由 AI 自己决定。
 
-## 想解决的问题
+## 安装
 
-当前很多 AI CLI 工具只展示最终答案，用户看不到 AI 在执行过程中的情绪、犹豫、吐槽和中间表达。`AI-Inner-Os` 希望把这些内容以合适的方式展示出来，让交互过程更透明，也更有趣。
+```bash
+# 添加 marketplace
+claude plugin marketplace add SummerSec/AI-Inner-Os
 
-## 当前实现方向
+# 安装插件
+claude plugin install ai-inner-os
+```
 
-- 参考 `pua` 的仓库组织方式，搭多平台可扩展骨架
-- 第一版优先实现 `Claude Code`
-- 通过 `hook` 自动注入 `Inner OS` 协议
-- 默认输出格式参考 `pua` 的旁白感，采用 `▎InnerOS：...`
-- 不预设固定语气映射，允许 AI 自由决定表达风格
+安装后重启会话即可生效，无需手动配置。
 
-## Claude Code 第一版
+## 工作原理
 
-第一版不尝试暴露模型的真实隐藏推理，而是通过插件和 hook 注入，让 AI 在正常完成任务时，可以额外输出一层可见的自由独白。
+插件通过 Claude Code 的 hook 生命周期自动注入 Inner OS 协议：
+
+| Hook | 触发时机 | 作用 |
+|------|---------|------|
+| `SessionStart` | 会话启动/恢复/压缩 | 从 SKILL.md 读取并注入 Inner OS 协议 |
+| `PreToolUse` | 工具执行前 | 注入即将执行的工具上下文（名称、目标、失败重试提示） |
+| `PostToolUse` | 工具执行成功后 | 追踪事件，注入最近活动上下文 |
+| `PostToolUseFailure` | 工具执行失败后 | 追踪失败事件，注入错误上下文和连续失败计数 |
+| `PreCompact` | 上下文压缩前 | 保存状态，维持协议连续性 |
+| `Stop` | 会话结束 | 清理状态文件 |
+
+完整的工具使用生命周期：
+
+```
+PreToolUse → 工具执行 → PostToolUse (成功)
+                       → PostToolUseFailure (失败)
+```
+
+## 协议设计
+
+Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/SKILL.md)，这是唯一的数据源。SessionStart hook 和 `/inner-os` skill 都从这个文件读取。
 
 核心原则：
 
-- 独白是允许被用户直接看到的
-- AI 可以用任何风格、任何语气表达
-- 主任务优先，独白不能替代实际交付内容
-- 独白默认使用 `▎InnerOS：...` 前缀
+- **不扮演固定人设**——没有预设语气表，AI 自行决定表达风格
+- **主任务优先**——独白不能替代实际交付内容
+- **独白可选**——是否输出由 AI 自己判断
+- **格式统一**——使用 `▎InnerOS：` 前缀
 
-## 当前仓库结构
+## 项目结构
 
-```text
+```
 .
-├─ .claude-plugin/
-├─ commands/
-├─ codex/
-├─ cursor/
-├─ docs/
-├─ hooks/
-├─ skills/
-└─ state/
+├── .claude-plugin/          # Claude Code 插件元信息
+│   ├── plugin.json
+│   └── marketplace.json
+├── hooks/                   # 生命周期 hook 脚本
+│   ├── hooks.json           # hook 注册清单
+│   ├── session-start.js
+│   ├── pre-tool-use.js
+│   ├── post-tool-use.js
+│   ├── post-tool-use-failure.js
+│   ├── pre-compact.js
+│   ├── stop.js
+│   └── lib/                 # 共享逻辑
+│       ├── constants.js     # 插件 ID、前缀、路径、枚举
+│       ├── events.js        # 工具事件归一化与分类
+│       ├── prompt.js        # 协议读取与上下文构建
+│       ├── state.js         # 会话状态读写
+│       ├── session.js       # 会话 ID 提取
+│       ├── format.js        # 输出格式
+│       └── io.js            # stdin/stdout I/O
+├── skills/
+│   └── inner-os/
+│       └── SKILL.md         # Inner OS 行为协议（唯一数据源）
+├── commands/
+│   └── inner-os.md          # /inner-os 调试命令（占位）
+├── tests/                   # 单元测试
+├── codex/                   # Codex 适配（占位）
+├── cursor/                  # Cursor 适配（占位）
+├── state/                   # 运行时会话状态（gitignored）
+└── plugin.json              # 仓库级插件元信息
 ```
 
-主要目录说明：
+## 开发
 
-- `hooks/`：Claude Code 生命周期脚本
-- `hooks/hooks.json`：Claude Code hook 注册清单
-- `hooks/lib/`：状态、prompt、事件归一化、输出格式等共享逻辑
-- `skills/inner-os/`：Inner OS 行为协议
-- `.claude-plugin/plugin.json`：Claude Code 插件元信息
-- `.claude-plugin/marketplace.json`：本地市场/安装元信息
-- `docs/architecture.md`：当前架构说明
-- `codex/`、`cursor/`：后续多平台适配占位
+```bash
+# 语法检查
+npm run check
 
-## 目前状态
+# 运行测试
+npm test
+```
 
-当前仓库已经搭起第一版基础框架，包括：
+Node.js >= 18，ESM 模块。
 
-- 插件根元信息 `plugin.json`
-- Claude Code 插件元信息 `.claude-plugin/plugin.json`
-- Claude Code hook 注册文件 `hooks/hooks.json`
-- `SessionStart`、`PostToolUse`、`PreCompact`、`Stop` 四个 hook 骨架
-- 会话状态文件读写
-- Inner OS prompt 注入逻辑
-- `skills/inner-os/SKILL.md`
-- 基础单元测试
+## 路线图
 
-下一步重点会是：
+- [ ] 实现 `/inner-os` 子命令（status / on / off / reload）
+- [ ] 适配 Codex
+- [ ] 适配 Cursor
 
-- 完成手动命令开关
-- 打通真实安装和本地联调
-- 再扩展到 `Codex` 和 `Cursor`
+## 许可证
+
+[Apache-2.0](LICENSE)
