@@ -43,6 +43,10 @@ cp cursor/hooks.json .cursor/hooks.json
 
 Cursor 中 `.mdc` 规则是主要注入机制，hooks 是可选增强。
 
+## Persona（人设切换）
+
+Cursor 使用静态协议文件，不支持动态切换人设。如需使用人设，请将 `personas/<name>.md` 的正文内容手动追加到 `cursor/rules/inner-os-protocol.mdc` 文件末尾。
+
 ## 与其他平台的差异
 
 | | Claude Code | Codex CLI | Cursor |

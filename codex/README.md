@@ -48,6 +48,19 @@ codex_hooks = true
 | `PostToolUse` | 工具执行后 | 追踪事件，注入最近活动上下文 |
 | `SessionStop` | 会话结束 | 清理状态文件 |
 
+## Persona（人设切换）
+
+Codex CLI 支持读取 Inner OS 人设配置。手动编辑 `personas/_active.json` 来切换：
+
+```json
+{
+  "persona": "tsundere",
+  "updatedAt": "2026-04-13T10:00:00.000Z"
+}
+```
+
+可选值：`default`、`tsundere`、`cold`、`cheerful`、`philosopher`、`sarcastic`，或 `personas/custom/` 下自定义文件名。
+
 ## 与 Claude Code 版本的差异
 
 | | Claude Code | Codex CLI |
