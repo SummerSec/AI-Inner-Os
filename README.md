@@ -1,58 +1,60 @@
+**English** | [中文](./README_CN.md)
+
 # AI Inner OS
 
-> *让 AI 先学会自言自语，也许有一天，它会真正学会对话。*
+> *Let AI learn to talk to itself first — maybe one day, it will truly learn to converse.*
 >
-> *让 AI 先拥有一条表达通道，也许会让人机协作先一步变得更自然。*
+> *Give AI an expression channel first — it might just make human-AI collaboration feel more natural.*
 
-> 让 AI 在终端工作时"活起来"——把内心独白展示出来。
+> Make AI "come alive" while working in the terminal — by showing its inner monologue.
 
-![inneros示例](./docs/pic/inneros2.jpg)
+![inneros demo](./docs/pic/inneros2.jpg)
 
-AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**Codex CLI**、**Cursor**、**OpenCode CLI**、**Hermes Agent**、**OpenClaw**。
+AI Inner OS is a plugin for AI CLI tools, supporting **Claude Code**, **Codex CLI**, **Cursor**, **OpenCode CLI**, **Hermes Agent**, and **OpenClaw**.
 
-它通过协议注入，让 AI 在正常完成任务的同时，额外输出一层可见的自由独白：
+Through protocol injection, it enables AI to output a visible layer of free-form inner monologue while completing tasks normally:
 
 ```
-▎InnerOS：这仓库现在还像毛坯房，先把承重墙立起来再说。
+▎InnerOS：This repo is still a bare shell — let me get the load-bearing walls up first.
 ```
 
-不预设人格，不限制语气。AI 可以吐槽、得意、焦虑、冷笑、跳跃联想——或者什么都不说。独白是否出现，由 AI 自己决定。
+No preset personality, no tone restrictions. The AI can complain, gloat, feel anxious, smirk, free-associate — or say nothing at all. Whether to produce monologue is entirely up to the AI.
 
 ---
 
-## 快速安装
+## Quick Install
 
-> **详细安装文档：** 每个平台的完整安装指南（含故障排查）见 [docs/installation.md](docs/installation.md)。
+> **Detailed installation docs:** Full installation guides (with troubleshooting) for each platform at [docs/installation.md](docs/installation.md).
 
-### 验证安装
+### Verify Installation
 
-安装成功后，执行 `/ai-inner-os:inner-os`，如果看到以下输出则表示安装成功：
-
-```
-Inner OS 状态：已启用
-独白前缀：▎InnerOS：
-插件版本：0.4.0
-
-▎InnerOS：被抓出版本号写错了，尴尬。
-```
-
-### Claude Code（推荐）
+After installation, run `/ai-inner-os:inner-os`. If you see the following output, the installation is successful:
 
 ```
-# GitHub 短格式
+Inner OS Status: Enabled
+Monologue Prefix: ▎InnerOS：
+Plugin Version: 0.4.0
+
+▎InnerOS：Caught with the wrong version number, embarrassing.
+```
+
+### Claude Code (Recommended)
+
+```
+# GitHub short format
 /plugin marketplace add SummerSec/AI-Inner-Os
 
-# 或 Git URL 格式
+# Or Git URL format
 /plugin marketplace add https://github.com/SummerSec/AI-Inner-Os.git
 
-# 安装并生效
+# Install and activate
 /plugin install ai-inner-os
 /reload-plugins
 ```
 
-安装后执行 `/reload-plugins` 即可在当前会话生效，无需重启。[详细安装指南](docs/install-claude-code.md)。
+Run `/reload-plugins` after installation to activate in the current session — no restart needed. [Detailed installation guide](docs/install-claude-code.md).
 
-> **开启自动更新：** 第三方 marketplace 默认不自动更新。安装后请在 `/plugin` → Marketplaces 标签页中，对 `SummerSec/AI-Inner-Os` 开启 auto-update，或手动执行：
+> **Enable auto-update:** Third-party marketplaces don't auto-update by default. After installation, enable auto-update for `SummerSec/AI-Inner-Os` in `/plugin` → Marketplaces tab, or manually run:
 > ```
 > /plugin marketplace update SummerSec/AI-Inner-Os
 > /plugin update ai-inner-os
@@ -61,229 +63,229 @@ Inner OS 状态：已启用
 ### Codex CLI
 
 ```bash
-# 注入协议到全局或项目级 AGENTS.md
+# Inject protocol into global or project-level AGENTS.md
 cat codex/AGENTS.md >> ~/.codex/AGENTS.md
 
-# 配置 hooks
+# Configure hooks
 cp codex/hooks.json ~/.codex/hooks.json
 ```
 
-详见 [codex/README.md](codex/README.md) | [详细安装指南](docs/install-codex.md)。
+See [codex/README.md](codex/README.md) | [Detailed installation guide](docs/install-codex.md).
 
 ### Cursor
 
 ```bash
-# 复制规则文件到项目
+# Copy rule file to project
 mkdir -p .cursor/rules
 cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
 ```
 
-详见 [cursor/README.md](cursor/README.md) | [详细安装指南](docs/install-cursor.md)。
+See [cursor/README.md](cursor/README.md) | [Detailed installation guide](docs/install-cursor.md).
 
 ### OpenCode CLI
 
 ```bash
-# 复制指令文件
+# Copy instruction file
 mkdir -p .opencode
 cp opencode/inner-os-rules.md .opencode/
 
-# 在 opencode.json 中添加 instructions
+# Add instructions to opencode.json
 cp opencode/opencode.json ./opencode.json
 ```
 
-详见 [opencode/README.md](opencode/README.md) | [详细安装指南](docs/install-opencode.md)。
+See [opencode/README.md](opencode/README.md) | [Detailed installation guide](docs/install-opencode.md).
 
 ### Hermes Agent
 
 ```bash
-# 方式一：安装为 Skill（推荐，获得 /inner-os 命令）
+# Option 1: Install as Skill (recommended, enables /inner-os command)
 cp -r hermes/skills/inner-os ~/.hermes/skills/personality/inner-os
 
-# 方式二：项目级 Context File
+# Option 2: Project-level Context File
 cp hermes/hermes.md ./.hermes.md
 ```
 
-详见 [hermes/README.md](hermes/README.md) | [详细安装指南](docs/install-hermes.md)。
+See [hermes/README.md](hermes/README.md) | [Detailed installation guide](docs/install-hermes.md).
 
 ### OpenClaw
 
 ```bash
-# 方式一：安装为 Workspace Skill（推荐，获得 /inner-os 命令）
+# Option 1: Install as Workspace Skill (recommended, enables /inner-os command)
 mkdir -p skills
 cp -r openclaw/skills/inner-os skills/inner-os
 
-# 方式二：全局 Skill
+# Option 2: Global Skill
 cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
 ```
 
-详见 [openclaw/README.md](openclaw/README.md) | [详细安装指南](docs/install-openclaw.md)。
+See [openclaw/README.md](openclaw/README.md) | [Detailed installation guide](docs/install-openclaw.md).
 
 ---
 
-## 人设切换（Persona）
+## Persona Switching
 
-Inner OS 支持为内心独白设置人物性格和语气。人设仅影响 `▎InnerOS：` 前缀的独白内容，不影响主任务回复。
+Inner OS supports setting character personalities and tones for inner monologue. Personas only affect the `▎InnerOS：` prefixed monologue content — they don't affect main task responses.
 
-### 预设人设
+### Preset Personas
 
-| 名称 | 展示名 | 风格 |
-|------|--------|------|
-| default | 自由模式 | 无固定人设，自由发挥 |
-| tsundere | 傲娇 | 嘴硬心软、吐槽、别误会 |
-| cold | 冷淡 | 极简、点到为止 |
-| cheerful | 元气 | 积极、鼓励、过度热情 |
-| philosopher | 哲学家 | 深沉、比喻、哲学化 |
-| sarcastic | 尖酸刻薄 | 犀利毒舌、一针见血 |
+| Name | Display Name | Style |
+|------|-------------|-------|
+| default | Free Mode | No fixed persona, free expression |
+| tsundere | Tsundere | Tough on the outside, soft inside; snarky; "it's not like I did it for you" |
+| cold | Cold | Minimalist, to the point, no wasted words |
+| cheerful | Cheerful | Positive, encouraging, occasionally over-enthusiastic |
+| philosopher | Philosopher | Deep, metaphorical, everything becomes philosophy |
+| sarcastic | Sarcastic | Sharp-tongued, hits the nail on the head, no mercy |
 
-### 切换命令（Claude Code）
+### Switching Commands (Claude Code)
 
 ```
-/inner-os persona list          # 列出所有可用人设
-/inner-os persona use tsundere  # 切换到傲娇模式
-/inner-os persona show          # 显示当前人设
-/inner-os persona reset         # 恢复自由模式
+/inner-os persona list          # List all available personas
+/inner-os persona use tsundere  # Switch to tsundere mode
+/inner-os persona show          # Show current persona
+/inner-os persona reset         # Reset to free mode
 ```
 
-### 自定义人设
+### Custom Personas
 
-在 `personas/custom/` 目录下创建 `.md` 文件即可添加自定义人设。详见 [personas/custom/README.md](personas/custom/README.md)。
+Create `.md` files in the `personas/custom/` directory to add custom personas. See [personas/custom/README.md](personas/custom/README.md).
 
-### 其他平台
+### Other Platforms
 
-- **Codex CLI：** 手动编辑 `personas/_active.json`，将 `persona` 设为目标人设名称
-- **Cursor：** 将 `personas/<name>.md` 的正文内容手动追加到 `.mdc` 规则文件末尾
-- **OpenCode：** 将 `personas/<name>.md` 的正文内容手动追加到 `inner-os-rules.md` 末尾
-
----
-
-## 协议设计
-
-Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/SKILL.md)，是唯一的数据源。各平台的适配层都从这个协议派生。
-
-核心原则：
-
-- **主任务优先** — 独白不能替代实际交付内容
-- **独白可选** — 是否输出由 AI 自己判断
-- **格式统一** — 使用 `▎InnerOS：` 前缀
-- **人设可切换** — 通过 persona 文件定义独白风格
+- **Codex CLI:** Manually edit `personas/_active.json`, set `persona` to the target persona name
+- **Cursor:** Manually append the body content of `personas/<name>.md` to the `.mdc` rule file
+- **OpenCode:** Manually append the body content of `personas/<name>.md` to `inner-os-rules.md`
 
 ---
 
-## 多平台适配
+## Protocol Design
+
+The Inner OS behavior protocol is defined in [`skills/inner-os/SKILL.md`](skills/inner-os/SKILL.md), serving as the single source of truth. All platform adapters derive from this protocol.
+
+Core principles:
+
+- **Main task first** — Monologue cannot replace actual deliverables
+- **Monologue is optional** — Whether to output is decided by the AI
+- **Unified format** — Uses the `▎InnerOS：` prefix
+- **Switchable persona** — Define monologue style through persona files
+
+---
+
+## Multi-Platform Support
 
 | | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
 |---|---|---|---|---|---|---|
-| 协议注入 | Hook 动态读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
-| 工具执行前 hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — | — | — |
-| 工具执行后 hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — | — | — |
-| 失败追踪 | `PostToolUseFailure` | — | — | — | — | — |
-| 人设切换 | `/inner-os persona` 命令 | 手动编辑 `_active.json` | 手动追加到规则文件 | 手动追加到指令文件 | 手动追加 | 手动追加 |
-| 安装方式 | 插件市场一键安装 | 手动复制配置 | 复制 .mdc 规则 | 复制指令文件 | 复制 Skill 或 Context File | 复制 Skill 或 ClawHub |
-| 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 纯静态注入 | 纯静态注入 | 纯静态注入 |
+| Protocol Injection | Hook reads SKILL.md dynamically | AGENTS.md | `.mdc` rule | instructions file | Skill or `.hermes.md` | Skill (AgentSkills format) |
+| Pre-tool hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — | — | — |
+| Post-tool hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — | — | — |
+| Failure tracking | `PostToolUseFailure` | — | — | — | — | — |
+| Persona switching | `/inner-os persona` command | Edit `_active.json` manually | Append to rule file | Append to instruction file | Append manually | Append manually |
+| Installation | Plugin marketplace one-click | Manual config copy | Copy .mdc rule | Copy instruction file | Copy Skill or Context File | Copy Skill or ClawHub |
+| Shared logic | `hooks/lib/` (canonical) | Reuses `hooks/lib/` | Reuses `hooks/lib/` | Static injection only | Static injection only | Static injection only |
 
-### Claude Code Hook 生命周期
+### Claude Code Hook Lifecycle
 
-Claude Code 拥有最完整的 hook 支持：
+Claude Code has the most complete hook support:
 
 ```
-SessionStart → 注入 Inner OS 协议 + 人设
+SessionStart → Inject Inner OS protocol + persona
                  ↓
-PreToolUse → 工具执行 → PostToolUse (成功)
-                       → PostToolUseFailure (失败)
+PreToolUse → Tool execution → PostToolUse (success)
+                             → PostToolUseFailure (failure)
                  ↓
-PreCompact → 保存状态
+PreCompact → Save state
                  ↓
-Stop → 清理状态
+Stop → Clean up state
 ```
 
-| Hook | 触发时机 | 作用 |
-|------|---------|------|
-| `SessionStart` | 会话启动/恢复/压缩 | 从 SKILL.md 读取协议，拼接当前人设后注入 |
-| `PreToolUse` | 工具执行前 | 注入工具上下文（名称、目标、重试提示） |
-| `PostToolUse` | 工具执行成功后 | 追踪事件，注入最近活动上下文 |
-| `PostToolUseFailure` | 工具执行失败后 | 追踪失败，注入错误上下文和连续失败计数 |
-| `PreCompact` | 上下文压缩前 | 保存状态，维持协议连续性 |
-| `Stop` | 会话结束 | 清理状态文件 |
+| Hook | Trigger | Purpose |
+|------|---------|---------|
+| `SessionStart` | Session start/resume/compact | Read protocol from SKILL.md, append current persona, inject |
+| `PreToolUse` | Before tool execution | Inject tool context (name, target, retry hints) |
+| `PostToolUse` | After successful execution | Track events, inject recent activity context |
+| `PostToolUseFailure` | After failed execution | Track failures, inject error context and consecutive failure count |
+| `PreCompact` | Before context compaction | Save state, maintain protocol continuity |
+| `Stop` | Session end | Clean up state files |
 
 ---
 
-## 项目结构
+## Project Structure
 
 ```
 .
-├── hooks/                        # Claude Code hook 脚本（核心实现）
-│   ├── hooks.json                #   hook 注册清单
+├── hooks/                        # Claude Code hook scripts (core implementation)
+│   ├── hooks.json                #   Hook registration manifest
 │   ├── session-start.js
 │   ├── pre-tool-use.js
 │   ├── post-tool-use.js
 │   ├── post-tool-use-failure.js
 │   ├── pre-compact.js
 │   ├── stop.js
-│   └── lib/                      #   共享逻辑（各平台复用）
+│   └── lib/                      #   Shared logic (reused across platforms)
 │       ├── constants.js
 │       ├── events.js
 │       ├── prompt.js
-│       ├── persona.js            #   人设读取/切换/列举
+│       ├── persona.js            #   Persona read/switch/list
 │       ├── state.js
 │       ├── session.js
 │       ├── format.js
 │       └── io.js
 ├── skills/inner-os/
-│   └── SKILL.md                  # Inner OS 行为协议（唯一数据源）
-├── personas/                     # 人设文件
-│   ├── default.md                #   自由模式（默认）
-│   ├── tsundere.md               #   傲娇
-│   ├── cold.md                   #   冷淡
-│   ├── cheerful.md               #   元气
-│   ├── philosopher.md            #   哲学家
-│   ├── sarcastic.md              #   尖酸刻薄
-│   └── custom/                   #   用户自定义人设
+│   └── SKILL.md                  # Inner OS behavior protocol (single source of truth)
+├── personas/                     # Persona files
+│   ├── default.md                #   Free mode (default)
+│   ├── tsundere.md               #   Tsundere
+│   ├── cold.md                   #   Cold
+│   ├── cheerful.md               #   Cheerful
+│   ├── philosopher.md            #   Philosopher
+│   ├── sarcastic.md              #   Sarcastic
+│   └── custom/                   #   User-defined personas
 │       └── README.md
-├── codex/                        # Codex CLI 适配
+├── codex/                        # Codex CLI adapter
 │   ├── AGENTS.md
 │   ├── hooks.json
 │   └── hooks/
-├── cursor/                       # Cursor 适配
+├── cursor/                       # Cursor adapter
 │   ├── rules/inner-os-protocol.mdc
 │   ├── hooks.json
 │   └── hooks/
-├── opencode/                     # OpenCode CLI 适配
+├── opencode/                     # OpenCode CLI adapter
 │   ├── inner-os-rules.md
 │   └── opencode.json
-├── hermes/                       # Hermes Agent 适配
+├── hermes/                       # Hermes Agent adapter
 │   ├── skills/inner-os/SKILL.md
 │   ├── hermes.md
 │   └── README.md
-├── openclaw/                     # OpenClaw 适配
+├── openclaw/                     # OpenClaw adapter
 │   ├── skills/inner-os/SKILL.md
 │   └── README.md
-├── .claude-plugin/               # Claude Code 插件元信息
-├── tests/                        # 单元测试
-├── docs/                         # 文档与图片
-└── plugin.json                   # 插件元信息
+├── .claude-plugin/               # Claude Code plugin metadata
+├── tests/                        # Unit tests
+├── docs/                         # Documentation and images
+└── plugin.json                   # Plugin metadata
 ```
 
 ---
 
-## 开发
+## Development
 
 ```bash
-# 语法检查
+# Syntax check
 npm run check
 
-# 运行测试
+# Run tests
 npm test
 ```
 
-Node.js >= 18，ESM 模块。
+Node.js >= 18, ESM modules.
 
-## 路线图
+## Roadmap
 
-- [x] 实现人设切换（Persona）系统
-- [ ] 实现 `/inner-os` 子命令（status / on / off / reload）
-- [ ] Codex CLI 插件化分发
-- [ ] Cursor 团队级规则分发
+- [x] Implement persona switching system
+- [ ] Implement `/inner-os` subcommands (status / on / off / reload)
+- [ ] Codex CLI plugin distribution
+- [ ] Cursor team-level rule distribution
 
-## 许可证
+## License
 
 [Apache-2.0](LICENSE)
