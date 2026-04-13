@@ -9,7 +9,7 @@
   },
   "scripts": {
     "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js",
-    "test": "node --test",
+    "test": "node --test tests/events.test.js && node --test tests/persona.test.js && node --test tests/prompt.test.js",
     "lint": "npm run check"
   }
 }
