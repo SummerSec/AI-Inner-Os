@@ -22,17 +22,18 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 
 ### Claude Code（推荐）
 
-```bash
-claude plugin marketplace add SummerSec/AI-Inner-Os
-claude plugin install ai-inner-os
+```
+/plugin marketplace add SummerSec/AI-Inner-Os
+/plugin install ai-inner-os
+/reload-plugins
 ```
 
-安装后重启会话即可生效，无需手动配置。
+安装后执行 `/reload-plugins` 即可在当前会话生效，无需重启。
 
 > **开启自动更新：** 第三方 marketplace 默认不自动更新。安装后请在 `/plugin` → Marketplaces 标签页中，对 `SummerSec/AI-Inner-Os` 开启 auto-update，或手动执行：
-> ```bash
-> claude plugin marketplace update SummerSec/AI-Inner-Os
-> claude plugin update ai-inner-os
+> ```
+> /plugin marketplace update SummerSec/AI-Inner-Os
+> /plugin update ai-inner-os
 > ```
 
 ### Codex CLI
