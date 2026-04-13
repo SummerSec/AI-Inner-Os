@@ -1,6 +1,6 @@
 {
   "name": "ai-inner-os",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Makes Claude Code sessions expose a visible Inner OS monologue layer in the format ▎InnerOS：...",
   "author": {
     "name": "sin",
