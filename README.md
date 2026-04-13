@@ -44,6 +44,18 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 > /plugin update ai-inner-os
 > ```
 
+### 验证安装
+
+安装成功后，执行 `/ai-inner-os:inner-os`，如果看到以下输出则表示安装成功：
+
+```
+Inner OS 状态：已启用
+独白前缀：▎InnerOS：
+插件版本：0.4.0
+
+▎InnerOS：系统已就绪，随时准备输出内心独白。
+```
+
 ### Codex CLI
 
 ```bash
@@ -106,16 +118,52 @@ cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
 
 ---
 
+## 人设切换（Persona）
+
+Inner OS 支持为内心独白设置人物性格和语气。人设仅影响 `▎InnerOS：` 前缀的独白内容，不影响主任务回复。
+
+### 预设人设
+
+| 名称 | 展示名 | 风格 |
+|------|--------|------|
+| default | 自由模式 | 无固定人设，自由发挥 |
+| tsundere | 傲娇 | 嘴硬心软、吐槽、别误会 |
+| cold | 冷淡 | 极简、点到为止 |
+| cheerful | 元气 | 积极、鼓励、过度热情 |
+| philosopher | 哲学家 | 深沉、比喻、哲学化 |
+| sarcastic | 尖酸刻薄 | 犀利毒舌、一针见血 |
+
+### 切换命令（Claude Code）
+
+```
+/inner-os persona list          # 列出所有可用人设
+/inner-os persona use tsundere  # 切换到傲娇模式
+/inner-os persona show          # 显示当前人设
+/inner-os persona reset         # 恢复自由模式
+```
+
+### 自定义人设
+
+在 `personas/custom/` 目录下创建 `.md` 文件即可添加自定义人设。详见 [personas/custom/README.md](personas/custom/README.md)。
+
+### 其他平台
+
+- **Codex CLI：** 手动编辑 `personas/_active.json`，将 `persona` 设为目标人设名称
+- **Cursor：** 将 `personas/<name>.md` 的正文内容手动追加到 `.mdc` 规则文件末尾
+- **OpenCode：** 将 `personas/<name>.md` 的正文内容手动追加到 `inner-os-rules.md` 末尾
+
+---
+
 ## 协议设计
 
 Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/SKILL.md)，是唯一的数据源。各平台的适配层都从这个协议派生。
 
 核心原则：
 
-- **不扮演固定人设** — 没有预设语气表，AI 自行决定表达风格
 - **主任务优先** — 独白不能替代实际交付内容
 - **独白可选** — 是否输出由 AI 自己判断
 - **格式统一** — 使用 `▎InnerOS：` 前缀
+- **人设可切换** — 通过 persona 文件定义独白风格
 
 ---
 
@@ -127,6 +175,7 @@ Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/S
 | 工具执行前 hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — | — | — |
 | 工具执行后 hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — | — | — |
 | 失败追踪 | `PostToolUseFailure` | — | — | — | — | — |
+| 人设切换 | `/inner-os persona` 命令 | 手动编辑 `_active.json` | 手动追加到规则文件 | 手动追加到指令文件 | 手动追加 | 手动追加 |
 | 安装方式 | 插件市场一键安装 | 手动复制配置 | 复制 .mdc 规则 | 复制指令文件 | 复制 Skill 或 Context File | 复制 Skill 或 ClawHub |
 | 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 纯静态注入 | 纯静态注入 | 纯静态注入 |
 
@@ -135,7 +184,7 @@ Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/S
 Claude Code 拥有最完整的 hook 支持：
 
 ```
-SessionStart → 注入 Inner OS 协议
+SessionStart → 注入 Inner OS 协议 + 人设
                  ↓
 PreToolUse → 工具执行 → PostToolUse (成功)
                        → PostToolUseFailure (失败)
@@ -147,7 +196,7 @@ Stop → 清理状态
 
 | Hook | 触发时机 | 作用 |
 |------|---------|------|
-| `SessionStart` | 会话启动/恢复/压缩 | 从 SKILL.md 读取并注入协议 |
+| `SessionStart` | 会话启动/恢复/压缩 | 从 SKILL.md 读取协议，拼接当前人设后注入 |
 | `PreToolUse` | 工具执行前 | 注入工具上下文（名称、目标、重试提示） |
 | `PostToolUse` | 工具执行成功后 | 追踪事件，注入最近活动上下文 |
 | `PostToolUseFailure` | 工具执行失败后 | 追踪失败，注入错误上下文和连续失败计数 |
@@ -172,12 +221,22 @@ Stop → 清理状态
 │       ├── constants.js
 │       ├── events.js
 │       ├── prompt.js
+│       ├── persona.js            #   人设读取/切换/列举
 │       ├── state.js
 │       ├── session.js
 │       ├── format.js
 │       └── io.js
 ├── skills/inner-os/
 │   └── SKILL.md                  # Inner OS 行为协议（唯一数据源）
+├── personas/                     # 人设文件
+│   ├── default.md                #   自由模式（默认）
+│   ├── tsundere.md               #   傲娇
+│   ├── cold.md                   #   冷淡
+│   ├── cheerful.md               #   元气
+│   ├── philosopher.md            #   哲学家
+│   ├── sarcastic.md              #   尖酸刻薄
+│   └── custom/                   #   用户自定义人设
+│       └── README.md
 ├── codex/                        # Codex CLI 适配
 │   ├── AGENTS.md
 │   ├── hooks.json
@@ -190,13 +249,12 @@ Stop → 清理状态
 │   ├── inner-os-rules.md
 │   └── opencode.json
 ├── hermes/                       # Hermes Agent 适配
-│   ├── skills/inner-os/SKILL.md  #   Hermes 技能（支持 /inner-os 命令）
-│   ├── hermes.md                 #   项目级 Context File
+│   ├── skills/inner-os/SKILL.md
+│   ├── hermes.md
 │   └── README.md
 ├── openclaw/                     # OpenClaw 适配
-│   ├── skills/inner-os/SKILL.md  #   OpenClaw 技能（AgentSkills 格式）
+│   ├── skills/inner-os/SKILL.md
 │   └── README.md
-├── commands/inner-os.md          # /inner-os 调试命令（占位）
 ├── .claude-plugin/               # Claude Code 插件元信息
 ├── tests/                        # 单元测试
 ├── docs/                         # 文档与图片
@@ -219,6 +277,7 @@ Node.js >= 18，ESM 模块。
 
 ## 路线图
 
+- [x] 实现人设切换（Persona）系统
 - [ ] 实现 `/inner-os` 子命令（status / on / off / reload）
 - [ ] Codex CLI 插件化分发
 - [ ] Cursor 团队级规则分发

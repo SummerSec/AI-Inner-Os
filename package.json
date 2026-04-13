@@ -1,6 +1,6 @@
 {
   "name": "ai-inner-os",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Framework for a Claude Code plugin that surfaces visible Inner OS monologue.",
   "type": "module",
