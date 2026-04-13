@@ -6,9 +6,7 @@
 
 > 让 AI 在终端工作时"活起来"——把内心独白展示出来。
 
-<p align="center">
-  <img src="docs/pic/inneros.jpg" width="600" />
-</p>
+![inneros示例](./docs/pic/inneros2.jpg)
 
 AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**Codex CLI**、**Cursor**、**OpenCode CLI**、**Hermes Agent**、**OpenClaw**。
 
