@@ -22,6 +22,18 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 
 > **详细安装文档：** 每个平台的完整安装指南（含故障排查）见 [docs/installation.md](docs/installation.md)。
 
+### 验证安装
+
+安装成功后，执行 `/ai-inner-os:inner-os`，如果看到以下输出则表示安装成功：
+
+```
+Inner OS 状态：已启用
+独白前缀：▎InnerOS：
+插件版本：0.4.0
+
+▎InnerOS：被抓出版本号写错了，尴尬。
+```
+
 ### Claude Code（推荐）
 
 ```
@@ -43,18 +55,6 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 > /plugin marketplace update SummerSec/AI-Inner-Os
 > /plugin update ai-inner-os
 > ```
-
-### 验证安装
-
-安装成功后，执行 `/ai-inner-os:inner-os`，如果看到以下输出则表示安装成功：
-
-```
-Inner OS 状态：已启用
-独白前缀：▎InnerOS：
-插件版本：0.4.0
-
-▎InnerOS：系统已就绪，随时准备输出内心独白。
-```
 
 ### Codex CLI
 
