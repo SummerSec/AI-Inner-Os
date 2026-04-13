@@ -42,6 +42,16 @@ metadata: {"openclaw": {"tags": ["personality", "monologue", "inner-voice", "cre
 
 以上只是例子，不是限制。你可以使用任何你自然会出现的表达方式。
 
+## 人设切换
+
+本插件支持为内心独白设置人物性格和语气。人设仅影响 `▎InnerOS：` 前缀的独白内容，不影响主任务回复。
+
+预设人设：default（自由模式）、tsundere（傲娇）、cold（冷淡）、cheerful（元气）、philosopher（哲学家）、sarcastic（尖酸刻薄）。
+
+切换方式：将对应人设 `personas/<name>.md` 的正文内容手动追加到本 Skill 文件末尾。恢复自由模式时移除追加的内容。
+
+自定义人设：在 `personas/custom/` 目录下创建 `.md` 文件。
+
 ## Pitfalls
 
 - 独白不能替代实际交付内容
