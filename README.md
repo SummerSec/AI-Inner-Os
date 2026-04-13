@@ -6,7 +6,7 @@
   <img src="docs/pic/inneros.jpg" width="600" />
 </p>
 
-AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**Codex CLI**、**Cursor**、**OpenCode CLI**。
+AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**Codex CLI**、**Cursor**、**OpenCode CLI**、**Hermes Agent**、**OpenClaw**。
 
 它通过协议注入，让 AI 在正常完成任务的同时，额外输出一层可见的自由独白：
 
@@ -19,6 +19,8 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 ---
 
 ## 快速安装
+
+> **详细安装文档：** 每个平台的完整安装指南（含故障排查）见 [docs/installation.md](docs/installation.md)。
 
 ### Claude Code（推荐）
 
@@ -34,7 +36,7 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 /reload-plugins
 ```
 
-安装后执行 `/reload-plugins` 即可在当前会话生效，无需重启。
+安装后执行 `/reload-plugins` 即可在当前会话生效，无需重启。[详细安装指南](docs/install-claude-code.md)。
 
 > **开启自动更新：** 第三方 marketplace 默认不自动更新。安装后请在 `/plugin` → Marketplaces 标签页中，对 `SummerSec/AI-Inner-Os` 开启 auto-update，或手动执行：
 > ```
@@ -52,7 +54,7 @@ cat codex/AGENTS.md >> ~/.codex/AGENTS.md
 cp codex/hooks.json ~/.codex/hooks.json
 ```
 
-详见 [codex/README.md](codex/README.md)。
+详见 [codex/README.md](codex/README.md) | [详细安装指南](docs/install-codex.md)。
 
 ### Cursor
 
@@ -62,7 +64,7 @@ mkdir -p .cursor/rules
 cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
 ```
 
-详见 [cursor/README.md](cursor/README.md)。
+详见 [cursor/README.md](cursor/README.md) | [详细安装指南](docs/install-cursor.md)。
 
 ### OpenCode CLI
 
@@ -75,7 +77,32 @@ cp opencode/inner-os-rules.md .opencode/
 cp opencode/opencode.json ./opencode.json
 ```
 
-详见 [opencode/README.md](opencode/README.md)。
+详见 [opencode/README.md](opencode/README.md) | [详细安装指南](docs/install-opencode.md)。
+
+### Hermes Agent
+
+```bash
+# 方式一：安装为 Skill（推荐，获得 /inner-os 命令）
+cp -r hermes/skills/inner-os ~/.hermes/skills/personality/inner-os
+
+# 方式二：项目级 Context File
+cp hermes/hermes.md ./.hermes.md
+```
+
+详见 [hermes/README.md](hermes/README.md) | [详细安装指南](docs/install-hermes.md)。
+
+### OpenClaw
+
+```bash
+# 方式一：安装为 Workspace Skill（推荐，获得 /inner-os 命令）
+mkdir -p skills
+cp -r openclaw/skills/inner-os skills/inner-os
+
+# 方式二：全局 Skill
+cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
+```
+
+详见 [openclaw/README.md](openclaw/README.md) | [详细安装指南](docs/install-openclaw.md)。
 
 ---
 
@@ -94,14 +121,14 @@ Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/S
 
 ## 多平台适配
 
-| | Claude Code | Codex CLI | Cursor | OpenCode |
-|---|---|---|---|---|
-| 协议注入 | Hook 动态读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 |
-| 工具执行前 hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — |
-| 工具执行后 hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — |
-| 失败追踪 | `PostToolUseFailure` | — | — | — |
-| 安装方式 | 插件市场一键安装 | 手动复制配置 | 复制 .mdc 规则 | 复制指令文件 |
-| 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 纯静态注入 |
+| | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
+|---|---|---|---|---|---|---|
+| 协议注入 | Hook 动态读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
+| 工具执行前 hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — | — | — |
+| 工具执行后 hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — | — | — |
+| 失败追踪 | `PostToolUseFailure` | — | — | — | — | — |
+| 安装方式 | 插件市场一键安装 | 手动复制配置 | 复制 .mdc 规则 | 复制指令文件 | 复制 Skill 或 Context File | 复制 Skill 或 ClawHub |
+| 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 纯静态注入 | 纯静态注入 | 纯静态注入 |
 
 ### Claude Code Hook 生命周期
 
@@ -162,6 +189,13 @@ Stop → 清理状态
 ├── opencode/                     # OpenCode CLI 适配
 │   ├── inner-os-rules.md
 │   └── opencode.json
+├── hermes/                       # Hermes Agent 适配
+│   ├── skills/inner-os/SKILL.md  #   Hermes 技能（支持 /inner-os 命令）
+│   ├── hermes.md                 #   项目级 Context File
+│   └── README.md
+├── openclaw/                     # OpenClaw 适配
+│   ├── skills/inner-os/SKILL.md  #   OpenClaw 技能（AgentSkills 格式）
+│   └── README.md
 ├── commands/inner-os.md          # /inner-os 调试命令（占位）
 ├── .claude-plugin/               # Claude Code 插件元信息
 ├── tests/                        # 单元测试

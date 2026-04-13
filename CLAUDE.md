@@ -14,7 +14,7 @@ No build step. Pure ESM, Node.js >= 18.
 
 ## Architecture
 
-AI Inner OS is a Claude Code plugin that injects a visible "inner monologue" layer into AI CLI sessions via lifecycle hooks. It also adapts to Codex CLI, Cursor, and OpenCode CLI.
+AI Inner OS is a Claude Code plugin that injects a visible "inner monologue" layer into AI CLI sessions via lifecycle hooks. It also adapts to Codex CLI, Cursor, OpenCode CLI, Hermes Agent, and OpenClaw.
 
 ### Data Flow (Claude Code)
 
@@ -35,7 +35,7 @@ Stop → deletes session state file
 
 ### Single Source of Truth
 
-`skills/inner-os/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, and `opencode/inner-os-rules.md` are manually synchronized — there is no automated derivation.
+`skills/inner-os/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/skills/inner-os/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/skills/inner-os/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata.
 
 ### hooks/lib/ — Shared Logic
 
@@ -58,6 +58,8 @@ Platforms degrade gracefully in hook richness:
 | Codex CLI | Static AGENTS.md | 4 hooks | Yes |
 | Cursor | Static .mdc rule | 2 hooks | Yes |
 | OpenCode | Static instructions file | None | No |
+| Hermes Agent | Skill or .hermes.md context file | None | No |
+| OpenClaw | Skill (AgentSkills format) | None | No |
 
 ### Plugin Registration
 
