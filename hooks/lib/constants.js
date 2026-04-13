@@ -18,3 +18,7 @@ export const EVENT_RESULTS = {
   FAILURE: "failure",
   UNKNOWN: "unknown",
 };
+
+export const PERSONAS_DIR = new URL("../../personas/", import.meta.url);
+export const ACTIVE_PERSONA_FILE = new URL("../../personas/_active.json", import.meta.url);
+export const DEFAULT_PERSONA = "default";
