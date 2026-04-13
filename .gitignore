@@ -4,3 +4,4 @@ state/*.log
 !.gitkeep
 .claude/
 personas/_active.json
+docs/superpowers/
