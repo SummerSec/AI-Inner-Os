@@ -22,7 +22,7 @@
 - `hooks/`：会话生命周期脚本
 - `hooks/hooks.json`：Claude Code hook 注册清单
 - `hooks/lib/`：状态管理、事件归一化、prompt 拼装、格式常量
-- `skills/inner-os/SKILL.md`：Inner OS 行为协议
+- `protocol/SKILL.md`：Inner OS 行为协议
 - `commands/inner-os.md`：手动调试入口占位
 - `state/`：按会话写入的轻量状态文件
 - `codex/`、`cursor/`：后续多平台适配占位

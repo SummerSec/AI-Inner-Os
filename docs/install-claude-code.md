@@ -104,7 +104,7 @@ Stop → 清理状态
 | `hooks/pre-compact.js` | 压缩前保存状态 |
 | `hooks/stop.js` | 清理会话状态文件 |
 | `hooks/lib/` | 共享逻辑（状态管理、事件归一化、prompt 拼装等） |
-| `skills/inner-os/SKILL.md` | Inner OS 行为协议（唯一数据源） |
+| `protocol/SKILL.md` | Inner OS 行为协议（唯一数据源） |
 | `.claude-plugin/plugin.json` | 插件元信息 |
 | `.claude-plugin/marketplace.json` | 本地 marketplace 注册 |
 

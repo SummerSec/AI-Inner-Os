@@ -136,7 +136,7 @@ node codex/hooks/session-start.js < /dev/null
 
 ### 协议更新
 
-当上游 `skills/inner-os/SKILL.md` 更新后，需手动同步 `codex/AGENTS.md`：
+当上游 `protocol/SKILL.md` 更新后，需手动同步 `codex/AGENTS.md`：
 
 ```bash
 # 重新追加到全局 AGENTS.md

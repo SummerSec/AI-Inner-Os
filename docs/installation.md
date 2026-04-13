@@ -53,6 +53,6 @@ cd AI-Inner-Os
 
 ## 协议数据源
 
-所有平台的协议内容派生自唯一的数据源：[`skills/inner-os/SKILL.md`](../skills/inner-os/SKILL.md)。
+所有平台的协议内容派生自唯一的数据源：[`protocol/SKILL.md`](../protocol/SKILL.md)。
 
 各平台的适配文件是手动同步的静态副本（Claude Code 除外，它在运行时动态读取 SKILL.md）。当上游协议更新后，需重新复制对应平台的文件。

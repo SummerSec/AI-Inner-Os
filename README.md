@@ -160,7 +160,7 @@ Create `.md` files in the `personas/custom/` directory to add custom personas. S
 
 ## Protocol Design
 
-The Inner OS behavior protocol is defined in [`skills/inner-os/SKILL.md`](skills/inner-os/SKILL.md), serving as the single source of truth. All platform adapters derive from this protocol.
+The Inner OS behavior protocol is defined in [`protocol/SKILL.md`](protocol/SKILL.md), serving as the single source of truth. All platform adapters derive from this protocol.
 
 Core principles:
 
@@ -230,7 +230,7 @@ Stop → Clean up state
 │       ├── session.js
 │       ├── format.js
 │       └── io.js
-├── skills/inner-os/
+├── protocol/
 │   └── SKILL.md                  # Inner OS behavior protocol (single source of truth)
 ├── personas/                     # Persona files
 │   ├── default.md                #   Free mode (default)

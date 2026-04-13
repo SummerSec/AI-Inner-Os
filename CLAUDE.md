@@ -19,7 +19,7 @@ AI Inner OS is a Claude Code plugin that injects a visible "inner monologue" lay
 ### Data Flow (Claude Code)
 
 ```
-SessionStart → reads skills/inner-os/SKILL.md → injects protocol as additionalContext
+SessionStart → reads protocol/SKILL.md → injects protocol as additionalContext
      ↓
 PreToolUse → reads session state → injects "[即将执行] ToolName → target" context
      ↓
@@ -35,7 +35,7 @@ Stop → deletes session state file
 
 ### Single Source of Truth
 
-`skills/inner-os/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/skills/inner-os/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/skills/inner-os/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata.
+`protocol/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/protocol/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/protocol/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata.
 
 ### hooks/lib/ — Shared Logic
 

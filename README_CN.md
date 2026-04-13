@@ -160,7 +160,7 @@ Inner OS 支持为内心独白设置人物性格和语气。人设仅影响 `▎
 
 ## 协议设计
 
-Inner OS 的行为协议定义在 [`skills/inner-os/SKILL.md`](skills/inner-os/SKILL.md)，是唯一的数据源。各平台的适配层都从这个协议派生。
+Inner OS 的行为协议定义在 [`protocol/SKILL.md`](protocol/SKILL.md)，是唯一的数据源。各平台的适配层都从这个协议派生。
 
 核心原则：
 
@@ -230,7 +230,7 @@ Stop → 清理状态
 │       ├── session.js
 │       ├── format.js
 │       └── io.js
-├── skills/inner-os/
+├── protocol/
 │   └── SKILL.md                  # Inner OS 行为协议（唯一数据源）
 ├── personas/                     # 人设文件
 │   ├── default.md                #   自由模式（默认）
