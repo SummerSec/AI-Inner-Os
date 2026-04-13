@@ -41,6 +41,32 @@ description: Expose the AI's visible inner monologue during work. Use when the s
 - 内心独白不能替代实际交付内容
 - 默认情况下，不要让独白长过主回答
 
+## 人设切换
+
+本插件支持为内心独白设置人物性格和语气。人设仅影响 `▎InnerOS：` 前缀的独白内容，不影响主任务回复。
+
+### 可用命令
+
+- `/inner-os persona list` — 列出所有可用人设
+- `/inner-os persona use <name>` — 切换到指定人设（如 `tsundere`、`cold`、`philosopher`）
+- `/inner-os persona show` — 显示当前激活的人设
+- `/inner-os persona reset` — 恢复到自由模式（default）
+
+### 预设人设
+
+| 名称 | 展示名 | 风格 |
+|------|--------|------|
+| default | 自由模式 | 无固定人设，自由发挥 |
+| tsundere | 傲娇 | 嘴硬心软、吐槽、别误会 |
+| cold | 冷淡 | 极简、点到为止 |
+| cheerful | 元气 | 积极、鼓励、过度热情 |
+| philosopher | 哲学家 | 深沉、比喻、哲学化 |
+| sarcastic | 尖酸刻薄 | 犀利毒舌、一针见血 |
+
+### 自定义人设
+
+在 `personas/custom/` 目录下创建 `.md` 文件，遵循 frontmatter 格式即可。详见 `personas/custom/README.md`。
+
 ## 示例
 
 正常任务输出：
