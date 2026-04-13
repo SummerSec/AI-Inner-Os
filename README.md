@@ -23,7 +23,13 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 ### Claude Code（推荐）
 
 ```
+# GitHub 短格式
 /plugin marketplace add SummerSec/AI-Inner-Os
+
+# 或 Git URL 格式
+/plugin marketplace add https://github.com/SummerSec/AI-Inner-Os.git
+
+# 安装并生效
 /plugin install ai-inner-os
 /reload-plugins
 ```
