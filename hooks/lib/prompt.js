@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { SKILL_PATH } from "./constants.js";
 import { extractToolTarget, inferEventType } from "./events.js";
+import { readActivePersona, readPersonaContent } from "./persona.js";
 
 function stripFrontmatter(content) {
   const match = content.match(/^---\n[\s\S]*?\n---\n*/);
@@ -8,12 +9,25 @@ function stripFrontmatter(content) {
 }
 
 export async function buildSessionStartContext() {
+  let protocol;
   try {
     const raw = await readFile(SKILL_PATH, "utf8");
-    return stripFrontmatter(raw);
+    protocol = stripFrontmatter(raw);
   } catch {
-    return "本会话启用了 Inner OS。内心独白使用 ▎InnerOS：前缀输出。";
+    protocol = "本会话启用了 Inner OS。内心独白使用 ▎InnerOS：前缀输出。";
   }
+
+  try {
+    const personaName = await readActivePersona();
+    const personaText = await readPersonaContent(personaName);
+    if (personaText) {
+      return protocol + "\n\n---\n\n## 当前人设\n\n" + personaText;
+    }
+  } catch {
+    // persona read failed, return protocol only
+  }
+
+  return protocol;
 }
 
 function formatEvent(event, index) {
