@@ -8,7 +8,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "check": "node --check hooks/session-start.js && node --check hooks/post-tool-use.js && node --check hooks/pre-compact.js && node --check hooks/stop.js",
+    "check": "node --check hooks/session-start.js && node --check hooks/post-tool-use.js && node --check hooks/pre-compact.js && node --check hooks/stop.js && node --check hooks/lib/session.js",
     "test": "node --test",
     "lint": "npm run check"
   }

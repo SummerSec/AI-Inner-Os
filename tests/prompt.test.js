@@ -18,7 +18,7 @@ test("buildRecentEventContext includes failure count when present", () => {
     failureCount: 2,
     recentEvents: [
       {
-        toolName: "Shell",
+        toolName: "Bash",
         eventType: "verify",
         result: "failure",
         target: "npm test",
@@ -26,8 +26,25 @@ test("buildRecentEventContext includes failure count when present", () => {
     ],
   });
 
-  assert.match(context, /工具：Shell/);
-  assert.match(context, /结果：failure/);
+  assert.match(context, /Bash/);
+  assert.match(context, /failure/);
   assert.match(context, /对象：npm test/);
   assert.match(context, /连续失败次数：2/);
+});
+
+test("buildRecentEventContext shows up to 3 recent events", () => {
+  const context = buildRecentEventContext({
+    failureCount: 0,
+    recentEvents: [
+      { toolName: "Edit", eventType: "edit", result: "success", target: "a.js" },
+      { toolName: "Read", eventType: "read", result: "success", target: "b.js" },
+      { toolName: "Grep", eventType: "search", result: "success", target: "foo" },
+      { toolName: "Bash", eventType: "execute", result: "success", target: "ls" },
+    ],
+  });
+
+  assert.match(context, /Edit/);
+  assert.match(context, /Read/);
+  assert.match(context, /Grep/);
+  assert.ok(!context.includes("Bash"), "should only show 3 events");
 });

@@ -8,8 +8,19 @@ import {
 } from "../hooks/lib/events.js";
 
 test("inferEventType recognizes verification shell commands", () => {
-  const type = inferEventType("Shell", { command: "npm test" });
-  assert.equal(type, "verify");
+  assert.equal(inferEventType("Shell", { command: "npm test" }), "verify");
+  assert.equal(inferEventType("Bash", { command: "npm test" }), "verify");
+});
+
+test("inferEventType recognizes Claude Code tool names", () => {
+  assert.equal(inferEventType("Grep", {}), "search");
+  assert.equal(inferEventType("Glob", {}), "search");
+  assert.equal(inferEventType("Read", {}), "read");
+  assert.equal(inferEventType("Edit", {}), "edit");
+  assert.equal(inferEventType("Write", {}), "edit");
+  assert.equal(inferEventType("Bash", { command: "ls" }), "execute");
+  assert.equal(inferEventType("WebFetch", {}), "read");
+  assert.equal(inferEventType("LSP", {}), "search");
 });
 
 test("inferResult returns failure for non-zero exit codes", () => {

@@ -22,26 +22,33 @@ export function buildSessionStartContext() {
   ].join("\n");
 }
 
-export function buildRecentEventContext(state) {
-  const event = state?.recentEvents?.[0];
+function formatEvent(event, index) {
+  const prefix = index === 0 ? "最新" : `#${index + 1}`;
+  const parts = [`[${prefix}] ${event.toolName} (${event.eventType}) → ${event.result}`];
 
-  if (!event) {
+  if (event.target) {
+    parts.push(`  对象：${event.target}`);
+  }
+
+  return parts.join("\n");
+}
+
+export function buildRecentEventContext(state) {
+  const events = state?.recentEvents;
+
+  if (!events?.length) {
     return "";
   }
 
-  const lines = [
-    "最近发生的事情：",
-    `- 工具：${event.toolName}`,
-    `- 事件类型：${event.eventType}`,
-    `- 结果：${event.result}`,
-  ];
+  const window = events.slice(0, 3);
+  const lines = ["最近发生的事情：", ""];
 
-  if (event.target) {
-    lines.push(`- 对象：${event.target}`);
+  for (let i = 0; i < window.length; i++) {
+    lines.push(formatEvent(window[i], i));
   }
 
   if (state.failureCount > 0) {
-    lines.push(`- 连续失败次数：${state.failureCount}`);
+    lines.push("", `连续失败次数：${state.failureCount}`);
   }
 
   lines.push("", "你可以根据这些事实，自行决定是否输出 Inner OS 旁白，以及用什么风格输出。");

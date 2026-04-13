@@ -20,11 +20,17 @@ export function inferEventType(toolName = "", payload = {}) {
     return EVENT_TYPES.READ;
   }
 
-  if (normalizedTool.includes("glob") || normalizedTool.includes("search") || normalizedTool.includes("rg")) {
+  if (
+    normalizedTool.includes("glob") ||
+    normalizedTool.includes("grep") ||
+    normalizedTool.includes("search") ||
+    normalizedTool.includes("rg") ||
+    normalizedTool.includes("lsp")
+  ) {
     return EVENT_TYPES.SEARCH;
   }
 
-  if (normalizedTool.includes("shell") || payload.command) {
+  if (normalizedTool.includes("bash") || normalizedTool.includes("shell") || payload.command) {
     if (target.includes("test") || target.includes("lint") || target.includes("check")) {
       return EVENT_TYPES.VERIFY;
     }
@@ -32,7 +38,13 @@ export function inferEventType(toolName = "", payload = {}) {
     return EVENT_TYPES.EXECUTE;
   }
 
-  if (normalizedTool.includes("patch") || normalizedTool.includes("edit") || normalizedTool.includes("delete")) {
+  if (
+    normalizedTool.includes("write") ||
+    normalizedTool.includes("patch") ||
+    normalizedTool.includes("edit") ||
+    normalizedTool.includes("delete") ||
+    normalizedTool.includes("notebook")
+  ) {
     return EVENT_TYPES.EDIT;
   }
 
