@@ -1,6 +1,7 @@
 export const PLUGIN_ID = "ai-inner-os";
 export const DEFAULT_PREFIX = "▎InnerOS：";
 export const STATE_DIR = new URL("../../state/", import.meta.url);
+export const SKILL_PATH = new URL("../../skills/inner-os/SKILL.md", import.meta.url);
 export const MAX_RECENT_EVENTS = 10;
 
 export const EVENT_TYPES = {

@@ -85,6 +85,26 @@ export function summarizePayload(toolName = "", payload = {}) {
   return `${toolName} executed`;
 }
 
+export function extractToolTarget(toolName, toolInput) {
+  if (!toolInput) return null;
+
+  const name = String(toolName).toLowerCase();
+
+  if (name.includes("bash") || name.includes("shell")) {
+    const cmd = toolInput.command || "";
+    return cmd.length > 80 ? cmd.slice(0, 80) + "…" : cmd || null;
+  }
+
+  return (
+    toolInput.file_path ||
+    toolInput.path ||
+    toolInput.pattern ||
+    toolInput.query ||
+    toolInput.url ||
+    null
+  );
+}
+
 export function normalizeToolEvent(input = {}) {
   const toolName = input.tool_name || input.toolName || input.hook_event_name || "unknown";
   const payload = input.tool_input || input.payload || input;
@@ -95,6 +115,20 @@ export function normalizeToolEvent(input = {}) {
     result: inferResult(input),
     target: payload.path || payload.target || payload.command || null,
     summary: summarizePayload(toolName, payload),
+    timestamp: new Date().toISOString(),
+  };
+}
+
+export function normalizeFailureEvent(input = {}) {
+  const toolName = input.tool_name || input.toolName || "unknown";
+  const toolInput = input.tool_input || input.toolInput || {};
+
+  return {
+    toolName,
+    eventType: inferEventType(toolName, toolInput),
+    result: EVENT_RESULTS.FAILURE,
+    target: extractToolTarget(toolName, toolInput),
+    summary: `${toolName} failed: ${input.error || "unknown error"}`,
     timestamp: new Date().toISOString(),
   };
 }

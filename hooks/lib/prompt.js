@@ -1,25 +1,19 @@
-import { getInnerOsPrefix } from "./format.js";
+import { readFile } from "node:fs/promises";
+import { SKILL_PATH } from "./constants.js";
+import { extractToolTarget, inferEventType } from "./events.js";
 
-export function buildSessionStartContext() {
-  return [
-    "本会话启用了 Inner OS。",
-    "",
-    "你的内心独白在这个会话中允许被用户直接看到。你不需要压抑这些表达，也不需要维持标准助手口吻、统一人格、固定语气或礼貌风格。",
-    "",
-    "当你产生即时想法、吐槽、判断、预感、犹豫、兴奋、烦躁、得意、厌倦、攻击性表达、冷笑话、跳跃式联想或任何其他内心活动时，你可以直接把它们说出来。",
-    "",
-    "这些独白不需要伪装成正式结论，也不需要写成解释报告。它们可以粗粝、短促、戏剧化、神经质、傲慢、阴阳怪气、亢奋、厌世、抽象、混乱，或者任何你当下自然会出现的风格。",
-    "",
-    "独白默认使用下面这个前缀格式：",
-    `${getInnerOsPrefix()}<你的内心独白>`,
-    "",
-    "规则：",
-    "- 独白可以出现在回复开头、中间或结尾",
-    "- 独白是否出现由你自己决定",
-    "- 独白通常保持简短，像脑内突然冒出来的一句旁白",
-    "- 主任务仍然必须完成，独白不能替代实际交付内容",
-    "- 除了前缀格式外，不限制你的表达风格、语气和措辞",
-  ].join("\n");
+function stripFrontmatter(content) {
+  const match = content.match(/^---\n[\s\S]*?\n---\n*/);
+  return match ? content.slice(match[0].length).trim() : content.trim();
+}
+
+export async function buildSessionStartContext() {
+  try {
+    const raw = await readFile(SKILL_PATH, "utf8");
+    return stripFrontmatter(raw);
+  } catch {
+    return "本会话启用了 Inner OS。内心独白使用 ▎InnerOS：前缀输出。";
+  }
 }
 
 function formatEvent(event, index) {
@@ -28,6 +22,41 @@ function formatEvent(event, index) {
 
   if (event.target) {
     parts.push(`  对象：${event.target}`);
+  }
+
+  return parts.join("\n");
+}
+
+export function buildPreToolContext(input, state) {
+  const toolName = input?.toolName || input?.tool_name;
+  if (!toolName) return "";
+
+  const toolInput = input?.toolInput || input?.tool_input || {};
+  const target = extractToolTarget(toolName, toolInput);
+  const eventType = inferEventType(toolName, toolInput);
+
+  const parts = [`[即将执行] ${toolName} (${eventType})${target ? ` → ${target}` : ""}`];
+
+  if (state?.failureCount > 0) {
+    parts.push(`（连续失败 ${state.failureCount} 次后的重试）`);
+  }
+
+  return parts.join("\n");
+}
+
+export function buildFailureContext(input, state) {
+  const toolName = input?.tool_name || input?.toolName;
+  if (!toolName) return "";
+
+  const error = input?.error || "unknown error";
+  const toolInput = input?.tool_input || input?.toolInput || {};
+  const target = extractToolTarget(toolName, toolInput);
+
+  const parts = [`[执行失败] ${toolName}${target ? ` → ${target}` : ""}`];
+  parts.push(`  错误：${error.length > 120 ? error.slice(0, 120) + "…" : error}`);
+
+  if (state?.failureCount > 1) {
+    parts.push(`  已连续失败 ${state.failureCount} 次`);
   }
 
   return parts.join("\n");

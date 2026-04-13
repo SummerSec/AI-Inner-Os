@@ -3,6 +3,8 @@ import { buildSessionStartContext } from "./lib/prompt.js";
 import { getSessionId } from "./lib/session.js";
 import { readSessionState, writeSessionState } from "./lib/state.js";
 
+const context = await buildSessionStartContext();
+
 try {
   const input = await readJsonStdin();
   const sessionId = getSessionId(input);
@@ -12,18 +14,13 @@ try {
     ...state,
     enabled: true,
   });
-
-  writeJsonStdout({
-    hookSpecificOutput: {
-      hookEventName: "SessionStart",
-      additionalContext: buildSessionStartContext(),
-    },
-  });
 } catch {
-  writeJsonStdout({
-    hookSpecificOutput: {
-      hookEventName: "SessionStart",
-      additionalContext: buildSessionStartContext(),
-    },
-  });
+  // session state failed, still inject the protocol below
 }
+
+writeJsonStdout({
+  hookSpecificOutput: {
+    hookEventName: "SessionStart",
+    additionalContext: context,
+  },
+});
