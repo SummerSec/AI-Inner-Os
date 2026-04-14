@@ -45,7 +45,7 @@ Free mode by default, no tone restrictions. The AI can complain, gloat, feel anx
 Paste the following prompt to let your AI agent install AI Inner OS automatically:
 
 ```
-Read https://xget.sumsec.me/gh/SummerSec/AI-Inner-Os/raw/refs/heads/main/docs/installation.md 安装 AI-Inner-Os
+Read https://raw.githubusercontent.com/SummerSec/AI-Inner-Os/refs/heads/main/docs/installation.md 安装 AI-Inner-Os
 ```
 
 ### Verify Installation

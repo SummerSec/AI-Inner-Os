@@ -45,7 +45,7 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 将以下 prompt 发送给你的 AI Agent，即可自动完成安装：
 
 ```
-Read https://xget.sumsec.me/gh/SummerSec/AI-Inner-Os/raw/refs/heads/main/docs/installation.md 安装 AI-Inner-Os
+Read https://raw.githubusercontent.com/SummerSec/AI-Inner-Os/refs/heads/main/docs/installation.md 安装 AI-Inner-Os
 ```
 
 ### 验证安装
