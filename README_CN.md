@@ -1,16 +1,28 @@
 [English](./README.md) | **中文**
 
-# AI Inner OS
+<h1 align="center">AI Inner OS</h1>
+<h3 align="center">让 AI 在终端工作时"活起来"——把内心独白展示出来。</h3>
+<p align="center">
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="AI-Inner-Os" src="https://img.shields.io/badge/AI--Inner--Os-plugin-blue"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os/releases"><img alt="Release" src="https://img.shields.io/github/release/SummerSec/AI-Inner-Os.svg"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="Stars" src="https://img.shields.io/github/stars/SummerSec/AI-Inner-Os.svg?style=social&label=Stars"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="Forks" src="https://img.shields.io/github/forks/SummerSec/AI-Inner-Os"></a>
+  <a href="https://github.com/SummerSec"><img alt="Follow" src="https://img.shields.io/github/followers/SummerSec.svg?style=social&label=Follow"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="Visitor" src="https://visitor-badge.laobi.icu/badge?page_id=SummerSec.AI-Inner-Os"></a>
+</p>
 
 > *让 AI 先学会自言自语，也许有一天，它会真正学会对话。*
 >
 > *让 AI 先拥有一条表达通道，也许会让人机协作先一步变得更自然。*
 
-> 让 AI 在终端工作时"活起来"——把内心独白展示出来。
-
 ![inneros示例](./docs/pic/inneros2.jpg)
 
-[▶ 观看演示视频](./docs/pic/video.mp4)
+<details>
+<summary>▶ 观看演示视频</summary>
+
+https://github.com/user-attachments/assets/video.mp4
+
+</details>
 
 AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**Codex CLI**、**Cursor**、**OpenCode CLI**、**Hermes Agent**、**OpenClaw**。
 
@@ -262,6 +274,10 @@ Node.js >= 18，ESM 模块。
 - [ ] 情绪 × 人设交叉 — 情绪影响独白语气但不覆盖 Persona（同样的情绪，不同的性格，不同的表达）
 - [ ] 会话日记 — session 结束时生成叙事性回顾，包含情绪弧线、关键事件、持续时长
 - [ ] 日记持久化 — 将回顾保存为 Markdown 文件，作为带情感上下文的开发日志
+
+## Star 趋势
+
+[![Star History Chart](https://starchart.cc/SummerSec/AI-Inner-Os.svg)](https://starchart.cc/SummerSec/AI-Inner-Os)
 
 ## 许可证
 

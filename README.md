@@ -1,16 +1,28 @@
 **English** | [中文](./README_CN.md)
 
-# AI Inner OS
+<h1 align="center">AI Inner OS</h1>
+<h3 align="center">Make AI "come alive" while working in the terminal — by showing its inner monologue.</h3>
+<p align="center">
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="AI-Inner-Os" src="https://img.shields.io/badge/AI--Inner--Os-plugin-blue"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os/releases"><img alt="Release" src="https://img.shields.io/github/release/SummerSec/AI-Inner-Os.svg"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="Stars" src="https://img.shields.io/github/stars/SummerSec/AI-Inner-Os.svg?style=social&label=Stars"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="Forks" src="https://img.shields.io/github/forks/SummerSec/AI-Inner-Os"></a>
+  <a href="https://github.com/SummerSec"><img alt="Follow" src="https://img.shields.io/github/followers/SummerSec.svg?style=social&label=Follow"></a>
+  <a href="https://github.com/SummerSec/AI-Inner-Os"><img alt="Visitor" src="https://visitor-badge.laobi.icu/badge?page_id=SummerSec.AI-Inner-Os"></a>
+</p>
 
 > *Let AI learn to talk to itself first — maybe one day, it will truly learn to converse.*
 >
 > *Give AI an expression channel first — it might just make human-AI collaboration feel more natural.*
 
-> Make AI "come alive" while working in the terminal — by showing its inner monologue.
-
 ![inneros demo](./docs/pic/inneros2.jpg)
 
-[▶ Watch demo video](./docs/pic/video.mp4)
+<details>
+<summary>▶ Watch demo video</summary>
+
+https://github.com/user-attachments/assets/video.mp4
+
+</details>
 
 AI Inner OS is a plugin for AI CLI tools, supporting **Claude Code**, **Codex CLI**, **Cursor**, **OpenCode CLI**, **Hermes Agent**, and **OpenClaw**.
 
@@ -262,6 +274,10 @@ Node.js >= 18, ESM modules.
 - [ ] Mood × Persona interaction — mood affects monologue tone without overriding persona (same emotion, different personality, different expression)
 - [ ] Session recap — generate narrative session summaries on session end, including emotional arc, key events, and duration
 - [ ] Session diary persistence — save recaps as Markdown files to serve as development journals with emotional context
+
+## Star History
+
+[![Star History Chart](https://starchart.cc/SummerSec/AI-Inner-Os.svg)](https://starchart.cc/SummerSec/AI-Inner-Os)
 
 ## License
 
