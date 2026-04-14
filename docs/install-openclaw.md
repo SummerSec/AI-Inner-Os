@@ -183,6 +183,31 @@ metadata: {"openclaw": {"tags": [...], "always": true}}
 |------|------|
 | `openclaw/skills/inner-os/SKILL.md` | OpenClaw 兼容技能文件（AgentSkills 格式） |
 
+## 人设切换（Persona）
+
+切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
+
+**第一步：在仓库中切换**
+
+```bash
+cd /path/to/AI-Inner-Os
+node scripts/switch-persona.js sarcastic   # 切换到指定人设
+node scripts/switch-persona.js default     # 恢复自由模式
+node scripts/switch-persona.js --list      # 列出所有可用人设
+```
+
+**第二步：重新复制到安装位置**
+
+```bash
+# 工作区级
+cp -r openclaw/skills/inner-os skills/inner-os
+
+# 全局级
+cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
+```
+
+> **提示：** 每次切换人设后都需要重新复制。如果使用 `extraDirs` 外部目录引用方式，脚本直接修改源文件，无需额外复制。
+
 ## 故障排查
 
 ### Skill 未出现在列表中

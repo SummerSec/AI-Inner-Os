@@ -125,7 +125,7 @@ GitHub: https://github.com/SummerSec/AI-Inner-Os
 
 ### Claude Code
 
-通过内置命令切换：
+通过内置命令切换，无需额外操作：
 
 ```
 /inner-os persona list          # 列出所有可用人设
@@ -135,9 +135,13 @@ GitHub: https://github.com/SummerSec/AI-Inner-Os
 
 ### 其他平台（Codex / Cursor / OpenCode / Hermes / OpenClaw）
 
-所有非 Claude Code 平台均支持通过脚本一键切换人设：
+> **前置条件：** 人设切换依赖仓库中的 `personas/` 目录和 `scripts/switch-persona.js` 脚本。请确保你已克隆完整仓库，而不是仅复制了单个平台文件。
+
+**第一步：在仓库中切换人设**
 
 ```bash
+cd /path/to/AI-Inner-Os
+
 # 切换到指定人设（自动注入到所有平台适配文件）
 node scripts/switch-persona.js sarcastic
 
@@ -146,16 +150,39 @@ node scripts/switch-persona.js default
 
 # 列出所有可用人设
 node scripts/switch-persona.js --list
+
+# 也可以通过 npm 运行
+npm run switch-persona -- sarcastic
 ```
 
-脚本会自动读取 `personas/<name>.md` 的内容，通过标记注入到所有平台适配文件（`codex/AGENTS.md`、`cursor/rules/inner-os-protocol.mdc`、`opencode/inner-os-rules.md`、`hermes/hermes.md`、`hermes/skills/inner-os/SKILL.md`、`openclaw/skills/inner-os/SKILL.md`）中的 `<!-- ACTIVE_PERSONA_START -->` / `<!-- ACTIVE_PERSONA_END -->` 标记之间。
+脚本会自动读取 `personas/<name>.md` 的内容，注入到仓库中所有平台适配文件的 `<!-- ACTIVE_PERSONA_START -->` / `<!-- ACTIVE_PERSONA_END -->` 标记之间。
 
-也可以通过 npm 运行：
+**第二步：重新复制到安装位置**
+
+脚本修改的是仓库中的源文件，你需要将更新后的文件重新复制到对应平台的安装位置：
 
 ```bash
-npm run switch-persona -- sarcastic
-npm run switch-persona -- default
+# Codex CLI
+cat codex/AGENTS.md >> ~/.codex/AGENTS.md
+
+# Cursor
+cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
+
+# OpenCode CLI
+cp opencode/inner-os-rules.md .opencode/
+
+# Hermes Agent（Skill 方式）
+cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.md
+# Hermes Agent（Context File 方式）
+cp hermes/hermes.md ./.hermes.md
+
+# OpenClaw（Workspace Skill）
+cp -r openclaw/skills/inner-os skills/inner-os
+# OpenClaw（Global Skill）
+cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
 ```
+
+> **提示：** 每次切换人设后都需要重新复制。各平台详细安装指南中也有对应的人设切换说明。
 
 ## 协议数据源
 

@@ -106,6 +106,27 @@ git commit -m "feat: add Inner OS protocol for Cursor"
 
 团队成员 pull 后自动生效。
 
+## 人设切换（Persona）
+
+切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
+
+**第一步：在仓库中切换**
+
+```bash
+cd /path/to/AI-Inner-Os
+node scripts/switch-persona.js sarcastic   # 切换到指定人设
+node scripts/switch-persona.js default     # 恢复自由模式
+node scripts/switch-persona.js --list      # 列出所有可用人设
+```
+
+**第二步：重新复制到安装位置**
+
+```bash
+cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
+```
+
+> **提示：** 每次切换人设后都需要重新复制规则文件。
+
 ## 故障排查
 
 ### 规则不生效

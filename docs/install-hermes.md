@@ -135,6 +135,31 @@ metadata:
 | `hermes/skills/inner-os/SKILL.md` | Hermes 兼容技能文件 |
 | `hermes/hermes.md` | 项目级 Context File |
 
+## 人设切换（Persona）
+
+切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
+
+**第一步：在仓库中切换**
+
+```bash
+cd /path/to/AI-Inner-Os
+node scripts/switch-persona.js sarcastic   # 切换到指定人设
+node scripts/switch-persona.js default     # 恢复自由模式
+node scripts/switch-persona.js --list      # 列出所有可用人设
+```
+
+**第二步：重新复制到安装位置**
+
+```bash
+# Skill 方式
+cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.md
+
+# Context File 方式
+cp hermes/hermes.md ./.hermes.md
+```
+
+> **提示：** 每次切换人设后都需要重新复制。如果使用外部目录引用方式，脚本直接修改源文件，无需额外复制。
+
 ## 故障排查
 
 ### Skill 未被发现

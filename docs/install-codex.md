@@ -117,6 +117,31 @@ codex_hooks = true
 
 所有 hook 脚本通过相对路径引用 `hooks/lib/` 中的共享逻辑。
 
+## 人设切换（Persona）
+
+切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
+
+**第一步：在仓库中切换**
+
+```bash
+cd /path/to/AI-Inner-Os
+node scripts/switch-persona.js sarcastic   # 切换到指定人设
+node scripts/switch-persona.js default     # 恢复自由模式
+node scripts/switch-persona.js --list      # 列出所有可用人设
+```
+
+**第二步：重新复制到安装位置**
+
+```bash
+# 全局
+cat codex/AGENTS.md >> ~/.codex/AGENTS.md
+
+# 或项目级
+cat codex/AGENTS.md >> ./AGENTS.md
+```
+
+> **注意：** 重新追加前，请先移除 `AGENTS.md` 中旧的 Inner OS 部分，避免重复。每次切换人设后都需要重新复制。
+
 ## 故障排查
 
 ### 无独白输出
