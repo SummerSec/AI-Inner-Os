@@ -14,7 +14,7 @@
 
 这就是 **AI Inner OS** 在做的事情。
 
-![AI Inner OS - 给 AI 开一条脑内弹幕通道](./pic/ c01-scene-inner-monologue-channel.png)
+![AI Inner OS - 给 AI 开一条脑内弹幕通道](./pic/01-scene-inner-monologue-channel.png)
 
 ---
 
