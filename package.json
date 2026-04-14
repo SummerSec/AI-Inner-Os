@@ -1,6 +1,6 @@
 {
   "name": "ai-inner-os",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Framework for a Claude Code plugin that surfaces visible Inner OS monologue.",
   "type": "module",
@@ -8,8 +8,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js",
-    "test": "node --test tests/events.test.js && node --test tests/persona.test.js && node --test tests/prompt.test.js",
+    "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js && node --check scripts/switch-persona.js",
+    "test": "node --test tests/events.test.js && node --test tests/persona.test.js && node --test tests/prompt.test.js && node --test tests/switch-persona.test.js",
+    "switch-persona": "node scripts/switch-persona.js",
     "lint": "npm run check"
   }
 }

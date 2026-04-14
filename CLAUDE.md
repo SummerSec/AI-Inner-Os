@@ -5,9 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run check    # syntax validation on all hook scripts
-npm test         # run tests (Node.js built-in test runner)
-npm run lint     # alias for check
+npm run check            # syntax validation on all hook scripts
+npm test                 # run tests (Node.js built-in test runner)
+npm run lint             # alias for check
+npm run switch-persona   # switch persona across all platform files
+  # usage: npm run switch-persona -- <name|default|--list>
 ```
 
 No build step. Pure ESM, Node.js >= 18.
@@ -35,7 +37,11 @@ Stop → deletes session state file
 
 ### Single Source of Truth
 
-`protocol/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/protocol/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/protocol/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata.
+`protocol/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/skills/inner-os/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/skills/inner-os/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata.
+
+### Persona Switching Script
+
+`scripts/switch-persona.js` handles cross-platform persona switching. It reads persona files from `personas/`, updates `personas/_active.json`, and injects the persona content between `<!-- ACTIVE_PERSONA_START -->` / `<!-- ACTIVE_PERSONA_END -->` markers in all 6 platform adapter files. The `/inner-os persona use` command calls this script via Bash.
 
 ### hooks/lib/ — Shared Logic
 

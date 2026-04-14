@@ -1,6 +1,6 @@
 {
   "name": "ai-inner-os",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Claude Code plugin framework for exposing an AI's visible inner monologue during work.",
   "author": {
     "name": "sin",

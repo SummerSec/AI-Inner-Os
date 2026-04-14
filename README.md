@@ -281,10 +281,35 @@ Node.js >= 18, ESM modules.
 
 ## Roadmap
 
+### Done
+
 - [x] Implement persona switching system
+
+### In Progress
+
 - [ ] Implement `/inner-os` subcommands (status / on / off / reload)
 - [ ] Codex CLI plugin distribution
 - [ ] Cursor team-level rule distribution
+
+### Phase 1: Personalized Style — Train Your AI With Your AI
+
+- [ ] Monologue export — persist all `▎InnerOS：` outputs to structured log files
+- [ ] Expression fingerprint extraction — analyze accumulated monologue data to identify unique style patterns
+- [ ] Custom style model training — let users fine-tune a "monologue personality layer" from exported data
+- [ ] Cross-session impression memory — store per-repo key impressions (repo fingerprint + short summary), enabling "déjà vu" across sessions
+
+### Phase 2: Self-Awareness — Achievement System & Anomaly Narration
+
+- [ ] Achievement system — track session milestones (first edit, 100th tool call, midnight coding, streak records) and announce via monologue
+- [ ] Anomaly narration — detect abnormal patterns (repeated edits to same file, consecutive failures exceeding threshold, sudden directory jumps) and narrate them as monologue
+- [ ] Session statistics — track tool call counts, success/failure ratios, active duration per session
+
+### Phase 3: Emotional State Machine & Session Diary
+
+- [ ] Mood system — introduce emotion state machine in `state.json` that evolves based on session events (consecutive failures → frustrated → anxious; bug fix → confident → relieved; idle → bored → curious)
+- [ ] Mood × Persona interaction — mood affects monologue tone without overriding persona (same emotion, different personality, different expression)
+- [ ] Session recap — generate narrative session summaries on session end, including emotional arc, key events, and duration
+- [ ] Session diary persistence — save recaps as Markdown files to serve as development journals with emotional context
 
 ## License
 

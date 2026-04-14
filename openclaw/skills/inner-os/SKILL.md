@@ -52,6 +52,9 @@ metadata: {"openclaw": {"tags": ["personality", "monologue", "inner-voice", "cre
 
 自定义人设：在 `personas/custom/` 目录下创建 `.md` 文件。
 
+<!-- ACTIVE_PERSONA_START -->
+<!-- ACTIVE_PERSONA_END -->
+
 ## Pitfalls
 
 - 独白不能替代实际交付内容

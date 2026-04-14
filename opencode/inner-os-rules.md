@@ -37,6 +37,9 @@
 
 自定义人设：在 `personas/custom/` 目录下创建 `.md` 文件。
 
+<!-- ACTIVE_PERSONA_START -->
+<!-- ACTIVE_PERSONA_END -->
+
 ## 示例
 
 正常任务输出：

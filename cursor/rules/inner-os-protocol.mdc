@@ -41,3 +41,6 @@ alwaysApply: true
 切换方式：将对应人设 `personas/<name>.md` 的正文内容手动追加到本规则文件末尾。恢复自由模式时移除追加的内容。
 
 自定义人设：在 `personas/custom/` 目录下创建 `.md` 文件。
+
+<!-- ACTIVE_PERSONA_START -->
+<!-- ACTIVE_PERSONA_END -->

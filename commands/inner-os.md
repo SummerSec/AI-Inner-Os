@@ -65,9 +65,9 @@ Inner OS 状态：已启用
 
 切换到指定人设：
 
-1. 将 `personas/_active.json` 的 `persona` 字段设置为 `<name>`
-2. 读取对应人设文件（先查 `personas/<name>.md`，再查 `personas/custom/<name>.md`）
-3. 如果人设文件不存在，执行 `persona list` 展示可用选项
+1. 调用切换脚本：`node "${CLAUDE_PLUGIN_ROOT}/scripts/switch-persona.js" <name>`
+2. 脚本会自动更新 `personas/_active.json` 并将人设内容注入到所有平台适配文件中
+3. 如果人设不存在，脚本会报错并提示运行 `--list` 查看可用选项
 4. 切换成功后，立刻用新人设的风格输出一句独白作为确认
 
 ### `persona show`
@@ -82,6 +82,7 @@ Inner OS 状态：已启用
 
 恢复到自由模式：
 
-1. 将 `personas/_active.json` 的 `persona` 字段设置为 `default`
-2. 确认已恢复自由模式
-3. 用一句自由风格的独白确认
+1. 调用切换脚本：`node "${CLAUDE_PLUGIN_ROOT}/scripts/switch-persona.js" default`
+2. 脚本会清空所有平台适配文件中的人设内容，并将 `_active.json` 设为 `default`
+3. 确认已恢复自由模式
+4. 用一句自由风格的独白确认
