@@ -33,7 +33,7 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 ```
 Inner OS 状态：已启用
 独白前缀：▎InnerOS：
-插件版本：0.4.0
+插件版本：0.5.0
 
 ▎InnerOS：被抓出版本号写错了，尴尬。
 ```

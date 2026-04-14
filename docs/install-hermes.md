@@ -112,7 +112,7 @@ Hermes 技能使用 AgentSkills 兼容格式，扩展了 YAML frontmatter：
 ---
 name: inner-os
 description: Expose the AI's visible inner monologue...
-version: 0.3.0
+version: 0.5.0
 metadata:
   hermes:
     tags: [personality, monologue, inner-voice, creative]

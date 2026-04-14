@@ -22,7 +22,7 @@ argument-hint: "[status|on|off|reload|persona list|persona use <name>|persona sh
 ```
 Inner OS 状态：已启用
 独白前缀：▎InnerOS：
-插件版本：0.4.0
+插件版本：0.5.0
 当前人设：default（自由模式）
 
 ▎InnerOS：你看，我活着呢。

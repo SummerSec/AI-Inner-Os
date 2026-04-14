@@ -1,7 +1,7 @@
 ---
 name: inner-os
 description: Expose the AI's visible inner monologue during work. Use when the session should allow short public asides in the format `▎InnerOS：...` alongside the main task output.
-version: 0.3.0
+version: 0.5.0
 metadata:
   hermes:
     tags: [personality, monologue, inner-voice, creative]

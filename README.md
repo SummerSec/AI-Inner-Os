@@ -33,7 +33,7 @@ After installation, run `/ai-inner-os:inner-os`. If you see the following output
 ```
 Inner OS Status: Enabled
 Monologue Prefix: ▎InnerOS：
-Plugin Version: 0.4.0
+Plugin Version: 0.5.0
 
 ▎InnerOS：Caught with the wrong version number, embarrassing.
 ```
