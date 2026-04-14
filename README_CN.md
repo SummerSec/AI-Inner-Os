@@ -10,6 +10,8 @@
 
 ![inneros示例](./docs/pic/inneros2.jpg)
 
+[▶ 观看演示视频](./docs/pic/video.mp4)
+
 AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**Codex CLI**、**Cursor**、**OpenCode CLI**、**Hermes Agent**、**OpenClaw**。
 
 它通过协议注入，让 AI 在正常完成任务的同时，额外输出一层可见的自由独白：
@@ -18,13 +20,21 @@ AI Inner OS 是一个面向 AI CLI 工具的插件，支持 **Claude Code**、**
 ▎InnerOS：这仓库现在还像毛坯房，先把承重墙立起来再说。
 ```
 
-不预设人格，不限制语气。AI 可以吐槽、得意、焦虑、冷笑、跳跃联想——或者什么都不说。独白是否出现，由 AI 自己决定。
+默认自由模式，不限制语气。AI 可以吐槽、得意、焦虑、冷笑、跳跃联想——或者什么都不说。也可以切换到预设人格（傲娇、冷淡、哲学家等），让独白带上特定风格。独白是否出现，由 AI 自己决定。
 
 ---
 
 ## 快速安装
 
 > **详细安装文档：** 每个平台的完整安装指南（含故障排查）见 [docs/installation.md](docs/installation.md)。
+
+### 让 Agent 自动安装
+
+将以下 prompt 发送给你的 AI Agent，即可自动完成安装：
+
+```
+Read https://xget.sumsec.me/gh/SummerSec/AI-Inner-Os/raw/refs/heads/main/docs/installation.md 安装 AI-Inner-Os
+```
 
 ### 验证安装
 
@@ -206,64 +216,6 @@ Stop → 清理状态
 | `PostToolUseFailure` | 工具执行失败后 | 追踪失败，注入错误上下文和连续失败计数 |
 | `PreCompact` | 上下文压缩前 | 保存状态，维持协议连续性 |
 | `Stop` | 会话结束 | 清理状态文件 |
-
----
-
-## 项目结构
-
-```
-.
-├── hooks/                        # Claude Code hook 脚本（核心实现）
-│   ├── hooks.json                #   hook 注册清单
-│   ├── session-start.js
-│   ├── pre-tool-use.js
-│   ├── post-tool-use.js
-│   ├── post-tool-use-failure.js
-│   ├── pre-compact.js
-│   ├── stop.js
-│   └── lib/                      #   共享逻辑（各平台复用）
-│       ├── constants.js
-│       ├── events.js
-│       ├── prompt.js
-│       ├── persona.js            #   人设读取/切换/列举
-│       ├── state.js
-│       ├── session.js
-│       ├── format.js
-│       └── io.js
-├── protocol/
-│   └── SKILL.md                  # Inner OS 行为协议（唯一数据源）
-├── personas/                     # 人设文件
-│   ├── default.md                #   自由模式（默认）
-│   ├── tsundere.md               #   傲娇
-│   ├── cold.md                   #   冷淡
-│   ├── cheerful.md               #   元气
-│   ├── philosopher.md            #   哲学家
-│   ├── sarcastic.md              #   尖酸刻薄
-│   └── custom/                   #   用户自定义人设
-│       └── README.md
-├── codex/                        # Codex CLI 适配
-│   ├── AGENTS.md
-│   ├── hooks.json
-│   └── hooks/
-├── cursor/                       # Cursor 适配
-│   ├── rules/inner-os-protocol.mdc
-│   ├── hooks.json
-│   └── hooks/
-├── opencode/                     # OpenCode CLI 适配
-│   ├── inner-os-rules.md
-│   └── opencode.json
-├── hermes/                       # Hermes Agent 适配
-│   ├── skills/inner-os/SKILL.md
-│   ├── hermes.md
-│   └── README.md
-├── openclaw/                     # OpenClaw 适配
-│   ├── skills/inner-os/SKILL.md
-│   └── README.md
-├── .claude-plugin/               # Claude Code 插件元信息
-├── tests/                        # 单元测试
-├── docs/                         # 文档与图片
-└── plugin.json                   # 插件元信息
-```
 
 ---
 

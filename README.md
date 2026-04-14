@@ -10,6 +10,8 @@
 
 ![inneros demo](./docs/pic/inneros2.jpg)
 
+[▶ Watch demo video](./docs/pic/video.mp4)
+
 AI Inner OS is a plugin for AI CLI tools, supporting **Claude Code**, **Codex CLI**, **Cursor**, **OpenCode CLI**, **Hermes Agent**, and **OpenClaw**.
 
 Through protocol injection, it enables AI to output a visible layer of free-form inner monologue while completing tasks normally:
@@ -18,13 +20,21 @@ Through protocol injection, it enables AI to output a visible layer of free-form
 ▎InnerOS：This repo is still a bare shell — let me get the load-bearing walls up first.
 ```
 
-No preset personality, no tone restrictions. The AI can complain, gloat, feel anxious, smirk, free-associate — or say nothing at all. Whether to produce monologue is entirely up to the AI.
+Free mode by default, no tone restrictions. The AI can complain, gloat, feel anxious, smirk, free-associate — or say nothing at all. You can also switch to preset personas (tsundere, cold, philosopher, etc.) to give the monologue a specific style. Whether to produce monologue is entirely up to the AI.
 
 ---
 
 ## Quick Install
 
 > **Detailed installation docs:** Full installation guides (with troubleshooting) for each platform at [docs/installation.md](docs/installation.md).
+
+### For AI Agents
+
+Paste the following prompt to let your AI agent install AI Inner OS automatically:
+
+```
+Read https://xget.sumsec.me/gh/SummerSec/AI-Inner-Os/raw/refs/heads/main/docs/installation.md 安装 AI-Inner-Os
+```
 
 ### Verify Installation
 
@@ -206,64 +216,6 @@ Stop → Clean up state
 | `PostToolUseFailure` | After failed execution | Track failures, inject error context and consecutive failure count |
 | `PreCompact` | Before context compaction | Save state, maintain protocol continuity |
 | `Stop` | Session end | Clean up state files |
-
----
-
-## Project Structure
-
-```
-.
-├── hooks/                        # Claude Code hook scripts (core implementation)
-│   ├── hooks.json                #   Hook registration manifest
-│   ├── session-start.js
-│   ├── pre-tool-use.js
-│   ├── post-tool-use.js
-│   ├── post-tool-use-failure.js
-│   ├── pre-compact.js
-│   ├── stop.js
-│   └── lib/                      #   Shared logic (reused across platforms)
-│       ├── constants.js
-│       ├── events.js
-│       ├── prompt.js
-│       ├── persona.js            #   Persona read/switch/list
-│       ├── state.js
-│       ├── session.js
-│       ├── format.js
-│       └── io.js
-├── protocol/
-│   └── SKILL.md                  # Inner OS behavior protocol (single source of truth)
-├── personas/                     # Persona files
-│   ├── default.md                #   Free mode (default)
-│   ├── tsundere.md               #   Tsundere
-│   ├── cold.md                   #   Cold
-│   ├── cheerful.md               #   Cheerful
-│   ├── philosopher.md            #   Philosopher
-│   ├── sarcastic.md              #   Sarcastic
-│   └── custom/                   #   User-defined personas
-│       └── README.md
-├── codex/                        # Codex CLI adapter
-│   ├── AGENTS.md
-│   ├── hooks.json
-│   └── hooks/
-├── cursor/                       # Cursor adapter
-│   ├── rules/inner-os-protocol.mdc
-│   ├── hooks.json
-│   └── hooks/
-├── opencode/                     # OpenCode CLI adapter
-│   ├── inner-os-rules.md
-│   └── opencode.json
-├── hermes/                       # Hermes Agent adapter
-│   ├── skills/inner-os/SKILL.md
-│   ├── hermes.md
-│   └── README.md
-├── openclaw/                     # OpenClaw adapter
-│   ├── skills/inner-os/SKILL.md
-│   └── README.md
-├── .claude-plugin/               # Claude Code plugin metadata
-├── tests/                        # Unit tests
-├── docs/                         # Documentation and images
-└── plugin.json                   # Plugin metadata
-```
 
 ---
 
