@@ -18,9 +18,11 @@
 ![inneros demo](./docs/pic/inneros2.jpg)
 
 <details>
-<summary>▶ Watch demo video</summary>
+<summary>Watch demo video</summary>
 
-https://github.com/user-attachments/assets/video.mp4
+<video controls playsinline preload="metadata" width="100%" style="max-width:720px" src="https://raw.githubusercontent.com/SummerSec/BlogPapers/master/resources/video.mp4"></video>
+
+If the player does not load here, open the file directly: [demo (MP4)](https://raw.githubusercontent.com/SummerSec/BlogPapers/master/resources/video.mp4) · [on GitHub](https://github.com/SummerSec/BlogPapers/blob/master/resources/video.mp4)
 
 </details>
 
