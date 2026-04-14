@@ -10,23 +10,35 @@
 
 ## 安装步骤
 
-### 第一步：注入 Inner OS 协议
-
-将协议追加到 `AGENTS.md`（Codex 的指令文件）：
+### 方式一：全局安装脚本（推荐）
 
 ```bash
-# 全局生效（所有项目）
+git clone https://github.com/SummerSec/AI-Inner-Os.git
+cd AI-Inner-Os
+node scripts/install.js --platform codex
+```
+
+脚本会自动：
+- 复制 hook 脚本和共享逻辑到 `~/.inner-os/`
+- 生成 `~/.codex/hooks.json`（带绝对路径）
+- 复制 `AGENTS.md` 到 `~/.codex/`
+- 复制所有预设人设文件
+
+### 方式二：手动安装
+
+**第一步：注入 Inner OS 协议**
+
+```bash
+# 全局生效
 cat codex/AGENTS.md >> ~/.codex/AGENTS.md
 
-# 或项目级生效（仅当前项目）
+# 或项目级
 cat codex/AGENTS.md >> ./AGENTS.md
 ```
 
 > **注意：** 使用 `>>` 追加而非 `>` 覆盖，避免丢失已有内容。
 
-### 第二步：配置 Hooks
-
-复制 hooks 配置文件：
+**第二步：配置 Hooks**
 
 ```bash
 # 全局配置
@@ -37,41 +49,9 @@ mkdir -p .codex
 cp codex/hooks.json .codex/hooks.json
 ```
 
-### 第三步：复制 Hook 脚本
+> **注意：** hooks.json 中的脚本路径使用相对路径。全局安装脚本会自动生成绝对路径。
 
-Hook 脚本需要可访问。选择以下任一方式：
-
-**方式 A：引用仓库路径（推荐开发者）**
-
-编辑 `hooks.json`，将脚本路径改为仓库的绝对路径：
-
-```json
-{
-  "hooks": [
-    {
-      "name": "SessionStart",
-      "type": "command",
-      "command": "node /path/to/AI-Inner-Os/codex/hooks/session-start.js"
-    }
-  ]
-}
-```
-
-**方式 B：复制脚本到 Codex 目录**
-
-```bash
-# 复制 hook 脚本
-cp -r codex/hooks/ ~/.codex/inner-os-hooks/
-
-# 复制共享逻辑
-cp -r hooks/lib/ ~/.codex/inner-os-hooks/lib/
-
-# 更新 hooks.json 中的路径
-```
-
-### 第四步：启用 Hooks 功能
-
-确认 Codex 配置中已启用 hooks：
+**第三步：启用 Hooks 功能**
 
 ```toml
 # ~/.codex/config.toml 或 .codex/config.toml
@@ -89,31 +69,32 @@ codex_hooks = true
 
 | Hook | 触发时机 | 作用 |
 |------|---------|------|
-| `SessionStart` | 会话启动 | 初始化会话状态 |
-| `PreToolUse` | 工具执行前 | 注入即将执行的工具上下文 |
-| `PostToolUse` | 工具执行后 | 追踪事件，注入最近活动上下文 |
-| `SessionStop` | 会话结束 | 清理状态文件 |
+| `SessionStart` | 会话启动/恢复 | 读取协议 + 当前人设，输出为开发者上下文 |
+| `PostToolUse` | Bash 工具执行后 | 追踪事件，注入最近活动上下文 |
+| `Stop` | 会话结束 | 清理状态文件 |
+
+> **注意：** Codex 的 `PreToolUse` 不支持 `additionalContext` 注入（文档标注 "parsed but not supported yet"），因此未使用。协议注入通过 `SessionStart` 完成。
 
 ### 与 Claude Code 的差异
 
 | | Claude Code | Codex CLI |
 |---|---|---|
-| 协议注入 | Hook 动态读取 `SKILL.md` | `AGENTS.md` 静态加载 |
-| 失败追踪 | `PostToolUseFailure` 独立 hook | 不支持（Codex 暂无此 hook） |
-| Hook 数量 | 6 个 | 4 个 |
-| 安装方式 | 插件市场一键安装 | 手动复制配置文件 |
-| 路径解析 | `${CLAUDE_PLUGIN_ROOT}` 自动解析 | 需手动设置绝对路径 |
+| 协议注入 | Hook 动态读取 `SKILL.md` | `SessionStart` Hook + `AGENTS.md` |
+| 失败追踪 | `PostToolUseFailure` 独立 hook | 不支持 |
+| Hook 数量 | 6 个 | 3 个 |
+| 工具覆盖 | 所有工具 | 仅 Bash |
+| 安装方式 | 插件市场一键安装 | 全局安装脚本或手动 |
+| 路径解析 | `${CLAUDE_PLUGIN_ROOT}` 自动解析 | 安装脚本生成绝对路径 |
 
 ## 文件说明
 
 | 文件 | 作用 |
 |------|------|
 | `codex/AGENTS.md` | Inner OS 协议（追加到 Codex 指令文件） |
-| `codex/hooks.json` | Hook 注册配置 |
-| `codex/hooks/session-start.js` | 会话启动初始化 |
-| `codex/hooks/pre-tool-use.js` | 工具执行前上下文 |
-| `codex/hooks/post-tool-use.js` | 工具执行后追踪 |
-| `codex/hooks/session-stop.js` | 会话结束清理 |
+| `codex/hooks.json` | Hook 注册配置（`SessionStart` + `PostToolUse` + `Stop`） |
+| `codex/hooks/session-start.js` | 会话启动：读取协议和人设，输出开发者上下文 |
+| `codex/hooks/post-tool-use.js` | Bash 执行后：追踪事件，输出 JSON 上下文 |
+| `codex/hooks/session-stop.js` | 会话结束：清理状态文件 |
 
 所有 hook 脚本通过相对路径引用 `hooks/lib/` 中的共享逻辑。
 

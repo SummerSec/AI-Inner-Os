@@ -5,53 +5,45 @@
 ## 前置条件
 
 - Cursor IDE 已安装
-- 一个打开的项目目录
+- Node.js >= 18
 
 ## 安装步骤
 
-### 方式一：`.mdc` 规则文件（推荐）
-
-Cursor 使用 `.mdc`（Markdown Configuration）规则文件来注入行为指令。
+### 方式一：全局安装脚本（推荐）
 
 ```bash
-# 创建规则目录
-mkdir -p .cursor/rules
+git clone https://github.com/SummerSec/AI-Inner-Os.git
+cd AI-Inner-Os
+node scripts/install.js --platform cursor
+```
 
-# 复制 Inner OS 规则
+脚本会自动：
+- 复制 hook 脚本和共享逻辑到 `~/.inner-os/`
+- 生成 `~/.cursor/hooks.json`（带绝对路径）
+- 复制所有预设人设文件
+
+### 方式二：手动安装
+
+**步骤 1：复制 `.mdc` 规则文件**
+
+```bash
+mkdir -p .cursor/rules
 cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
 ```
 
-规则文件设置了 `alwaysApply: true`，每次对话自动生效，无需手动触发。
+**步骤 2：配置 Hooks**
 
-### 方式二：追加到 AGENTS.md
-
-如果你的项目使用 `AGENTS.md` 管理指令：
+将 hooks 配置复制到用户级（全局）或项目级：
 
 ```bash
-# 追加 Inner OS 协议
-cat cursor/rules/inner-os-protocol.mdc >> AGENTS.md
-```
+# 用户级（推荐，全局生效）
+cp cursor/hooks.json ~/.cursor/hooks.json
 
-### 可选：启用 Hooks
-
-Cursor 支持有限的 hook 机制。如需工具执行上下文追踪：
-
-```bash
-# 复制 hooks 配置
+# 或项目级
 cp cursor/hooks.json .cursor/hooks.json
 ```
 
-> **注意：** Hook 脚本路径需要指向本仓库的实际位置。你可以：
-> - 使用绝对路径指向克隆的仓库
-> - 将 `cursor/hooks/` 和 `hooks/lib/` 复制到项目中
-
-```bash
-# 方式 A：复制到项目中
-cp -r cursor/hooks/ .cursor/inner-os-hooks/
-mkdir -p .cursor/inner-os-hooks/lib
-cp -r hooks/lib/* .cursor/inner-os-hooks/lib/
-# 然后更新 hooks.json 中的路径
-```
+> **注意：** hooks.json 中的脚本路径使用相对路径，需要从仓库根目录执行 Cursor。全局安装脚本会自动生成绝对路径。
 
 ## 安装后验证
 
@@ -76,23 +68,25 @@ alwaysApply: true
 - `description`：规则的简短描述
 - `alwaysApply: true`：每次对话自动加载，无需手动激活
 
-## Hook 说明（可选）
+## Hook 说明
 
 | Hook | 触发时机 | 作用 |
 |------|---------|------|
-| `beforeToolUse` | 工具执行前 | 注入即将执行的工具上下文 |
-| `afterToolUse` | 工具执行后 | 追踪事件，注入最近活动上下文 |
+| `sessionStart` | 会话启动 | 读取协议 + 当前人设，注入 `additional_context` |
+| `postToolUse` | 工具执行成功后 | 追踪事件，注入最近活动上下文 |
+| `stop` | 会话结束 | 清理会话状态文件 |
 
-Cursor 中 `.mdc` 规则是主要注入机制，hooks 只是可选增强。即使不配置 hooks，Inner OS 独白功能也能正常工作。
+> **注意：** Cursor 的 `preToolUse` 不支持注入 `additional_context`（仅支持 allow/deny），因此未使用。协议注入通过 `sessionStart` 完成。
 
 ## 文件说明
 
 | 文件 | 作用 |
 |------|------|
-| `cursor/rules/inner-os-protocol.mdc` | Cursor 规则文件（`alwaysApply: true`） |
-| `cursor/hooks.json` | Hook 注册配置（可选） |
-| `cursor/hooks/before-tool-use.js` | 工具执行前上下文（可选） |
-| `cursor/hooks/after-tool-use.js` | 工具执行后追踪（可选） |
+| `cursor/rules/inner-os-protocol.mdc` | Cursor 规则文件（`alwaysApply: true`，静态备用） |
+| `cursor/hooks.json` | Hook 注册配置（`sessionStart` + `postToolUse` + `stop`） |
+| `cursor/hooks/session-start.js` | 会话启动时注入协议和人设 |
+| `cursor/hooks/post-tool-use.js` | 工具执行后追踪事件 |
+| `cursor/hooks/stop.js` | 会话结束清理状态 |
 
 ## 团队使用
 

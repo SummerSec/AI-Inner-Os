@@ -8,7 +8,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js && node --check scripts/switch-persona.js",
+    "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js && node --check scripts/switch-persona.js && node --check scripts/install.js && node --check codex/hooks/session-start.js && node --check codex/hooks/post-tool-use.js && node --check codex/hooks/session-stop.js && node --check cursor/hooks/session-start.js && node --check cursor/hooks/post-tool-use.js && node --check cursor/hooks/stop.js && node --check opencode/plugins/inner-os.js",
     "test": "node --test tests/events.test.js && node --test tests/persona.test.js && node --test tests/prompt.test.js && node --test tests/switch-persona.test.js",
     "switch-persona": "node scripts/switch-persona.js",
     "lint": "npm run check"

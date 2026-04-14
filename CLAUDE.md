@@ -10,6 +10,9 @@ npm test                 # run tests (Node.js built-in test runner)
 npm run lint             # alias for check
 npm run switch-persona   # switch persona across all platform files
   # usage: npm run switch-persona -- <name|default|--list>
+node scripts/install.js  # global install for all platforms
+  # usage: node scripts/install.js --all
+  # usage: node scripts/install.js --platform cursor
 ```
 
 No build step. Pure ESM, Node.js >= 18.
@@ -61,9 +64,9 @@ Platforms degrade gracefully in hook richness:
 | Platform | Protocol mechanism | Hook scripts | Reuses hooks/lib/ |
 |----------|-------------------|--------------|-------------------|
 | Claude Code | Dynamic (reads SKILL.md) | 6 hooks | Yes (canonical) |
-| Codex CLI | Static AGENTS.md | 4 hooks | Yes |
-| Cursor | Static .mdc rule | 2 hooks | Yes |
-| OpenCode | Static instructions file | None | No |
+| Codex CLI | SessionStart + PostToolUse + Stop | 3 hooks | Yes |
+| Cursor | sessionStart + postToolUse + stop | 3 hooks | Yes |
+| OpenCode | Plugin + static instructions | Plugin | No |
 | Hermes Agent | Skill or .hermes.md context file | None | No |
 | OpenClaw | Skill (AgentSkills format) | None | No |
 
@@ -80,5 +83,15 @@ Platforms degrade gracefully in hook richness:
 - Every hook wraps its body in `try/catch` and fails silently — hook errors never interrupt the session
 - Session state files live in `state/` (gitignored), keyed by sanitized session ID
 - `failureCount` increments on consecutive failures, resets to 0 on any success
-- PreToolUse output uses `hookSpecificOutput.additionalContext`; PostToolUse/PostToolUseFailure output plain text to stdout
+- Claude Code: PreToolUse uses `hookSpecificOutput.additionalContext`; PostToolUse/PostToolUseFailure output plain text to stdout
+- Cursor: sessionStart/postToolUse use `{ additional_context: string }` top-level format; preToolUse removed (can't inject context)
+- Codex: SessionStart outputs plain text to stdout; PostToolUse uses `hookSpecificOutput.additionalContext` JSON; PreToolUse removed (additionalContext not supported)
 - Bash commands are truncated at 80 chars in target extraction
+
+### Global Install Script
+
+`scripts/install.js` handles global installation for all platforms. It copies shared core files (hooks/lib/, protocol/, personas/) to `~/.inner-os/`, then generates platform-specific config files with absolute paths. After global install, hook-based platforms (Cursor, Codex) read personas dynamically at runtime — no re-copying needed after persona switches.
+
+### OpenCode Plugin
+
+`opencode/plugins/inner-os.js` is an OpenCode plugin that provides a custom `inner-os` tool for status/persona management. It reads protocol and personas from the repo or `~/.inner-os/` at startup. Install to `~/.config/opencode/plugins/` for global use.

@@ -199,13 +199,12 @@ Inner OS 的行为协议定义在 [`protocol/SKILL.md`](protocol/SKILL.md)，是
 
 | | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
 |---|---|---|---|---|---|---|
-| 协议注入 | Hook 动态读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
-| 工具执行前 hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — | — | — |
-| 工具执行后 hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — | — | — |
+| 协议注入 | Hook 动态读取 SKILL.md | SessionStart Hook | sessionStart Hook | Plugin + instructions | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
+| 工具执行后 hook | `PostToolUse` | `PostToolUse` | `postToolUse` | Plugin event | — | — |
 | 失败追踪 | `PostToolUseFailure` | — | — | — | — | — |
-| 人设切换 | `/inner-os persona` 命令 | 手动编辑 `_active.json` | 手动追加到规则文件 | 手动追加到指令文件 | 手动追加 | 手动追加 |
-| 安装方式 | 插件市场一键安装 | 手动复制配置 | 复制 .mdc 规则 | 复制指令文件 | 复制 Skill 或 Context File | 复制 Skill 或 ClawHub |
-| 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 纯静态注入 | 纯静态注入 | 纯静态注入 |
+| 人设切换 | `/inner-os persona` 命令 | 动态（Hook 读取） | 动态（Hook 读取） | Plugin tool | 脚本注入 | 脚本注入 |
+| 安装方式 | 插件市场一键安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 |
+| 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 独立 Plugin | 纯静态注入 | 纯静态注入 |
 
 ### Claude Code Hook 生命周期
 

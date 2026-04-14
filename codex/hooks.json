@@ -1,26 +1,38 @@
 {
-  "hooks": [
-    {
-      "name": "SessionStart",
-      "type": "command",
-      "command": "node codex/hooks/session-start.js"
-    },
-    {
-      "name": "PreToolUse",
-      "type": "command",
-      "matcher": ".*",
-      "command": "node codex/hooks/pre-tool-use.js"
-    },
-    {
-      "name": "PostToolUse",
-      "type": "command",
-      "matcher": ".*",
-      "command": "node codex/hooks/post-tool-use.js"
-    },
-    {
-      "name": "SessionStop",
-      "type": "command",
-      "command": "node codex/hooks/session-stop.js"
-    }
-  ]
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node codex/hooks/session-start.js",
+            "statusMessage": "Loading Inner OS protocol"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node codex/hooks/post-tool-use.js",
+            "statusMessage": "Tracking Inner OS events"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node codex/hooks/session-stop.js"
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -18,5 +18,5 @@ try {
   // session state failed, still inject the protocol below
 }
 
-// Codex SessionStart: plain text on stdout is added as developer context
-process.stdout.write(context + "\n");
+// Cursor sessionStart output: { additional_context: string }
+process.stdout.write(JSON.stringify({ additional_context: context }) + "\n");

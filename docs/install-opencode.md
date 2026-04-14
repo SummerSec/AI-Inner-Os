@@ -9,16 +9,43 @@
 
 ## 安装步骤
 
-### 第一步：复制指令文件
+### 方式一：全局安装脚本（推荐）
+
+```bash
+git clone https://github.com/SummerSec/AI-Inner-Os.git
+cd AI-Inner-Os
+node scripts/install.js --platform opencode
+```
+
+脚本会自动：
+- 复制 Plugin 到 `~/.config/opencode/plugins/inner-os.js`
+- 复制 instructions 到 `~/.config/opencode/inner-os-rules.md`
+- 复制所有预设人设文件到 `~/.inner-os/personas/`
+
+Plugin 提供 `inner-os` 自定义工具，支持状态查询和人设切换。
+
+### 方式二：手动安装
+
+**第一步：复制指令文件**
 
 ```bash
 mkdir -p .opencode
 cp opencode/inner-os-rules.md .opencode/inner-os-rules.md
 ```
 
-### 第二步：配置 opencode.json
+**第二步：安装 Plugin（可选，提供 inner-os 工具）**
 
-在项目根目录的 `opencode.json` 中声明加载指令文件：
+```bash
+# 全局 Plugin（所有项目生效）
+mkdir -p ~/.config/opencode/plugins
+cp opencode/plugins/inner-os.js ~/.config/opencode/plugins/
+
+# 或项目级 Plugin
+mkdir -p .opencode/plugins
+cp opencode/plugins/inner-os.js .opencode/plugins/
+```
+
+**第三步：配置 opencode.json**
 
 **如果还没有 opencode.json：**
 
@@ -36,17 +63,6 @@ cp opencode/opencode.json ./opencode.json
 }
 ```
 
-如果已有 `instructions` 数组，将路径追加进去：
-
-```json
-{
-  "instructions": [
-    "existing-instructions.md",
-    ".opencode/inner-os-rules.md"
-  ]
-}
-```
-
 ## 安装后验证
 
 1. 启动一个新的 OpenCode 会话
@@ -55,29 +71,28 @@ cp opencode/opencode.json ./opencode.json
 
 ## 工作原理
 
-OpenCode CLI 不支持 hooks。Inner OS 通过 `instructions` 配置将协议静态注入到系统 prompt。
+Inner OS 通过两个机制工作：
 
 | 机制 | 文件 | 作用 |
 |------|------|------|
 | 指令文件 | `.opencode/inner-os-rules.md` | 注入 Inner OS 协议到系统 prompt |
+| Plugin | `plugins/inner-os.js` | 提供 `inner-os` 工具（状态查询、人设切换） |
 | 配置 | `opencode.json` | 声明加载哪些指令文件 |
 
-### 局限性
+Plugin 提供的 `inner-os` 工具支持：
+- `status` — 查看 Inner OS 状态
+- `persona-list` — 列出所有可用人设
+- `persona-use <name>` — 切换人设
+- `persona-reset` — 恢复自由模式
 
-由于没有 hook 支持，OpenCode 版本：
-
-- 无工具执行前后的上下文追踪
-- 无连续失败计数
-- 无会话状态管理
-- 协议为纯静态注入，每次对话都从系统 prompt 加载
-
-独白功能本身不受影响——AI 仍然可以正常输出 `▎InnerOS：...` 格式的独白。
+即使不安装 Plugin，指令文件仍能让 AI 正常输出 `▎InnerOS：...` 独白。Plugin 是可选增强。
 
 ## 文件说明
 
 | 文件 | 作用 |
 |------|------|
 | `opencode/inner-os-rules.md` | Inner OS 协议（纯文本，无 YAML frontmatter） |
+| `opencode/plugins/inner-os.js` | OpenCode Plugin（状态查询、人设切换工具） |
 | `opencode/opencode.json` | 配置模板 |
 
 ## 人设切换（Persona）

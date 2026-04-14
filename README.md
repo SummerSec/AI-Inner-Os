@@ -199,13 +199,12 @@ Core principles:
 
 | | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
 |---|---|---|---|---|---|---|
-| Protocol Injection | Hook reads SKILL.md dynamically | AGENTS.md | `.mdc` rule | instructions file | Skill or `.hermes.md` | Skill (AgentSkills format) |
-| Pre-tool hook | `PreToolUse` | `PreToolUse` | `beforeToolUse` | — | — | — |
-| Post-tool hook | `PostToolUse` | `PostToolUse` | `afterToolUse` | — | — | — |
+| Protocol Injection | Hook reads SKILL.md dynamically | SessionStart Hook | sessionStart Hook | Plugin + instructions | Skill or `.hermes.md` | Skill (AgentSkills format) |
+| Post-tool hook | `PostToolUse` | `PostToolUse` | `postToolUse` | Plugin event | — | — |
 | Failure tracking | `PostToolUseFailure` | — | — | — | — | — |
-| Persona switching | `/inner-os persona` command | Edit `_active.json` manually | Append to rule file | Append to instruction file | Append manually | Append manually |
-| Installation | Plugin marketplace one-click | Manual config copy | Copy .mdc rule | Copy instruction file | Copy Skill or Context File | Copy Skill or ClawHub |
-| Shared logic | `hooks/lib/` (canonical) | Reuses `hooks/lib/` | Reuses `hooks/lib/` | Static injection only | Static injection only | Static injection only |
+| Persona switching | `/inner-os persona` command | Dynamic (Hook reads) | Dynamic (Hook reads) | Plugin tool | Script injection | Script injection |
+| Installation | Plugin marketplace one-click | `install.js` global | `install.js` global | `install.js` global | `install.js` global | `install.js` global |
+| Shared logic | `hooks/lib/` (canonical) | Reuses `hooks/lib/` | Reuses `hooks/lib/` | Standalone Plugin | Static injection only | Static injection only |
 
 ### Claude Code Hook Lifecycle
 
