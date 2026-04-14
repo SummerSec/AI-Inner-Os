@@ -20,7 +20,7 @@
 <details>
 <summary>Watch demo video</summary>
 
-<video controls playsinline preload="metadata" width="100%" style="max-width:720px" src="https://sumsec.me/resources/video.mp4"></video>
+https://sumsec.me/resources/video.mp4
 
 If the player does not load here, open the file directly: [demo (MP4)](https://sumsec.me/resources/video.mp4) 
 
