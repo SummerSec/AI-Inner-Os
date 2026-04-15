@@ -276,6 +276,11 @@ Node.js >= 18, ESM modules.
 - [ ] Session recap — generate narrative session summaries on session end, including emotional arc, key events, and duration
 - [ ] Session diary persistence — save recaps as Markdown files to serve as development journals with emotional context
 
+## Friendship Link
+
+Thanks for the support and feedback from the friends at [LINUX DO](https://linux.do/). 
+
+
 ## Star History
 
 [![Star History Chart](https://starchart.cc/SummerSec/AI-Inner-Os.svg)](https://starchart.cc/SummerSec/AI-Inner-Os)
