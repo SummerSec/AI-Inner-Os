@@ -276,6 +276,10 @@ Node.js >= 18，ESM 模块。
 - [ ] 会话日记 — session 结束时生成叙事性回顾，包含情绪弧线、关键事件、持续时长
 - [ ] 日记持久化 — 将回顾保存为 Markdown 文件，作为带情感上下文的开发日志
 
+## 友链
+
+感谢 [LINUX DO](https://linux.do/) 用户的支持与反馈
+
 ## Star 趋势
 
 [![Star History Chart](https://starchart.cc/SummerSec/AI-Inner-Os.svg)](https://starchart.cc/SummerSec/AI-Inner-Os)
