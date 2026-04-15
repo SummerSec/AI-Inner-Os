@@ -3,16 +3,16 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { fileURLToPath } from "node:url";
 
 const run = promisify(execFile);
-const SCRIPT = new URL("../scripts/switch-persona.js", import.meta.url);
+const SCRIPT = fileURLToPath(
+  new URL("../scripts/switch-persona.js", import.meta.url),
+);
 const ACTIVE_FILE = new URL("../personas/_active.json", import.meta.url);
 
 async function runScript(...args) {
-  const { stdout, stderr } = await run("node", [
-    SCRIPT.pathname,
-    ...args,
-  ]);
+  const { stdout, stderr } = await run("node", [SCRIPT, ...args]);
   return { stdout, stderr };
 }
 
