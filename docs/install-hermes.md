@@ -9,7 +9,7 @@
 
 ## 安装方式
 
-### 方式一：Skill 安装（推荐）
+### 方式一：Skill 安装（默认）
 
 将 Inner OS 安装为 Hermes 技能，获得 `/inner-os` 斜杠命令支持。
 

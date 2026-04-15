@@ -9,7 +9,7 @@
 
 ## 安装方式
 
-### 方式一：Workspace Skill（推荐）
+### 方式一：Workspace Skill
 
 安装到当前工作区，最高优先级：
 
@@ -23,7 +23,7 @@ cp -r openclaw/skills/inner-os skills/inner-os
 
 安装后在会话中使用 `/inner-os` 命令触发。
 
-### 方式二：全局 Skill
+### 方式二：全局 Skill （默认推荐）
 
 对机器上所有 agent 生效：
 
@@ -63,7 +63,7 @@ mkdir -p .agents/skills
 cp -r openclaw/skills/inner-os .agents/skills/inner-os
 ```
 
-### 方式五：ClawHub（待发布）
+### 方式五：ClawHub
 
 未来可通过 ClawHub 一键安装：
 

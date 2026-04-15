@@ -9,7 +9,7 @@
 
 ## 安装步骤
 
-### 方式一：全局安装脚本（推荐）
+### 方式一：全局安装脚本（默认）
 
 ```bash
 git clone https://github.com/SummerSec/AI-Inner-Os.git
