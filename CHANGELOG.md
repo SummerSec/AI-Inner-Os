@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-04-16
+
+### Fixed
+
+- **Install**: Global installer no longer overwrites user config files (respects existing configurations).
+
 ## [0.6.0] - 2026-04-15
 
 ### Added
@@ -35,4 +41,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Persona system: preset personas, custom template, `/inner-os` command updates, and persona sections in platform adapter docs.
 
+[0.6.1]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.6.1
 [0.6.0]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.6.0
