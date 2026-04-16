@@ -95,3 +95,7 @@ Platforms degrade gracefully in hook richness:
 ### OpenCode Plugin
 
 `opencode/plugins/inner-os.js` is an OpenCode plugin that provides a custom `inner-os` tool for status/persona management. It reads protocol and personas from the repo or `~/.inner-os/` at startup. Install to `~/.config/opencode/plugins/` for global use.
+
+## Git Policy
+
+**禁止在 Bash 工具中执行 `git commit` 和 `git push` 命令。** 这两个命令必须由用户手动执行。AI 可以执行其他 git 命令（如 `git status`、`git diff`、`git log`、`git add` 等），但提交和推送操作必须交由用户自行完成。

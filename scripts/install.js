@@ -3,7 +3,6 @@
 import { copyFile, mkdir, readdir, readFile, writeFile, cp } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -72,6 +71,102 @@ async function copySharedCore() {
   console.log("  ✓ hooks/lib/, protocol/, personas/, scripts/");
 }
 
+// ── Helpers: merge hooks.json ────────────────────────────
+
+const INNER_OS_CMD_TAG = ".inner-os";
+
+/**
+ * Merge Inner OS hooks into an existing Cursor hooks.json.
+ * Preserves user-defined hooks for other events and within same events.
+ */
+async function mergeCursorHooksJson(target, newHooks) {
+  let existing = { version: 1, hooks: {} };
+  try {
+    existing = JSON.parse(await readFile(target, "utf8"));
+    if (!existing.hooks) existing.hooks = {};
+  } catch {
+    // file doesn't exist or invalid JSON
+  }
+
+  for (const [event, hooks] of Object.entries(newHooks)) {
+    if (!existing.hooks[event]) {
+      existing.hooks[event] = [];
+    }
+    // Remove old Inner OS hooks (identified by command path containing .inner-os)
+    existing.hooks[event] = existing.hooks[event].filter(
+      (h) => !h.command || !h.command.includes(INNER_OS_CMD_TAG),
+    );
+    // Append our hooks
+    existing.hooks[event].push(...hooks);
+  }
+
+  await writeFile(target, JSON.stringify(existing, null, 2) + "\n", "utf8");
+}
+
+/**
+ * Merge Inner OS hooks into an existing Codex hooks.json.
+ * Codex uses nested matcher groups: { hooks: { EventName: [{ matcher, hooks: [...] }] } }
+ */
+async function mergeCodexHooksJson(target, newHooks) {
+  let existing = { hooks: {} };
+  try {
+    existing = JSON.parse(await readFile(target, "utf8"));
+    if (!existing.hooks) existing.hooks = {};
+  } catch {
+    // file doesn't exist or invalid JSON
+  }
+
+  for (const [event, groups] of Object.entries(newHooks)) {
+    if (!existing.hooks[event]) {
+      existing.hooks[event] = [];
+    }
+    // Remove old Inner OS hook groups
+    existing.hooks[event] = existing.hooks[event].filter(
+      (g) => !g.hooks?.some((h) => h.command?.includes(INNER_OS_CMD_TAG)),
+    );
+    // Append our groups
+    existing.hooks[event].push(...groups);
+  }
+
+  await writeFile(target, JSON.stringify(existing, null, 2) + "\n", "utf8");
+}
+
+// ── Helpers: marker-based file append ───────────────────
+
+const INNER_OS_START = "<!-- INNER_OS_START -->";
+const INNER_OS_END = "<!-- INNER_OS_END -->";
+
+/**
+ * Append or replace Inner OS content in a shared file (e.g. AGENTS.md).
+ * Uses marker comments to identify the Inner OS block.
+ */
+async function markerAppend(target, content) {
+  let existing = "";
+  try {
+    existing = await readFile(target, "utf8");
+  } catch {
+    // file doesn't exist yet
+  }
+
+  const block = `${INNER_OS_START}\n${content}\n${INNER_OS_END}`;
+
+  const startIdx = existing.indexOf(INNER_OS_START);
+  const endIdx = existing.indexOf(INNER_OS_END);
+
+  if (startIdx !== -1 && endIdx !== -1 && startIdx < endIdx) {
+    // Replace existing block
+    const before = existing.slice(0, startIdx);
+    const after = existing.slice(endIdx + INNER_OS_END.length);
+    await writeFile(target, before + block + after, "utf8");
+  } else if (existing.trim()) {
+    // Append to existing file
+    await writeFile(target, existing.trimEnd() + "\n\n" + block + "\n", "utf8");
+  } else {
+    // New file
+    await writeFile(target, block + "\n", "utf8");
+  }
+}
+
 // ── Cursor ───────────────────────────────────────────────
 
 async function installCursor() {
@@ -80,32 +175,29 @@ async function installCursor() {
   // Copy cursor hooks to ~/.inner-os/cursor/hooks/
   await copyDir(join(REPO_ROOT, "cursor", "hooks"), join(INNER_OS_HOME, "cursor", "hooks"));
 
-  // Generate hooks.json with absolute paths
-  const hooksConfig = {
-    version: 1,
-    hooks: {
-      sessionStart: [
-        {
-          command: `node ${join(INNER_OS_HOME, "cursor", "hooks", "session-start.js")}`,
-          type: "command",
-          timeout: 5,
-        },
-      ],
-      postToolUse: [
-        {
-          command: `node ${join(INNER_OS_HOME, "cursor", "hooks", "post-tool-use.js")}`,
-          type: "command",
-          timeout: 5,
-        },
-      ],
-      stop: [
-        {
-          command: `node ${join(INNER_OS_HOME, "cursor", "hooks", "stop.js")}`,
-          type: "command",
-          timeout: 5,
-        },
-      ],
-    },
+  // Inner OS hooks with absolute paths
+  const innerOsHooks = {
+    sessionStart: [
+      {
+        command: `node ${join(INNER_OS_HOME, "cursor", "hooks", "session-start.js")}`,
+        type: "command",
+        timeout: 5,
+      },
+    ],
+    postToolUse: [
+      {
+        command: `node ${join(INNER_OS_HOME, "cursor", "hooks", "post-tool-use.js")}`,
+        type: "command",
+        timeout: 5,
+      },
+    ],
+    stop: [
+      {
+        command: `node ${join(INNER_OS_HOME, "cursor", "hooks", "stop.js")}`,
+        type: "command",
+        timeout: 5,
+      },
+    ],
   };
 
   // Copy .mdc rule file as fallback
@@ -116,9 +208,10 @@ async function installCursor() {
   );
 
   await ensureDir(PLATFORMS.cursor.hooksDir);
-  await writeFile(PLATFORMS.cursor.hooksConfig, JSON.stringify(hooksConfig, null, 2) + "\n", "utf8");
+  // Merge into existing hooks.json instead of overwriting
+  await mergeCursorHooksJson(PLATFORMS.cursor.hooksConfig, innerOsHooks);
 
-  console.log(`  ✓ hooks.json → ${PLATFORMS.cursor.hooksConfig}`);
+  console.log(`  ✓ hooks.json → ${PLATFORMS.cursor.hooksConfig}（已合并，保留用户已有 hooks）`);
   console.log(`  ✓ hook scripts → ${join(INNER_OS_HOME, "cursor", "hooks")}/`);
   console.log("  ℹ  Also copy .mdc rule to project: cp ~/.inner-os/cursor/rules/inner-os-protocol.mdc .cursor/rules/");
 }
@@ -131,55 +224,54 @@ async function installCodex() {
   // Copy codex hooks to ~/.inner-os/codex/hooks/
   await copyDir(join(REPO_ROOT, "codex", "hooks"), join(INNER_OS_HOME, "codex", "hooks"));
 
-  // Generate hooks.json with absolute paths
-  const hooksConfig = {
-    hooks: {
-      SessionStart: [
-        {
-          matcher: "startup|resume",
-          hooks: [
-            {
-              type: "command",
-              command: `node ${join(INNER_OS_HOME, "codex", "hooks", "session-start.js")}`,
-              statusMessage: "Loading Inner OS protocol",
-            },
-          ],
-        },
-      ],
-      PostToolUse: [
-        {
-          matcher: "Bash",
-          hooks: [
-            {
-              type: "command",
-              command: `node ${join(INNER_OS_HOME, "codex", "hooks", "post-tool-use.js")}`,
-              statusMessage: "Tracking Inner OS events",
-            },
-          ],
-        },
-      ],
-      Stop: [
-        {
-          hooks: [
-            {
-              type: "command",
-              command: `node ${join(INNER_OS_HOME, "codex", "hooks", "session-stop.js")}`,
-            },
-          ],
-        },
-      ],
-    },
+  // Inner OS hooks with absolute paths
+  const innerOsHooks = {
+    SessionStart: [
+      {
+        matcher: "startup|resume",
+        hooks: [
+          {
+            type: "command",
+            command: `node ${join(INNER_OS_HOME, "codex", "hooks", "session-start.js")}`,
+            statusMessage: "Loading Inner OS protocol",
+          },
+        ],
+      },
+    ],
+    PostToolUse: [
+      {
+        matcher: "Bash",
+        hooks: [
+          {
+            type: "command",
+            command: `node ${join(INNER_OS_HOME, "codex", "hooks", "post-tool-use.js")}`,
+            statusMessage: "Tracking Inner OS events",
+          },
+        ],
+      },
+    ],
+    Stop: [
+      {
+        hooks: [
+          {
+            type: "command",
+            command: `node ${join(INNER_OS_HOME, "codex", "hooks", "session-stop.js")}`,
+          },
+        ],
+      },
+    ],
   };
 
   await ensureDir(PLATFORMS.codex.hooksDir);
-  await writeFile(PLATFORMS.codex.hooksConfig, JSON.stringify(hooksConfig, null, 2) + "\n", "utf8");
+  // Merge into existing hooks.json instead of overwriting
+  await mergeCodexHooksJson(PLATFORMS.codex.hooksConfig, innerOsHooks);
 
-  // Copy AGENTS.md
-  const agentsSrc = join(REPO_ROOT, "codex", "AGENTS.md");
-  await copyFile(agentsSrc, PLATFORMS.codex.agentsMd);
+  // Marker-based append for AGENTS.md — preserves user's existing content
+  const agentsContent = await readFile(join(REPO_ROOT, "codex", "AGENTS.md"), "utf8");
+  await markerAppend(PLATFORMS.codex.agentsMd, agentsContent);
 
-  console.log(`  ✓ hooks.json → ${PLATFORMS.codex.hooksConfig}`);
-  console.log(`  ✓ AGENTS.md → ${PLATFORMS.codex.agentsMd}`);
+  console.log(`  ✓ hooks.json → ${PLATFORMS.codex.hooksConfig}（已合并，保留用户已有 hooks）`);
+  console.log(`  ✓ AGENTS.md → ${PLATFORMS.codex.agentsMd}（标记追加，保留用户已有内容）`);
   console.log(`  ✓ hook scripts → ${join(INNER_OS_HOME, "codex", "hooks")}/`);
   console.log("  ℹ  Enable hooks in ~/.codex/config.toml: [features] codex_hooks = true");
 }

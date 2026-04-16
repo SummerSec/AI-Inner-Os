@@ -2,10 +2,18 @@
 
 import { readFile, writeFile, readdir } from "node:fs/promises";
 
+import { existsSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
 const REPO_ROOT = new URL("../", import.meta.url);
 const PERSONAS_DIR = new URL("personas/", REPO_ROOT);
 const ACTIVE_PERSONA_FILE = new URL("personas/_active.json", REPO_ROOT);
+const HOME = homedir();
+const INNER_OS_HOME = join(HOME, ".inner-os");
+const HAS_GLOBAL_INSTALL = existsSync(INNER_OS_HOME);
 
+// Repo source files (always updated)
 const TARGET_FILES = [
   "codex/AGENTS.md",
   "cursor/rules/inner-os-protocol.mdc",
@@ -14,6 +22,25 @@ const TARGET_FILES = [
   "hermes/skills/inner-os/SKILL.md",
   "openclaw/skills/inner-os/SKILL.md",
 ];
+
+// Installed copies (updated when ~/.inner-os/ exists)
+function getInstalledTargets() {
+  if (!HAS_GLOBAL_INSTALL) return [];
+  return [
+    // Hermes skill installed copy
+    join(HOME, ".hermes", "skills", "personality", "inner-os", "SKILL.md"),
+    // OpenClaw skill installed copy
+    join(HOME, ".openclaw", "skills", "inner-os", "SKILL.md"),
+  ];
+}
+
+// Codex AGENTS.md uses different markers (INNER_OS_START/END wraps the whole file content)
+// Persona markers inside AGENTS.md are handled by the normal injection above
+function getCodexAgentsMd() {
+  if (!HAS_GLOBAL_INSTALL) return null;
+  const p = join(HOME, ".codex", "AGENTS.md");
+  return existsSync(p) ? p : null;
+}
 
 const START_MARKER = "<!-- ACTIVE_PERSONA_START -->";
 const END_MARKER = "<!-- ACTIVE_PERSONA_END -->";
@@ -86,13 +113,19 @@ function buildPersonaBlock(name, meta, body) {
   return `\n${header}\n\n${body}\n`;
 }
 
+/**
+ * Inject persona content between markers in a file.
+ * Supports both URL paths (repo files) and absolute string paths (installed copies).
+ */
 async function injectIntoFile(filePath, content) {
-  const fullPath = new URL(filePath, REPO_ROOT);
+  const isAbsolute = typeof filePath === "string" && filePath.startsWith("/");
+  const fullPath = isAbsolute ? filePath : new URL(filePath, REPO_ROOT);
+  const displayPath = isAbsolute ? filePath : filePath;
   let raw;
   try {
     raw = await readFile(fullPath, "utf8");
   } catch {
-    console.log(`  跳过 ${filePath}（文件不存在）`);
+    console.log(`  跳过 ${displayPath}（文件不存在）`);
     return false;
   }
 
@@ -100,12 +133,12 @@ async function injectIntoFile(filePath, content) {
   const endIdx = raw.indexOf(END_MARKER);
 
   if (startIdx === -1 || endIdx === -1) {
-    console.log(`  跳过 ${filePath}（未找到标记）`);
+    console.log(`  跳过 ${displayPath}（未找到标记）`);
     return false;
   }
 
   if (startIdx >= endIdx) {
-    console.error(`  错误 ${filePath}（标记顺序异常）`);
+    console.error(`  错误 ${displayPath}（标记顺序异常）`);
     return false;
   }
 
@@ -114,7 +147,7 @@ async function injectIntoFile(filePath, content) {
   const updated = before + content + after;
 
   await writeFile(fullPath, updated, "utf8");
-  console.log(`  ✓ ${filePath}`);
+  console.log(`  ✓ ${displayPath}`);
   return true;
 }
 
@@ -162,8 +195,20 @@ async function main() {
     console.log("恢复自由模式...");
     await setActivePersona("default");
     let count = 0;
+    // Update repo source files
     for (const file of TARGET_FILES) {
       if (await injectIntoFile(file, "\n")) count++;
+    }
+    // Update installed copies (if global install exists)
+    if (HAS_GLOBAL_INSTALL) {
+      console.log("  更新已安装副本...");
+      for (const file of getInstalledTargets()) {
+        if (await injectIntoFile(file, "\n")) count++;
+      }
+      const codexMd = getCodexAgentsMd();
+      if (codexMd) {
+        if (await injectIntoFile(codexMd, "\n")) count++;
+      }
     }
     console.log(`\n已恢复自由模式，更新了 ${count} 个文件。`);
     process.exit(0);
@@ -182,8 +227,20 @@ async function main() {
   await setActivePersona(name);
 
   let count = 0;
+  // Update repo source files
   for (const file of TARGET_FILES) {
     if (await injectIntoFile(file, block)) count++;
+  }
+  // Update installed copies (if global install exists)
+  if (HAS_GLOBAL_INSTALL) {
+    console.log("  更新已安装副本...");
+    for (const file of getInstalledTargets()) {
+      if (await injectIntoFile(file, block)) count++;
+    }
+    const codexMd = getCodexAgentsMd();
+    if (codexMd) {
+      if (await injectIntoFile(codexMd, block)) count++;
+    }
   }
 
   console.log(`\n切换完成，更新了 ${count} 个文件。`);
