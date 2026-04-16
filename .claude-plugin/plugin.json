@@ -6,6 +6,9 @@
     "name": "SummerSec",
     "url": "https://github.com/SummerSec"
   },
+  "commands": [
+    "./commands/inner-os.md"
+  ],
   "homepage": "https://github.com/SummerSec/AI-Inner-Os",
   "repository": "https://github.com/SummerSec/AI-Inner-Os",
   "license": "Apache-2.0",
