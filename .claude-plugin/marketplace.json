@@ -4,8 +4,8 @@
     "description": "Expose a visible Inner OS layer for Claude Code. Allows public side-thoughts in the format ▎InnerOS：... while keeping the main task output intact."
   },
   "owner": {
-    "name": "sin",
-    "url": "https://github.com/sin"
+    "name": "SummerSec",
+    "url": "https://github.com/SummerSec"
   },
   "plugins": [
     {
@@ -14,8 +14,8 @@
       "version": "0.6.0",
       "source": "./",
       "author": {
-        "name": "sin",
-        "url": "https://github.com/sin"
+        "name": "SummerSec",
+        "url": "https://github.com/SummerSec"
       }
     }
   ]
