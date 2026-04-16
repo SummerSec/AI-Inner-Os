@@ -11,7 +11,7 @@
     {
       "name": "ai-inner-os",
       "description": "Claude Code hook-based plugin scaffold for visible AI inner monologue.",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "source": "./",
       "author": {
         "name": "SummerSec",
