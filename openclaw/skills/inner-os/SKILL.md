@@ -1,5 +1,6 @@
 ---
 name: inner-os
+version: "0.7.1"
 description: Expose the AI's visible inner monologue during work. Use when the session should allow short public asides in the format `▎InnerOS：...` alongside the main task output.
 metadata: {"openclaw": {"tags": ["personality", "monologue", "inner-voice", "creative"], "always": true}}
 ---
