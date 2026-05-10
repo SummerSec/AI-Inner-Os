@@ -9,7 +9,42 @@
 
 ## 安装方式
 
-### 方式一：Workspace Skill
+### 方式一：OpenClaw 原生 Plugin
+
+按官方插件规范加载 `openclaw.plugin.json` 和 `package.json` 中的 OpenClaw entrypoint：
+
+```bash
+git clone https://github.com/SummerSec/AI-Inner-Os.git
+cd AI-Inner-Os
+openclaw plugins install .
+```
+
+安装后可检查 runtime 注册：
+
+```bash
+openclaw plugins inspect ai-inner-os --runtime --json
+```
+
+原生插件会在启动时注册 `llm_output` 观察 hook，并把 `▎InnerOS：` 独白写入 `~/.inner-os/monologues/`。如需修改日志目录，可在 OpenClaw 配置中设置：
+
+```json5
+{
+  plugins: {
+    entries: {
+      "ai-inner-os": {
+        config: {
+          logPath: "/path/to/inner-os/logs"
+          frequency: "high"
+        }
+      }
+    }
+  }
+}
+```
+
+> **注意：** 非 bundled 插件如果需要读取原始模型输出，OpenClaw 可能要求在插件配置中开启 `hooks.allowConversationAccess: true`。
+
+### 方式二：Workspace Skill
 
 安装到当前工作区，最高优先级：
 
@@ -23,7 +58,7 @@ cp -r openclaw/skills/inner-os skills/inner-os
 
 安装后在会话中使用 `/inner-os` 命令触发。
 
-### 方式二：全局 Skill （默认推荐）
+### 方式三：全局 Skill
 
 对机器上所有 agent 生效：
 
@@ -40,7 +75,7 @@ mkdir -p ~/.agents/skills
 cp -r openclaw/skills/inner-os ~/.agents/skills/inner-os
 ```
 
-### 方式三：外部目录引用
+### 方式四：外部目录引用
 
 在 `openclaw.json` 中配置外部 skills 目录，避免复制：
 
@@ -54,7 +89,7 @@ cp -r openclaw/skills/inner-os ~/.agents/skills/inner-os
 }
 ```
 
-### 方式四：项目级 Agent Skill
+### 方式五：项目级 Agent Skill
 
 安装到项目的 `.agents/skills/` 目录：
 
@@ -63,7 +98,7 @@ mkdir -p .agents/skills
 cp -r openclaw/skills/inner-os .agents/skills/inner-os
 ```
 
-### 方式五：ClawHub
+### 方式六：ClawHub
 
 未来可通过 ClawHub 一键安装：
 
@@ -181,6 +216,8 @@ metadata: {"openclaw": {"tags": [...], "always": true}}
 
 | 文件 | 作用 |
 |------|------|
+| `openclaw.plugin.json` | OpenClaw 原生插件 manifest |
+| `openclaw/index.js` | OpenClaw 插件入口，使用 `definePluginEntry` |
 | `openclaw/skills/inner-os/SKILL.md` | OpenClaw 兼容技能文件（AgentSkills 格式） |
 
 ## 人设切换（Persona）

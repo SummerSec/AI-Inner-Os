@@ -4,6 +4,7 @@ import { writeFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import {
+  buildFrequencyContext,
   buildPostCompactContext,
   buildRecentEventContext,
   buildSessionStartContext,
@@ -37,6 +38,33 @@ test("buildRecentEventContext includes failure count when present", () => {
   assert.match(context, /failure/);
   assert.match(context, /对象：npm test/);
   assert.match(context, /连续失败次数：2/);
+});
+
+test("buildRecentEventContext adds frequency reminder when requested", () => {
+  const context = buildRecentEventContext({
+    frequency: "high",
+    failureCount: 0,
+    shouldRemindInnerOs: true,
+    recentEvents: [
+      {
+        toolName: "Edit",
+        eventType: "edit",
+        result: "success",
+        target: "README.md",
+      },
+    ],
+  });
+
+  assert.match(context, /Inner OS 触发提醒/);
+  assert.match(context, /high/);
+  assert.match(context, /▎InnerOS：/);
+});
+
+test("buildFrequencyContext describes high frequency behavior", () => {
+  const context = buildFrequencyContext("high");
+
+  assert.match(context, /触发频率：high/);
+  assert.match(context, /工具结果/);
 });
 
 test("buildRecentEventContext shows up to 3 recent events", () => {

@@ -45,12 +45,16 @@ node scripts/install.js --all
 # 或只安装指定平台
 node scripts/install.js --platform cursor
 node scripts/install.js --platform codex --platform opencode
+
+# 提高 Inner OS 独白触发频率
+node scripts/install.js --all --frequency high
 ```
 
 安装脚本会：
 1. 将共享核心文件（hooks/lib/、protocol/、personas/）复制到 `~/.inner-os/`
 2. 为每个平台生成带绝对路径的 hooks 配置文件
 3. 人设文件自动就位，切换人设无需手动复制
+4. 写入 `~/.inner-os/config.json`，保存 `low` / `normal` / `high` 触发频率
 
 安装后，Hook 类平台（Cursor、Codex）在会话启动时动态读取协议和人设，切换人设后立即生效。
 

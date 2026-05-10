@@ -1,14 +1,30 @@
 {
   "name": "ai-inner-os",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "private": true,
   "description": "Framework for a Claude Code plugin that surfaces visible Inner OS monologue.",
   "type": "module",
+  "openclaw": {
+    "extensions": [
+      "./openclaw/index.js"
+    ],
+    "runtimeExtensions": [
+      "./openclaw/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.3.24-beta.2",
+      "minGatewayVersion": "2026.3.24-beta.2"
+    },
+    "build": {
+      "openclawVersion": "2026.3.24-beta.2",
+      "pluginSdkVersion": "2026.3.24-beta.2"
+    }
+  },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/post-compact.js && node --check hooks/subagent-start.js && node --check hooks/subagent-stop.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js && node --check scripts/switch-persona.js && node --check scripts/install.js && node --check codex/hooks/session-start.js && node --check codex/hooks/post-tool-use.js && node --check codex/hooks/session-stop.js && node --check cursor/hooks/session-start.js && node --check cursor/hooks/post-tool-use.js && node --check cursor/hooks/stop.js && node --check opencode/plugins/inner-os.js && node --check openclaw/index.js",
+    "check": "node --check hooks/session-start.js && node --check hooks/pre-tool-use.js && node --check hooks/post-tool-use.js && node --check hooks/post-tool-use-failure.js && node --check hooks/pre-compact.js && node --check hooks/post-compact.js && node --check hooks/subagent-start.js && node --check hooks/subagent-stop.js && node --check hooks/stop.js && node --check hooks/lib/session.js && node --check hooks/lib/persona.js && node --check hooks/lib/config.js && node --check hooks/lib/state.js && node --check hooks/lib/prompt.js && node --check scripts/switch-persona.js && node --check scripts/install.js && node --check codex/hooks/session-start.js && node --check codex/hooks/post-tool-use.js && node --check codex/hooks/session-stop.js && node --check cursor/hooks/session-start.js && node --check cursor/hooks/post-tool-use.js && node --check cursor/hooks/stop.js && node --check opencode/plugins/inner-os.js && node --check openclaw/index.js",
     "test": "node --test tests/events.test.js && node --test tests/persona.test.js && node --test tests/prompt.test.js && node --test tests/state.test.js && node --test tests/switch-persona.test.js",
     "switch-persona": "node scripts/switch-persona.js",
     "lint": "npm run check"

@@ -30,18 +30,33 @@ cp opencode/opencode.json ./opencode.json
 # 如果已有，手动将 instructions 字段合并进去
 ```
 
+### 3. 安装 OpenCode Plugin（可选）
+
+插件按 OpenCode 官方 plugin API 导出函数，并使用 `@opencode-ai/plugin` 的 `tool()` helper 注册 `inner-os` 自定义工具：
+
+```bash
+# 项目级 Plugin
+mkdir -p .opencode/plugins
+cp opencode/plugins/inner-os.js .opencode/plugins/
+
+# 或全局 Plugin
+mkdir -p ~/.config/opencode/plugins
+cp opencode/plugins/inner-os.js ~/.config/opencode/plugins/
+```
+
 ## 工作原理
 
-OpenCode CLI 不支持 hooks，通过 `instructions` 配置将 Inner OS 协议静态注入到系统 prompt 中。
+OpenCode 通过 `instructions` 配置静态注入 Inner OS 协议；可选 Plugin 提供 `inner-os` 工具用于状态查询和人设切换。
 
 | 机制 | 文件 | 作用 |
 |------|------|------|
 | 指令文件 | `inner-os-rules.md` | 注入 Inner OS 协议到系统 prompt |
+| Plugin | `plugins/inner-os.js` | 注册 `inner-os` 自定义工具 |
 | 配置 | `opencode.json` | 声明加载哪些指令文件 |
 
 ## Persona（人设切换）
 
-OpenCode 使用静态指令文件，不支持动态切换人设。如需使用人设，请将 `personas/<name>.md` 的正文内容手动追加到 `opencode/inner-os-rules.md` 文件末尾。
+OpenCode 使用静态指令文件注入协议。安装 Plugin 后可以通过 `inner-os` 工具执行 `persona-list`、`persona-use <name>`、`persona-reset`；未安装 Plugin 时，请将 `personas/<name>.md` 的正文内容手动追加到 `opencode/inner-os-rules.md` 文件末尾。
 
 ## 与其他平台的差异
 

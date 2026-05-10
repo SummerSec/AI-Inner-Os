@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { SKILL_PATH } from "./constants.js";
+import { normalizeFrequency, readInnerOsConfig } from "./config.js";
 import { extractToolTarget, inferEventType } from "./events.js";
 import { readActivePersona, readPersonaContent } from "./persona.js";
 
@@ -18,6 +19,13 @@ export async function buildSessionStartContext() {
   }
 
   try {
+    const config = await readInnerOsConfig();
+    protocol += "\n\n" + buildFrequencyContext(config.frequency);
+  } catch {
+    // frequency config is optional
+  }
+
+  try {
     const personaName = await readActivePersona();
     const personaText = await readPersonaContent(personaName);
     if (personaText) {
@@ -28,6 +36,24 @@ export async function buildSessionStartContext() {
   }
 
   return protocol;
+}
+
+export function buildFrequencyContext(frequency = "normal") {
+  const normalized = normalizeFrequency(frequency);
+  const lines = [
+    `Inner OS 触发频率：${normalized}`,
+    "- low：只在关键判断、失败恢复、重要结论前输出",
+    "- normal：每个任务至少一次；复杂任务在开始、转折、验证或收尾阶段可各输出一次",
+    "- high：阶段推进、连续工具调用、失败重试、发现问题时都可以输出；避免每句话都刷屏",
+  ];
+
+  if (normalized === "high") {
+    lines.push("当前为 high 档：只要有新的阶段、工具结果或判断点，就优先输出一条简短 `▎InnerOS：` 独白。");
+  } else if (normalized === "normal") {
+    lines.push("当前为 normal 档：本任务至少输出一次简短 `▎InnerOS：` 独白。");
+  }
+
+  return lines.join("\n");
 }
 
 function formatEvent(event, index) {
@@ -94,7 +120,14 @@ export function buildRecentEventContext(state) {
     lines.push("", `连续失败次数：${state.failureCount}`);
   }
 
-  lines.push("", "你可以根据这些事实，自行决定是否输出 Inner OS 旁白，以及用什么风格输出。");
+  if (state.shouldRemindInnerOs) {
+    lines.push(
+      "",
+      `Inner OS 触发提醒（${normalizeFrequency(state.frequency)}）：最近已有多个工具事件或出现失败；本轮如有任何判断点，请输出一条简短的 \`▎InnerOS：\` 独白。`,
+    );
+  } else {
+    lines.push("", "根据当前频率档位，在关键判断、失败恢复、阶段推进或收尾时输出简短 Inner OS 旁白。");
+  }
 
   return lines.join("\n");
 }

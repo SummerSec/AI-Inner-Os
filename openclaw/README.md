@@ -4,7 +4,18 @@
 
 ## 安装
 
-### 方式一：Workspace Skill（推荐）
+### 方式一：OpenClaw 原生 Plugin
+
+按 OpenClaw 官方插件规范安装，会加载 `openclaw.plugin.json` 和 `package.json#openclaw`：
+
+```bash
+openclaw plugins install .
+openclaw plugins inspect ai-inner-os --runtime --json
+```
+
+插件入口 `openclaw/index.js` 使用 `definePluginEntry`，注册 `llm_output` 观察 hook，并将 `▎InnerOS：` 独白写入 `~/.inner-os/monologues/`。
+
+### 方式二：Workspace Skill
 
 将 Inner OS 安装为当前工作区技能，获得 `/inner-os` 斜杠命令：
 
@@ -14,7 +25,7 @@ mkdir -p skills
 cp -r openclaw/skills/inner-os skills/inner-os
 ```
 
-### 方式二：全局 Skill
+### 方式三：全局 Skill
 
 对所有 agent 生效：
 
@@ -28,7 +39,7 @@ mkdir -p ~/.agents/skills
 cp -r openclaw/skills/inner-os ~/.agents/skills/inner-os
 ```
 
-### 方式三：外部目录引用
+### 方式四：外部目录引用
 
 避免复制，在 `openclaw.json` 中配置外部 skills 目录：
 
@@ -42,7 +53,7 @@ cp -r openclaw/skills/inner-os ~/.agents/skills/inner-os
 }
 ```
 
-### 方式四：ClawHub（待发布）
+### 方式五：ClawHub（待发布）
 
 ```bash
 openclaw skills install inner-os
@@ -68,6 +79,7 @@ OpenClaw 的 Skills 系统使用 AgentSkills 兼容的 `SKILL.md` 格式。Inner
 
 | 机制 | 文件 | 作用 |
 |------|------|------|
+| Plugin | `openclaw.plugin.json` + `openclaw/index.js` | 注册 OpenClaw hook，记录 Inner OS 独白 |
 | Skill | `skills/inner-os/SKILL.md` | 注入协议，提供 `/inner-os` 命令 |
 
 ### Skill 加载优先级
@@ -103,8 +115,8 @@ OpenClaw 从 6 个位置加载 skills，后者覆盖前者：
 
 | | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
 |---|---|---|---|---|---|---|
-| 协议注入 | Hook 读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
-| Hook 支持 | 9 个 | 3 个 | 3 个 | 无 | 无 | 无（插件管理） |
+| 协议注入 | Hook 读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 | Plugin、Skill 或 `.hermes.md` | Plugin + Skill（AgentSkills 格式） |
+| Hook 支持 | 9 个 | 3 个 | 3 个 | 无 | Python 插件 hooks | OpenClaw plugin hooks |
 | 失败追踪 | PostToolUseFailure | 不支持 | 不支持 | 不支持 | 不支持 | 不支持 |
-| 安装方式 | 插件市场 | 手动复制 | 复制 .mdc | 复制指令文件 | 复制 Skill | 复制 Skill 或 ClawHub |
+| 安装方式 | 插件市场 | 手动复制 | 复制 .mdc | 复制指令文件 | Plugin / Skill | Plugin / Skill / ClawHub |
 | 斜杠命令 | `/inner-os`（命令） | 无 | 无 | 无 | `/inner-os`（Skill） | `/inner-os`（Skill） |

@@ -2,6 +2,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { basename } from "node:path";
 
 import { MAX_RECENT_EVENTS, STATE_DIR } from "./constants.js";
+import { getReminderThreshold, normalizeFrequency, readInnerOsConfig } from "./config.js";
 
 function sanitizeSessionId(sessionId) {
   return String(sessionId || "default").replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -17,16 +18,24 @@ export async function ensureStateDir() {
 
 export async function readSessionState(sessionId) {
   await ensureStateDir();
+  const config = await readInnerOsConfig();
 
   try {
     const raw = await readFile(getStateFileUrl(sessionId), "utf8");
-    return JSON.parse(raw);
+    const state = JSON.parse(raw);
+    return {
+      ...state,
+      frequency: normalizeFrequency(state.frequency || config.frequency),
+    };
   } catch {
     return {
       enabled: true,
       sessionId: sanitizeSessionId(sessionId),
+      frequency: config.frequency,
       failureCount: 0,
       lastTool: null,
+      toolEventsSinceReminder: 0,
+      shouldRemindInnerOs: false,
       recentEvents: [],
       updatedAt: new Date().toISOString(),
     };
@@ -54,6 +63,10 @@ export async function writeSessionState(sessionId, state) {
 
 export async function appendEvent(sessionId, event) {
   const state = await readSessionState(sessionId);
+  const frequency = normalizeFrequency(state.frequency);
+  const eventsSinceReminder = (state.toolEventsSinceReminder || 0) + 1;
+  const shouldRemindInnerOs =
+    event.result === "failure" || eventsSinceReminder >= getReminderThreshold(frequency);
   const recentEvents = [event, ...(state.recentEvents || [])].slice(
     0,
     MAX_RECENT_EVENTS,
@@ -64,8 +77,11 @@ export async function appendEvent(sessionId, event) {
 
   return writeSessionState(sessionId, {
     ...state,
+    frequency,
     lastTool: event.toolName,
     failureCount,
+    toolEventsSinceReminder: shouldRemindInnerOs ? 0 : eventsSinceReminder,
+    shouldRemindInnerOs,
     recentEvents,
   });
 }

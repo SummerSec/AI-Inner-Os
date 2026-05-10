@@ -40,6 +40,7 @@ node scripts/install.js --platform cursor
 - 复制 hook 脚本和共享逻辑到 `~/.inner-os/`
 - 合并写入 `~/.cursor/hooks.json`（带绝对路径，保留已有 hooks）
 - 复制所有预设人设文件
+- 写入触发频率配置；可用 `--frequency high` 提高独白提醒频率
 
 ### 方式三：手动安装
 

@@ -9,6 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..");
 const HOME = homedir();
 const INNER_OS_HOME = join(HOME, ".inner-os");
+const VALID_FREQUENCIES = new Set(["low", "normal", "high"]);
 
 const PLATFORMS = {
   cursor: {
@@ -30,6 +31,7 @@ const PLATFORMS = {
   hermes: {
     name: "Hermes Agent",
     skillDir: join(HOME, ".hermes", "skills", "personality", "inner-os"),
+    pluginDir: join(HOME, ".hermes", "plugins", "inner-os"),
   },
   openclaw: {
     name: "OpenClaw",
@@ -48,7 +50,22 @@ async function ensureDir(dir) {
   await mkdir(dir, { recursive: true });
 }
 
-async function copySharedCore() {
+function withFrequencyOverride(content, frequency) {
+  if (frequency === "normal") return content;
+
+  return `${content.trimEnd()}
+
+## 当前安装频率覆盖
+
+Inner OS 当前安装频率为 \`${frequency}\`。请按该频率执行：${
+    frequency === "high"
+      ? "阶段推进、工具结果、失败重试或发现问题时，优先输出一条简短 `▎InnerOS：` 独白。"
+      : "只在关键判断、失败恢复、重要结论前输出。"
+  }
+`;
+}
+
+async function copySharedCore(frequency) {
   console.log("\n📦 Copying shared core to ~/.inner-os/ ...");
   await ensureDir(INNER_OS_HOME);
 
@@ -65,11 +82,19 @@ async function copySharedCore() {
   // state/ (create empty)
   await ensureDir(join(INNER_OS_HOME, "state"));
 
+  // config
+  await writeFile(
+    join(INNER_OS_HOME, "config.json"),
+    JSON.stringify({ frequency }, null, 2) + "\n",
+    "utf8",
+  );
+
   // scripts/
   await ensureDir(join(INNER_OS_HOME, "scripts"));
   await copyFile(join(REPO_ROOT, "scripts", "switch-persona.js"), join(INNER_OS_HOME, "scripts", "switch-persona.js"));
 
   console.log("  ✓ hooks/lib/, protocol/, personas/, scripts/");
+  console.log(`  ✓ frequency → ${frequency}`);
 }
 
 // ── Helpers: merge hooks.json ────────────────────────────
@@ -279,7 +304,7 @@ async function installCodex() {
 
 // ── OpenCode ─────────────────────────────────────────────
 
-async function installOpenCode() {
+async function installOpenCode(frequency = "normal") {
   console.log("\n📝 Installing for OpenCode CLI ...");
 
   // Copy plugin file
@@ -291,9 +316,14 @@ async function installOpenCode() {
 
   // Copy instructions file
   await ensureDir(PLATFORMS.opencode.instructionsDir);
-  await copyFile(
+  const instructions = await readFile(
     join(REPO_ROOT, "opencode", "inner-os-rules.md"),
+    "utf8",
+  );
+  await writeFile(
     join(PLATFORMS.opencode.instructionsDir, "inner-os-rules.md"),
+    withFrequencyOverride(instructions, frequency),
+    "utf8",
   );
 
   console.log(`  ✓ plugin → ${join(PLATFORMS.opencode.pluginsDir, "inner-os.js")}`);
@@ -306,13 +336,17 @@ async function installOpenCode() {
 async function installHermes() {
   console.log("\n🔮 Installing for Hermes Agent ...");
 
+  await copyDir(join(REPO_ROOT, "hermes", "plugins", "inner-os"), PLATFORMS.hermes.pluginDir);
+
   await ensureDir(PLATFORMS.hermes.skillDir);
   await copyFile(
     join(REPO_ROOT, "hermes", "skills", "inner-os", "SKILL.md"),
     join(PLATFORMS.hermes.skillDir, "SKILL.md"),
   );
 
+  console.log(`  ✓ plugin → ${PLATFORMS.hermes.pluginDir}/`);
   console.log(`  ✓ SKILL.md → ${PLATFORMS.hermes.skillDir}/`);
+  console.log("  ℹ  Enable plugin with: hermes plugins enable inner-os");
 }
 
 // ── OpenClaw ─────────────────────────────────────────────
@@ -334,8 +368,16 @@ async function installOpenClaw() {
     join(PLATFORMS.openclaw.extensionsDir, "openclaw.plugin.json"),
   );
   await copyFile(
+    join(REPO_ROOT, "package.json"),
+    join(PLATFORMS.openclaw.extensionsDir, "package.json"),
+  );
+  await copyFile(
     join(REPO_ROOT, "openclaw", "index.js"),
     join(PLATFORMS.openclaw.extensionsDir, "openclaw", "index.js"),
+  );
+  await copyDir(
+    join(REPO_ROOT, "openclaw", "skills"),
+    join(PLATFORMS.openclaw.extensionsDir, "openclaw", "skills"),
   );
 
   console.log(`  ✓ SKILL.md → ${PLATFORMS.openclaw.skillDir}/`);
@@ -363,6 +405,7 @@ async function main() {
     console.log("  --all                 安装到所有平台");
     console.log("  --platform <name>     安装到指定平台");
     console.log("                        可选：cursor, codex, opencode, hermes, openclaw");
+    console.log("  --frequency <level>   设置 Inner OS 触发频率：low, normal, high（默认 normal）");
     console.log("  --list                列出可安装的平台");
     console.log("  --help                显示帮助");
     console.log("");
@@ -370,6 +413,7 @@ async function main() {
     console.log("  node scripts/install.js --all");
     console.log("  node scripts/install.js --platform cursor");
     console.log("  node scripts/install.js --platform codex --platform opencode");
+    console.log("  node scripts/install.js --all --frequency high");
     process.exit(0);
   }
 
@@ -383,6 +427,7 @@ async function main() {
 
   // Parse platforms to install
   const targets = new Set();
+  let frequency = "normal";
 
   if (args.includes("--all")) {
     for (const key of Object.keys(PLATFORMS)) {
@@ -400,6 +445,16 @@ async function main() {
       targets.add(name);
       i++;
     }
+
+    if (args[i] === "--frequency" && args[i + 1]) {
+      const value = args[i + 1].toLowerCase();
+      if (!VALID_FREQUENCIES.has(value)) {
+        console.error(`错误：未知频率 "${value}"。可选：low, normal, high。`);
+        process.exit(1);
+      }
+      frequency = value;
+      i++;
+    }
   }
 
   if (targets.size === 0) {
@@ -409,13 +464,14 @@ async function main() {
 
   console.log("AI Inner OS 全局安装");
   console.log(`目标平台：${[...targets].map((t) => PLATFORMS[t].name).join(", ")}`);
+  console.log(`触发频率：${frequency}`);
 
   // Step 1: Copy shared core
-  await copySharedCore();
+  await copySharedCore(frequency);
 
   // Step 2: Install for each platform
   for (const target of targets) {
-    await INSTALLERS[target]();
+    await INSTALLERS[target](frequency);
   }
 
   // Summary

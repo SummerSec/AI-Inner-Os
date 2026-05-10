@@ -14,9 +14,16 @@ function dataDirFromEnv() {
 }
 
 export const PLUGIN_DATA_DIR = dataDirFromEnv();
+export const CONFIG_PATH = new URL("config.json", PLUGIN_DATA_DIR);
 export const STATE_DIR = new URL("state/", PLUGIN_DATA_DIR);
 export const SKILL_PATH = new URL("../../protocol/SKILL.md", import.meta.url);
 export const MAX_RECENT_EVENTS = 10;
+export const DEFAULT_FREQUENCY = "normal";
+export const FREQUENCY_THRESHOLDS = {
+  low: 6,
+  normal: 3,
+  high: 1,
+};
 
 export const EVENT_TYPES = {
   READ: "read",

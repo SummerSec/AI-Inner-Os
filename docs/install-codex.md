@@ -44,6 +44,7 @@ node scripts/install.js --platform codex
 - 生成 `~/.codex/hooks.json`（带绝对路径）
 - 复制 `AGENTS.md` 到 `~/.codex/`
 - 复制所有预设人设文件
+- 写入触发频率配置；可用 `--frequency high` 提高独白提醒频率
 
 ### 方式三：手动安装
 

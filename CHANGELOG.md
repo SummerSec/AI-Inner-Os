@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.3] - 2026-05-10
+
+### Added
+
+- **Trigger frequency**: Add `low`, `normal`, and `high` Inner OS frequency levels across the canonical protocol and platform adapter copies.
+- **Runtime reminders**: Track tool-event cadence in hook state and inject stronger `▎InnerOS：` reminders after failures or consecutive tool activity.
+- **Installer**: Add `--frequency <low|normal|high>` and persist the setting to `~/.inner-os/config.json`; OpenCode instructions receive an install-time frequency override.
+- **Hermes plugin**: Add a native Hermes plugin package with `pre_llm_call`, `on_session_start`, `/inner-os`, and bundled `plugin:inner-os` skill support.
+
+### Changed
+
+- **OpenClaw**: Align the plugin entrypoint with `definePluginEntry`, add OpenClaw package metadata, and expose a `frequency` config option.
+- **OpenCode**: Use the official `@opencode-ai/plugin` `tool()` helper and prefer globally installed Inner OS protocol/persona files when available.
+- **Documentation**: Refresh OpenClaw, OpenCode, Hermes, and global installation docs for plugin packaging and frequency configuration.
+
 ## [0.7.2] - 2026-05-10
 
 ### Fixed
@@ -69,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Persona system: preset personas, custom template, `/inner-os` command updates, and persona sections in platform adapter docs.
 
+[0.7.3]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.3
 [0.7.2]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.2
 [0.7.1]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.1
 [0.7.0]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.0

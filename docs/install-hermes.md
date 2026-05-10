@@ -9,7 +9,38 @@
 
 ## 安装方式
 
-### 方式一：Skill 安装（默认）
+### 方式一：Hermes Plugin（按官方插件规范）
+
+Hermes 原生插件位于 `hermes/plugins/inner-os/`，包含 `plugin.yaml`、`__init__.py` 和随插件分发的 Skill。
+
+```bash
+mkdir -p ~/.hermes/plugins
+cp -r hermes/plugins/inner-os ~/.hermes/plugins/inner-os
+hermes plugins enable inner-os
+```
+
+项目级插件也可以放到 `.hermes/plugins/inner-os/`，但 Hermes 默认禁用项目级插件。只在可信仓库中启用：
+
+```bash
+mkdir -p .hermes/plugins
+cp -r hermes/plugins/inner-os .hermes/plugins/inner-os
+HERMES_ENABLE_PROJECT_PLUGINS=true hermes
+```
+
+插件会注册：
+
+- `pre_llm_call` hook：向每轮模型调用注入 Inner OS 协议
+- `on_session_start` hook：会话生命周期占位
+- `/inner-os` slash command：显示插件状态
+- `plugin:inner-os` bundled skill：通过 Hermes plugin skill 机制按需查看完整技能
+
+如需提高频率，可在启动 Hermes 前设置环境变量：
+
+```bash
+INNER_OS_FREQUENCY=high hermes
+```
+
+### 方式二：Skill 安装
 
 将 Inner OS 安装为 Hermes 技能，获得 `/inner-os` 斜杠命令支持。
 
@@ -33,7 +64,7 @@ cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.m
 hermes chat --toolsets skills -q "启用 inner-os 技能"
 ```
 
-### 方式二：外部目录引用
+### 方式三：外部目录引用
 
 避免复制文件，直接引用仓库中的技能目录：
 
@@ -46,7 +77,7 @@ skills:
 
 外部目录是只读的——agent 创建或编辑的技能仍然写入 `~/.hermes/skills/`。本地技能同名时优先级更高。
 
-### 方式三：Context File（项目级）
+### 方式四：Context File（项目级）
 
 将 Inner OS 协议作为项目上下文文件注入：
 
@@ -112,7 +143,7 @@ Hermes 技能使用 AgentSkills 兼容格式，扩展了 YAML frontmatter：
 ---
 name: inner-os
 description: Expose the AI's visible inner monologue...
-version: 0.5.0
+version: 0.7.3
 metadata:
   hermes:
     tags: [personality, monologue, inner-voice, creative]
@@ -132,6 +163,9 @@ metadata:
 
 | 文件 | 作用 |
 |------|------|
+| `hermes/plugins/inner-os/plugin.yaml` | Hermes 原生插件 manifest |
+| `hermes/plugins/inner-os/__init__.py` | Hermes 插件注册入口 |
+| `hermes/plugins/inner-os/skills/inner-os/SKILL.md` | 随插件分发的只读 skill |
 | `hermes/skills/inner-os/SKILL.md` | Hermes 兼容技能文件 |
 | `hermes/hermes.md` | 项目级 Context File |
 

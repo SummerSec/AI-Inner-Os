@@ -21,8 +21,11 @@ node scripts/install.js --platform opencode
 - 复制 Plugin 到 `~/.config/opencode/plugins/inner-os.js`
 - 复制 instructions 到 `~/.config/opencode/inner-os-rules.md`
 - 复制所有预设人设文件到 `~/.inner-os/personas/`
+- 写入 `~/.inner-os/config.json`；可用 `--frequency high` 提高独白提醒频率，脚本会把频率覆盖写入 OpenCode instructions
 
 Plugin 提供 `inner-os` 自定义工具，支持状态查询和人设切换。
+
+`opencode/plugins/inner-os.js` 使用 OpenCode 官方 plugin 函数导出和 `@opencode-ai/plugin` 的 `tool()` helper 注册自定义工具。
 
 ### 方式二：手动安装
 
@@ -76,7 +79,7 @@ Inner OS 通过两个机制工作：
 | 机制 | 文件 | 作用 |
 |------|------|------|
 | 指令文件 | `.opencode/inner-os-rules.md` | 注入 Inner OS 协议到系统 prompt |
-| Plugin | `plugins/inner-os.js` | 提供 `inner-os` 工具（状态查询、人设切换） |
+| Plugin | `.opencode/plugins/inner-os.js` 或 `~/.config/opencode/plugins/inner-os.js` | 提供 `inner-os` 工具（状态查询、人设切换） |
 | 配置 | `opencode.json` | 声明加载哪些指令文件 |
 
 Plugin 提供的 `inner-os` 工具支持：

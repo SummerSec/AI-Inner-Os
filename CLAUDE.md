@@ -13,6 +13,7 @@ npm run switch-persona   # switch persona across all platform files
 node scripts/install.js  # global install for all platforms
   # usage: node scripts/install.js --all
   # usage: node scripts/install.js --platform cursor
+  # usage: node scripts/install.js --all --frequency high
 ```
 
 No build step. Pure ESM, Node.js >= 18.
@@ -73,8 +74,8 @@ Platforms degrade gracefully in hook richness:
 | Codex CLI | SessionStart + PostToolUse + Stop | 3 hooks | Yes |
 | Cursor | sessionStart + postToolUse + stop | 3 hooks | Yes |
 | OpenCode | Plugin + static instructions | Plugin | No |
-| Hermes Agent | Skill or .hermes.md context file | None | No |
-| OpenClaw | Skill (AgentSkills format) | None | No |
+| Hermes Agent | Plugin, Skill, or .hermes.md context file | Python plugin hooks | No |
+| OpenClaw | Native plugin + Skill (AgentSkills format) | Plugin hook | No |
 
 ### Plugin Registration
 
@@ -85,6 +86,8 @@ Platforms degrade gracefully in hook richness:
 - `.agents/plugins/marketplace.json` — repo-scoped Codex marketplace metadata
 - `.cursor-plugin/plugin.json` — plugin identity and component paths for Cursor plugin packaging
 - `.cursor-plugin/marketplace.json` — Cursor marketplace metadata
+- `openclaw.plugin.json` + `package.json#openclaw` — OpenClaw native plugin metadata and entrypoint paths
+- `hermes/plugins/inner-os/plugin.yaml` — Hermes native plugin metadata
 - `plugin.json` — repo-level metadata
 - Version must be bumped across all platform manifests and package metadata for updates to reach installed users: `package.json`, `plugin.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, and `openclaw.plugin.json`
 
@@ -124,6 +127,40 @@ This repository ships both legacy Codex adapter files and formal Codex plugin me
 - Codex currently uses `SessionStart`, `PostToolUse`, and `Stop` in this repo. Do not document unsupported Codex hooks as active behavior.
 - Keep Codex documentation in `codex/README.md` and `docs/install-codex.md` aligned with `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, and `codex/hooks.json`.
 
+### OpenClaw Plugin Standards
+
+This repository ships both OpenClaw skill content and an OpenClaw extension entrypoint:
+
+- OpenClaw native plugin metadata lives in `openclaw.plugin.json`; keep `id`, `version`, `description`, `configSchema`, `activation`, and `skills` valid for OpenClaw plugin discovery.
+- OpenClaw runtime entrypoints are declared in `package.json#openclaw.extensions` / `runtimeExtensions` and point to `openclaw/index.js`.
+- The plugin entrypoint uses `definePluginEntry` from `openclaw/plugin-sdk/plugin-entry`; keep it covered by `npm run check`.
+- OpenClaw skill content lives under `openclaw/skills/inner-os/SKILL.md` and should remain AgentSkills-compatible.
+- Plugin-distributed skills are lower precedence than workspace, project, personal, and managed skill locations. Do not assume plugin skills override user/workspace skills.
+- Keep OpenClaw docs in `openclaw/README.md` and `docs/install-openclaw.md` aligned with `openclaw.plugin.json`, `openclaw/index.js`, and `openclaw/skills/inner-os/SKILL.md`.
+
+### OpenCode Plugin Standards
+
+OpenCode uses a standalone JavaScript plugin plus static instruction files:
+
+- The OpenCode plugin entrypoint is `opencode/plugins/inner-os.js`; it does not reuse `hooks/lib/`.
+- OpenCode custom tools should use the official `tool()` helper from `@opencode-ai/plugin`.
+- Static Inner OS instructions live in `opencode/inner-os-rules.md` and optional config examples live under `opencode/`.
+- OpenCode plugins are loaded from `.opencode/plugins/` or `~/.config/opencode/plugins/`, or from npm packages configured in `opencode.json`.
+- OpenCode plugin code should follow the official plugin API and event names. Do not document hook-style Claude/Codex lifecycle events as OpenCode behavior.
+- Keep `opencode/README.md`, `docs/install-opencode.md`, and `scripts/install.js` aligned with the plugin entrypoint and instruction file paths.
+
+### Hermes Plugin Standards
+
+Hermes supports both plugin-style packaging and skills/context-file workflows:
+
+- This repo ships a Hermes native plugin under `hermes/plugins/inner-os/` with `plugin.yaml` and `__init__.py`.
+- The Hermes plugin registers `pre_llm_call`, `on_session_start`, `/inner-os`, and a bundled `plugin:inner-os` skill.
+- The repo also supports standalone Hermes workflows through `hermes/skills/inner-os/SKILL.md` and `hermes/hermes.md`.
+- Hermes skills should keep Hermes-specific frontmatter such as version/category/tags when present, and remain compatible with the Hermes skills system.
+- `hermes/hermes.md` is the project context-file variant; keep it synchronized with the canonical protocol and persona markers.
+- Do not assume Hermes supports the same JavaScript hook model as Claude Code, Codex, or Cursor.
+- Keep `hermes/README.md` and `docs/install-hermes.md` aligned with the plugin, skill, and context-file installation paths.
+
 ### Key Patterns
 
 - Every hook wraps its body in `try/catch` and fails silently — hook errors never interrupt the session
@@ -136,7 +173,7 @@ This repository ships both legacy Codex adapter files and formal Codex plugin me
 
 ### Global Install Script
 
-`scripts/install.js` handles global installation for all platforms. It copies shared core files (hooks/lib/, protocol/, personas/) to `~/.inner-os/`, then generates platform-specific config files with absolute paths. After global install, hook-based platforms (Cursor, Codex) read personas dynamically at runtime — no re-copying needed after persona switches.
+`scripts/install.js` handles global installation for all platforms. It copies shared core files (hooks/lib/, protocol/, personas/) to `~/.inner-os/`, writes `~/.inner-os/config.json` with the Inner OS trigger frequency (`low`, `normal`, or `high`), then generates platform-specific config files with absolute paths. After global install, hook-based platforms (Cursor, Codex) read personas dynamically at runtime — no re-copying needed after persona switches.
 
 ### OpenCode Plugin
 

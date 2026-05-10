@@ -11,7 +11,7 @@
     {
       "name": "ai-inner-os",
       "description": "Visible Inner OS monologue layer for Cursor sessions.",
-      "version": "0.7.2",
+      "version": "0.7.3",
       "source": "./",
       "author": {
         "name": "SummerSec",
