@@ -1,0 +1,32 @@
+{
+  "name": "ai-inner-os",
+  "version": "0.7.2",
+  "description": "Expose a visible Inner OS monologue layer in Codex sessions with protocol injection and hook-based tool context.",
+  "author": {
+    "name": "SummerSec",
+    "url": "https://github.com/SummerSec"
+  },
+  "homepage": "https://github.com/SummerSec/AI-Inner-Os",
+  "repository": "https://github.com/SummerSec/AI-Inner-Os",
+  "license": "Apache-2.0",
+  "keywords": [
+    "codex",
+    "inner-os",
+    "hooks",
+    "agent",
+    "persona"
+  ],
+  "hooks": "./codex/hooks.json",
+  "interface": {
+    "displayName": "AI Inner OS",
+    "shortDescription": "Visible Inner OS monologue for Codex sessions.",
+    "longDescription": "Injects the AI Inner OS protocol into Codex sessions and tracks Bash tool activity through lifecycle hooks.",
+    "developerName": "SummerSec",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/SummerSec/AI-Inner-Os"
+  }
+}

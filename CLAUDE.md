@@ -81,10 +81,12 @@ Platforms degrade gracefully in hook richness:
 - `hooks/hooks.json` — Claude Code hook registration (the authoritative config)
 - `.claude-plugin/plugin.json` — plugin identity for Claude Code
 - `.claude-plugin/marketplace.json` — local marketplace listing
+- `.codex-plugin/plugin.json` — plugin identity and component paths for Codex plugin packaging
+- `.agents/plugins/marketplace.json` — repo-scoped Codex marketplace metadata
 - `.cursor-plugin/plugin.json` — plugin identity and component paths for Cursor plugin packaging
 - `.cursor-plugin/marketplace.json` — Cursor marketplace metadata
 - `plugin.json` — repo-level metadata
-- Version must be bumped across all platform manifests and package metadata for updates to reach installed users: `package.json`, `plugin.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, and `openclaw.plugin.json`
+- Version must be bumped across all platform manifests and package metadata for updates to reach installed users: `package.json`, `plugin.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, and `openclaw.plugin.json`
 
 ### Claude Code Plugin Standards
 
@@ -109,6 +111,18 @@ This repository also ships Cursor plugin metadata because AI Inner OS is multi-p
 - Cursor hooks use lowercase event names in this repo's Cursor adapter: `sessionStart`, `postToolUse`, and `stop`. Cursor hook output uses top-level `{ "additional_context": "..." }`.
 - Cursor `preToolUse` is intentionally not used for context injection because it cannot inject `additional_context`.
 - Keep Cursor documentation in `cursor/README.md` and `docs/install-cursor.md` aligned with `.cursor-plugin/plugin.json` and `cursor/hooks.json`.
+
+### Codex Plugin Standards
+
+This repository ships both legacy Codex adapter files and formal Codex plugin metadata:
+
+- Codex plugin metadata lives in `.codex-plugin/plugin.json`. Only `plugin.json` belongs under `.codex-plugin/`; component files stay at the plugin root.
+- The repo-scoped Codex marketplace lives at `.agents/plugins/marketplace.json`.
+- `.codex-plugin/plugin.json` points to `hooks: "./codex/hooks.json"`. If future Codex skills are added, use root-level `skills/<skill-name>/SKILL.md` or a manifest `skills` path that starts with `./`.
+- Codex manifest component paths and marketplace `source.path` values must be relative, start with `./`, and stay inside the marketplace/plugin root.
+- `codex/hooks.json` commands should use plugin-root relative paths such as `node ./codex/hooks/session-start.js`; the global installer may still generate absolute paths for user-level hook configs.
+- Codex currently uses `SessionStart`, `PostToolUse`, and `Stop` in this repo. Do not document unsupported Codex hooks as active behavior.
+- Keep Codex documentation in `codex/README.md` and `docs/install-codex.md` aligned with `.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`, and `codex/hooks.json`.
 
 ### Key Patterns
 

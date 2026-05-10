@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node codex/hooks/session-start.js",
+            "command": "node ./codex/hooks/session-start.js",
             "statusMessage": "Loading Inner OS protocol"
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node codex/hooks/post-tool-use.js",
+            "command": "node ./codex/hooks/post-tool-use.js",
             "statusMessage": "Tracking Inner OS events"
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node codex/hooks/session-stop.js"
+            "command": "node ./codex/hooks/session-stop.js"
           }
         ]
       }

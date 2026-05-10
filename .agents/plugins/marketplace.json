@@ -1,0 +1,20 @@
+{
+  "name": "inner-os-plugins",
+  "interface": {
+    "displayName": "AI Inner OS Plugins"
+  },
+  "plugins": [
+    {
+      "name": "ai-inner-os",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

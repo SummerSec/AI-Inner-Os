@@ -10,7 +10,28 @@
 
 ## 安装步骤
 
-### 方式一：全局安装脚本（默认）
+### 方式一：Codex 插件清单
+
+仓库根目录包含 Codex 插件清单和 repo-scoped marketplace：
+
+```text
+.codex-plugin/plugin.json
+.agents/plugins/marketplace.json
+```
+
+插件清单引用现有 Codex hook 配置：
+
+```json
+{
+  "hooks": "./codex/hooks.json"
+}
+```
+
+Codex 可从 `.agents/plugins/marketplace.json` 发现并安装 `ai-inner-os`。修改插件文件后，重启 Codex 以加载更新后的插件缓存。
+
+> 注意：如果当前 `codex --help` 中没有 `plugin` 子命令，说明本机 Codex CLI 版本暂不支持插件管理入口。此时请使用全局安装脚本。
+
+### 方式二：全局安装脚本（推荐给普通用户）
 
 ```bash
 git clone https://github.com/SummerSec/AI-Inner-Os.git
@@ -24,7 +45,7 @@ node scripts/install.js --platform codex
 - 复制 `AGENTS.md` 到 `~/.codex/`
 - 复制所有预设人设文件
 
-### 方式二：手动安装
+### 方式三：手动安装
 
 **第一步：注入 Inner OS 协议**
 
@@ -49,7 +70,7 @@ mkdir -p .codex
 cp codex/hooks.json .codex/hooks.json
 ```
 
-> **注意：** hooks.json 中的脚本路径使用相对路径。全局安装脚本会自动生成绝对路径。
+> **注意：** hooks.json 中的脚本路径使用插件根相对路径。全局安装脚本会自动生成绝对路径。
 
 **第三步：启用 Hooks 功能**
 
@@ -95,6 +116,8 @@ codex_hooks = true
 | `codex/hooks/session-start.js` | 会话启动：读取协议和人设，输出开发者上下文 |
 | `codex/hooks/post-tool-use.js` | Bash 执行后：追踪事件，输出 JSON 上下文 |
 | `codex/hooks/session-stop.js` | 会话结束：清理状态文件 |
+| `.codex-plugin/plugin.json` | Codex 插件清单 |
+| `.agents/plugins/marketplace.json` | Codex repo-scoped marketplace |
 
 所有 hook 脚本通过相对路径引用 `hooks/lib/` 中的共享逻辑。
 
@@ -133,7 +156,7 @@ cat codex/AGENTS.md >> ./AGENTS.md
 
 ### Hook 脚本路径错误
 
-Codex hooks 使用相对或绝对路径，不支持变量替换。确保路径指向实际的脚本文件：
+Codex hooks 使用插件根相对路径或绝对路径，不支持变量替换。确保路径指向实际的脚本文件：
 
 ```bash
 # 验证脚本可执行

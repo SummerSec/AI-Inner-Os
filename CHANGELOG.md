@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Claude Code hooks**: Add `PostCompact`, `SubagentStart`, and `SubagentStop` coverage to preserve Inner OS continuity after compaction and during subagent lifecycles.
+- **Codex plugin packaging**: Add `.codex-plugin/` metadata and a repo-scoped `.agents/plugins/marketplace.json` for Codex plugin discovery.
 - **Cursor plugin packaging**: Add `.cursor-plugin/` metadata so the existing `cursor/` adapter can be discovered as a Cursor plugin component directory.
 - **OpenClaw extension packaging**: Add OpenClaw plugin metadata and extension entrypoint for JSONL capture of `▎InnerOS：` outputs.
 - **Documentation**: Document Claude Code and Cursor plugin packaging standards in `CLAUDE.md`, including persistent data rules and component path constraints.

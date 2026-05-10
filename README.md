@@ -87,11 +87,11 @@ Run `/reload-plugins` after installation to activate in the current session — 
 ### Codex CLI
 
 ```bash
-# Inject protocol into global or project-level AGENTS.md
-cat codex/AGENTS.md >> ~/.codex/AGENTS.md
+# Codex plugin metadata is included at .codex-plugin/plugin.json
+# Repo marketplace metadata is included at .agents/plugins/marketplace.json
 
-# Configure hooks
-cp codex/hooks.json ~/.codex/hooks.json
+# Fallback global install for Codex versions without plugin CLI support
+node scripts/install.js --platform codex
 ```
 
 See [codex/README.md](codex/README.md) | [Detailed installation guide](docs/install-codex.md).

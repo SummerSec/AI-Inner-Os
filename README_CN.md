@@ -87,11 +87,11 @@ Inner OS 状态：已启用
 ### Codex CLI
 
 ```bash
-# 注入协议到全局或项目级 AGENTS.md
-cat codex/AGENTS.md >> ~/.codex/AGENTS.md
+# Codex 插件元数据位于 .codex-plugin/plugin.json
+# 仓库级 marketplace 位于 .agents/plugins/marketplace.json
 
-# 配置 hooks
-cp codex/hooks.json ~/.codex/hooks.json
+# 若当前 Codex 版本没有 plugin CLI，可使用全局安装脚本
+node scripts/install.js --platform codex
 ```
 
 详见 [codex/README.md](codex/README.md) | [详细安装指南](docs/install-codex.md)。
