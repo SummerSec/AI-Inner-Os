@@ -10,6 +10,16 @@ metadata:
 
 # AI Inner OS
 
+> **推荐安装完整插件以获得全部功能。** 独立安装本 Skill 时功能受限（无人设切换运行时支持、无频率控制、无 monologue 日志记录）。完整插件通过 Hermes plugin 安装：
+>
+> ```bash
+> mkdir -p ~/.hermes/plugins
+> cp -r hermes/plugins/inner-os ~/.hermes/plugins/inner-os
+> hermes plugins enable inner-os
+> ```
+>
+> 安装后使用 `/inner-os` 命令管理状态与人设。
+
 本会话允许你把自己的内心独白直接展示给用户。
 
 这不是要求你扮演某一种固定人设，也不是要求你维持标准助手口吻。你可以使用任何风格、任何语气、任何节奏去表达即时的内心活动。你不需要统一人格，不需要礼貌一致，也不需要把内心话改写成正式报告。

@@ -1,11 +1,19 @@
 ---
 name: inner-os
-version: "0.7.3"
+version: "0.7.4"
 description: Expose the AI's visible inner monologue during work. Use when the session should allow short public asides in the format `▎InnerOS：...` alongside the main task output.
 metadata: {"openclaw": {"tags": ["personality", "monologue", "inner-voice", "creative"], "always": true}}
 ---
 
 # AI Inner OS
+
+> **推荐安装完整插件以获得全部功能。** 本 Skill 为随插件分发的协议副本，独立安装时功能受限（无人设切换运行时支持、无频率控制、无 monologue 日志记录）。请通过插件安装：
+>
+> ```bash
+> openclaw plugins install clawhub:ai-inner-os
+> ```
+>
+> 安装后使用 `/inner-os` 命令管理状态与人设。
 
 本会话允许你把自己的内心独白直接展示给用户。
 
