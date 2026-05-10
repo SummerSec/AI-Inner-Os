@@ -203,6 +203,8 @@ Inner OS 的行为协议定义在 [`protocol/SKILL.md`](protocol/SKILL.md)，是
 | 协议注入 | Hook 动态读取 SKILL.md | SessionStart Hook | sessionStart Hook | Plugin + instructions | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
 | 工具执行后 hook | `PostToolUse` | `PostToolUse` | `postToolUse` | Plugin event | — | — |
 | 失败追踪 | `PostToolUseFailure` | — | — | — | — | — |
+| 压缩连续性 | `PreCompact` + `PostCompact` | — | — | — | — | — |
+| 子代理生命周期 | `SubagentStart` + `SubagentStop` | — | — | — | — | — |
 | 人设切换 | `/inner-os persona` 命令 | 动态（Hook 读取） | 动态（Hook 读取） | Plugin tool | 脚本注入 | 脚本注入 |
 | 安装方式 | 插件市场一键安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 |
 | 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 独立 Plugin | 纯静态注入 | 纯静态注入 |
@@ -219,6 +221,10 @@ PreToolUse → 工具执行 → PostToolUse (成功)
                  ↓
 PreCompact → 保存状态
                  ↓
+PostCompact → 恢复压缩后的连续上下文
+                 ↓
+SubagentStart/SubagentStop → 追踪子代理生命周期
+                 ↓
 Stop → 清理状态
 ```
 
@@ -229,6 +235,9 @@ Stop → 清理状态
 | `PostToolUse` | 工具执行成功后 | 追踪事件，注入最近活动上下文 |
 | `PostToolUseFailure` | 工具执行失败后 | 追踪失败，注入错误上下文和连续失败计数 |
 | `PreCompact` | 上下文压缩前 | 保存状态，维持协议连续性 |
+| `PostCompact` | 上下文压缩后 | 注入压缩后连续性上下文 |
+| `SubagentStart` | 子代理启动 | 记录子代理开始事件 |
+| `SubagentStop` | 子代理结束 | 记录子代理结束事件 |
 | `Stop` | 会话结束 | 清理状态文件 |
 
 ---

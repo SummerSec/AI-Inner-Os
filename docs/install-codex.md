@@ -81,7 +81,7 @@ codex_hooks = true
 |---|---|---|
 | 协议注入 | Hook 动态读取 `SKILL.md` | `SessionStart` Hook + `AGENTS.md` |
 | 失败追踪 | `PostToolUseFailure` 独立 hook | 不支持 |
-| Hook 数量 | 6 个 | 3 个 |
+| Hook 数量 | 9 个 | 3 个 |
 | 工具覆盖 | 所有工具 | 仅 Bash |
 | 安装方式 | 插件市场一键安装 | 全局安装脚本或手动 |
 | 路径解析 | `${CLAUDE_PLUGIN_ROOT}` 自动解析 | 安装脚本生成绝对路径 |

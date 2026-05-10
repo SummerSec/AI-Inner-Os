@@ -132,3 +132,25 @@ export function normalizeFailureEvent(input = {}) {
     timestamp: new Date().toISOString(),
   };
 }
+
+export function normalizeLifecycleEvent(input = {}) {
+  const eventName = input.hook_event_name || input.hookEventName || "Lifecycle";
+  const target =
+    input.subagent_name ||
+    input.subagentName ||
+    input.agent_name ||
+    input.agentName ||
+    input.name ||
+    input.description ||
+    null;
+  const description = input.description || input.prompt || input.message || "";
+
+  return {
+    toolName: eventName,
+    eventType: EVENT_TYPES.OTHER,
+    result: inferResult({ ...input, status: input.status || "success" }),
+    target,
+    summary: description ? `${eventName} -> ${description}` : `${eventName} event`,
+    timestamp: new Date().toISOString(),
+  };
+}

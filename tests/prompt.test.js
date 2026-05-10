@@ -4,6 +4,7 @@ import { writeFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import {
+  buildPostCompactContext,
   buildRecentEventContext,
   buildSessionStartContext,
 } from "../hooks/lib/prompt.js";
@@ -53,6 +54,24 @@ test("buildRecentEventContext shows up to 3 recent events", () => {
   assert.match(context, /Read/);
   assert.match(context, /Grep/);
   assert.ok(!context.includes("Bash"), "should only show 3 events");
+});
+
+test("buildPostCompactContext summarizes compacted session state", () => {
+  const context = buildPostCompactContext({
+    compactedAt: "2026-05-10T05:00:00.000Z",
+    recentEvents: [
+      {
+        toolName: "SubagentStart",
+        eventType: "other",
+        result: "success",
+        target: "reviewer",
+      },
+    ],
+  });
+
+  assert.match(context, /上下文刚刚完成压缩/);
+  assert.match(context, /SubagentStart/);
+  assert.match(context, /reviewer/);
 });
 
 test("buildSessionStartContext returns only protocol when persona is default", async () => {

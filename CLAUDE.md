@@ -34,6 +34,8 @@ PostToolUse (success) → normalizes event → appends to state → injects rece
 PostToolUseFailure    → normalizes failure → increments failureCount → injects error context
      ↓
 PreCompact → saves compactedAt timestamp
+PostCompact → injects compact-continuity context with recent events
+SubagentStart/SubagentStop → records subagent lifecycle events
      ↓
 Stop → deletes session state file
 ```
@@ -67,7 +69,7 @@ Platforms degrade gracefully in hook richness:
 
 | Platform | Protocol mechanism | Hook scripts | Reuses hooks/lib/ |
 |----------|-------------------|--------------|-------------------|
-| Claude Code | Dynamic (reads SKILL.md) | 6 hooks | Yes (canonical) |
+| Claude Code | Dynamic (reads SKILL.md) | 9 hooks | Yes (canonical) |
 | Codex CLI | SessionStart + PostToolUse + Stop | 3 hooks | Yes |
 | Cursor | sessionStart + postToolUse + stop | 3 hooks | Yes |
 | OpenCode | Plugin + static instructions | Plugin | No |
@@ -113,7 +115,7 @@ This repository also ships Cursor plugin metadata because AI Inner OS is multi-p
 - Every hook wraps its body in `try/catch` and fails silently — hook errors never interrupt the session
 - Claude Code plugin session state files live in `${CLAUDE_PLUGIN_DATA}/state/`; repo/global-install fallback state files live in `state/` (gitignored), keyed by sanitized session ID
 - `failureCount` increments on consecutive failures, resets to 0 on any success
-- Claude Code: PreToolUse uses `hookSpecificOutput.additionalContext`; PostToolUse/PostToolUseFailure output plain text to stdout
+- Claude Code: PreToolUse uses `hookSpecificOutput.additionalContext`; PostToolUse/PostToolUseFailure/PostCompact/SubagentStart/SubagentStop output plain text to stdout
 - Cursor: sessionStart/postToolUse use `{ additional_context: string }` top-level format; preToolUse removed (can't inject context)
 - Codex: SessionStart outputs plain text to stdout; PostToolUse uses `hookSpecificOutput.additionalContext` JSON; PreToolUse removed (additionalContext not supported)
 - Bash commands are truncated at 80 chars in target extraction

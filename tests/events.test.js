@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   inferEventType,
   inferResult,
+  normalizeLifecycleEvent,
   normalizeToolEvent,
 } from "../hooks/lib/events.js";
 
@@ -40,4 +41,18 @@ test("normalizeToolEvent builds a useful shell event summary", () => {
   assert.equal(event.result, "success");
   assert.equal(event.target, "npm run check");
   assert.match(event.summary, /Shell -> npm run check/);
+});
+
+test("normalizeLifecycleEvent builds subagent lifecycle summaries", () => {
+  const event = normalizeLifecycleEvent({
+    hook_event_name: "SubagentStart",
+    subagent_name: "reviewer",
+    description: "review implementation",
+  });
+
+  assert.equal(event.toolName, "SubagentStart");
+  assert.equal(event.eventType, "other");
+  assert.equal(event.result, "success");
+  assert.equal(event.target, "reviewer");
+  assert.match(event.summary, /review implementation/);
 });

@@ -1,6 +1,6 @@
 # Claude Code 安装指南
 
-在 [Claude Code](https://claude.ai/code) 中安装 AI Inner OS。这是功能最完整的平台，拥有 6 个生命周期 hook。
+在 [Claude Code](https://claude.ai/code) 中安装 AI Inner OS。这是功能最完整的平台，拥有 9 个生命周期 hook。
 
 ## 前置条件
 
@@ -80,6 +80,10 @@ PostToolUseFailure (失败) → 追踪失败，注入错误上下文
        ↓
 PreCompact → 保存状态
        ↓
+PostCompact → 恢复压缩后的连续上下文
+       ↓
+SubagentStart/SubagentStop → 追踪子代理生命周期
+       ↓
 Stop → 清理状态
 ```
 
@@ -90,6 +94,9 @@ Stop → 清理状态
 | `PostToolUse` | 工具执行成功后 | 追踪事件，注入最近活动上下文 |
 | `PostToolUseFailure` | 工具执行失败后 | 追踪失败，注入错误上下文和连续失败计数 |
 | `PreCompact` | 上下文压缩前 | 保存状态，维持协议连续性 |
+| `PostCompact` | 上下文压缩后 | 注入压缩后连续性上下文 |
+| `SubagentStart` | 子代理启动 | 记录子代理开始事件 |
+| `SubagentStop` | 子代理结束 | 记录子代理结束事件 |
 | `Stop` | 会话结束 | 清理状态文件 |
 
 ## 文件说明
@@ -102,6 +109,9 @@ Stop → 清理状态
 | `hooks/post-tool-use.js` | 归一化事件，更新状态 |
 | `hooks/post-tool-use-failure.js` | 追踪失败事件 |
 | `hooks/pre-compact.js` | 压缩前保存状态 |
+| `hooks/post-compact.js` | 压缩后注入连续性上下文 |
+| `hooks/subagent-start.js` | 记录子代理启动事件 |
+| `hooks/subagent-stop.js` | 记录子代理结束事件 |
 | `hooks/stop.js` | 清理会话状态文件 |
 | `hooks/lib/` | 共享逻辑（状态管理、事件归一化、prompt 拼装等） |
 | `protocol/SKILL.md` | Inner OS 行为协议（唯一数据源） |

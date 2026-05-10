@@ -104,7 +104,7 @@ OpenClaw 从 6 个位置加载 skills，后者覆盖前者：
 | | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
 |---|---|---|---|---|---|---|
 | 协议注入 | Hook 读取 SKILL.md | AGENTS.md | `.mdc` 规则 | instructions 指令文件 | Skill 或 `.hermes.md` | Skill（AgentSkills 格式） |
-| Hook 支持 | 6 个 | 4 个 | 2 个 | 无 | 无 | 无（插件管理） |
+| Hook 支持 | 9 个 | 3 个 | 3 个 | 无 | 无 | 无（插件管理） |
 | 失败追踪 | PostToolUseFailure | 不支持 | 不支持 | 不支持 | 不支持 | 不支持 |
 | 安装方式 | 插件市场 | 手动复制 | 复制 .mdc | 复制指令文件 | 复制 Skill | 复制 Skill 或 ClawHub |
 | 斜杠命令 | `/inner-os`（命令） | 无 | 无 | 无 | `/inner-os`（Skill） | `/inner-os`（Skill） |

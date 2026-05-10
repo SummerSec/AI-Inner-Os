@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Claude Code plugin**: Store session state and active persona under `${CLAUDE_PLUGIN_DATA}` so marketplace installs keep persistent data across plugin cache updates.
 - **Persona switching**: Avoid modifying plugin cache source files when `/inner-os persona use` runs inside Claude Code; repository and global-install workflows still update platform adapter files.
 
+### Added
+
+- **Claude Code hooks**: Add `PostCompact`, `SubagentStart`, and `SubagentStop` coverage to preserve Inner OS continuity after compaction and during subagent lifecycles.
+- **Cursor plugin packaging**: Add `.cursor-plugin/` metadata so the existing `cursor/` adapter can be discovered as a Cursor plugin component directory.
+- **OpenClaw extension packaging**: Add OpenClaw plugin metadata and extension entrypoint for JSONL capture of `▎InnerOS：` outputs.
+- **Documentation**: Document Claude Code and Cursor plugin packaging standards in `CLAUDE.md`, including persistent data rules and component path constraints.
+
 ## [0.7.1] - 2026-04-16
 
 ### Fixed

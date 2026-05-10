@@ -67,5 +67,5 @@ Codex CLI 支持读取 Inner OS 人设配置。手动编辑 `personas/_active.js
 |---|---|---|
 | 协议注入 | SessionStart hook 自动读取 SKILL.md | AGENTS.md 静态加载 |
 | 失败追踪 | PostToolUseFailure 独立 hook | 无（Codex 暂不支持） |
-| Hook 数量 | 6 个 | 4 个 |
+| Hook 数量 | 9 个 | 3 个 |
 | 安装方式 | 插件市场一键安装 | 手动复制配置文件 |

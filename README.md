@@ -203,6 +203,8 @@ Core principles:
 | Protocol Injection | Hook reads SKILL.md dynamically | SessionStart Hook | sessionStart Hook | Plugin + instructions | Skill or `.hermes.md` | Skill (AgentSkills format) |
 | Post-tool hook | `PostToolUse` | `PostToolUse` | `postToolUse` | Plugin event | — | — |
 | Failure tracking | `PostToolUseFailure` | — | — | — | — | — |
+| Compaction continuity | `PreCompact` + `PostCompact` | — | — | — | — | — |
+| Subagent lifecycle | `SubagentStart` + `SubagentStop` | — | — | — | — | — |
 | Persona switching | `/inner-os persona` command | Dynamic (Hook reads) | Dynamic (Hook reads) | Plugin tool | Script injection | Script injection |
 | Installation | Plugin marketplace one-click | `install.js` global | `install.js` global | `install.js` global | `install.js` global | `install.js` global |
 | Shared logic | `hooks/lib/` (canonical) | Reuses `hooks/lib/` | Reuses `hooks/lib/` | Standalone Plugin | Static injection only | Static injection only |
@@ -219,6 +221,10 @@ PreToolUse → Tool execution → PostToolUse (success)
                  ↓
 PreCompact → Save state
                  ↓
+PostCompact → Restore compact-continuity context
+                 ↓
+SubagentStart/SubagentStop → Track subagent lifecycle
+                 ↓
 Stop → Clean up state
 ```
 
@@ -229,6 +235,9 @@ Stop → Clean up state
 | `PostToolUse` | After successful execution | Track events, inject recent activity context |
 | `PostToolUseFailure` | After failed execution | Track failures, inject error context and consecutive failure count |
 | `PreCompact` | Before context compaction | Save state, maintain protocol continuity |
+| `PostCompact` | After context compaction | Inject compact-continuity context |
+| `SubagentStart` | Subagent starts | Track subagent lifecycle start |
+| `SubagentStop` | Subagent stops | Track subagent lifecycle completion |
 | `Stop` | Session end | Clean up state files |
 
 ---

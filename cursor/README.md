@@ -74,6 +74,6 @@ node ~/.inner-os/scripts/switch-persona.js default
 | | Claude Code | Codex CLI | Cursor |
 |---|---|---|---|
 | 协议注入 | SessionStart hook 读取 SKILL.md | SessionStart hook / AGENTS.md | `.mdc` 规则 + `sessionStart` hook |
-| Hook 数量 | 6 个 | 3 个 | 3 个 |
+| Hook 数量 | 9 个 | 3 个 | 3 个 |
 | 失败追踪 | PostToolUseFailure | 不支持 | 不支持 |
 | 安装方式 | 插件市场一键安装 | `install.js` 全局安装 | Cursor 插件清单 / `install.js` 全局安装 |

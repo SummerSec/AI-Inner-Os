@@ -1,5 +1,5 @@
 {
-  "description": "AI Inner OS hooks for Claude Code: session protocol injection, tool-event context updates, compaction state persistence, and cleanup.",
+  "description": "AI Inner OS hooks for Claude Code: session protocol injection, tool-event context updates, compaction continuity, subagent lifecycle context, and cleanup.",
   "hooks": {
     "SessionStart": [
       {
@@ -56,6 +56,42 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-compact.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/post-compact.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/subagent-start.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/subagent-stop.js\"",
             "timeout": 5
           }
         ]

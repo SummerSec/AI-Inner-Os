@@ -98,3 +98,20 @@ export function buildRecentEventContext(state) {
 
   return lines.join("\n");
 }
+
+export function buildPostCompactContext(state) {
+  const parts = ["上下文刚刚完成压缩。"];
+
+  if (state?.compactedAt) {
+    parts.push(`压缩时间：${state.compactedAt}`);
+  }
+
+  const recent = buildRecentEventContext(state);
+  if (recent) {
+    parts.push("", recent);
+  } else {
+    parts.push("", "Inner OS 状态已保留，你可以继续根据当前任务自行决定是否输出旁白。");
+  }
+
+  return parts.join("\n");
+}
