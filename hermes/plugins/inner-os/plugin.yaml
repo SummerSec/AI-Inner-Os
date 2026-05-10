@@ -1,5 +1,5 @@
 name: inner-os
-version: "0.7.3"
+version: "0.7.4"
 description: AI Inner OS protocol injection, slash command, and bundled skill for Hermes Agent.
 provides_hooks:
   - pre_llm_call

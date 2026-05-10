@@ -49,7 +49,7 @@ Hermes 插件注册：
 - `pre_llm_call` hook：向每轮模型调用注入 Inner OS 协议
 - `on_session_start` hook：会话生命周期占位
 - `/inner-os` slash command：显示插件状态
-- `plugin:inner-os` bundled skill：通过 Hermes plugin skill 机制按需查看完整技能
+- bundled plugin skills：通过 Hermes plugin skill 机制按需查看 Inner OS、历史查询和用户画像 skill
 
 ## 文件说明
 
@@ -58,12 +58,19 @@ Hermes 插件注册：
 | `hermes/plugins/inner-os/plugin.yaml` | Hermes 原生插件 manifest |
 | `hermes/plugins/inner-os/__init__.py` | Hermes 插件注册入口 |
 | `hermes/plugins/inner-os/skills/inner-os/SKILL.md` | 随插件分发的只读 skill |
+| `hermes/plugins/inner-os/skills/user-profile-distillation/SKILL.md` | 可选用户人物画像 skill，需用户显式调用 |
+| `hermes/plugins/inner-os/skills/agent-chat-history/` | 只读历史提示词查询 skill，供画像分析在获准后复用 |
 | `hermes/skills/inner-os/SKILL.md` | 开发用 standalone skill 副本 |
+| `hermes/skills/user-profile-distillation/SKILL.md` | 开发用 standalone 用户画像 skill 副本 |
 | `hermes/hermes.md` | 开发用项目级 context file 副本 |
 
 ## 人设切换（Persona）
 
 正式安装场景下，人设与频率应由 Hermes 插件配置、环境变量或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本。
+
+## 可选用户人物画像
+
+Hermes 插件会注册 `user-profile-distillation` bundled skill，但不会自动启用。只有用户明确要求画像分析时才使用；读取本地历史前必须确认日期范围和来源，输出仅限工作画像、沟通偏好和不确定性说明。持续进化模式也需显式开启，只在当前对话中维护版本化画像。
 
 ## 故障排查
 

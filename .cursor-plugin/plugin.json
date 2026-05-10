@@ -1,7 +1,7 @@
 {
   "name": "ai-inner-os",
   "displayName": "AI Inner OS",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Expose a visible Inner OS monologue layer in Cursor sessions, with optional hook-based event context and persona-aware protocol injection.",
   "author": {
     "name": "SummerSec",
@@ -25,5 +25,6 @@
     "hooks"
   ],
   "rules": "./cursor/rules/",
+  "skills": "./cursor/skills/",
   "hooks": "./cursor/hooks.json"
 }

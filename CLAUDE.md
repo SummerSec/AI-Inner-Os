@@ -43,7 +43,7 @@ Stop → deletes session state file
 
 ### Single Source of Truth
 
-`protocol/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/skills/inner-os/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/skills/inner-os/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata.
+`protocol/SKILL.md` is the canonical Inner OS protocol. `hooks/lib/prompt.js` reads it at runtime (strips YAML frontmatter). The static copies in `codex/AGENTS.md`, `cursor/rules/inner-os-protocol.mdc`, `opencode/inner-os-rules.md`, and `hermes/hermes.md` are manually synchronized — there is no automated derivation. `hermes/skills/inner-os/SKILL.md` is a Hermes-compatible skill variant with extended frontmatter. `openclaw/skills/inner-os/SKILL.md` is an OpenClaw-compatible skill variant with AgentSkills metadata. Optional skills live under `skills/` and are copied to platform-specific skill directories when the platform has a native skill system.
 
 ### Persona Switching Script
 
@@ -86,10 +86,21 @@ Platforms degrade gracefully in hook richness:
 - `.agents/plugins/marketplace.json` — repo-scoped Codex marketplace metadata
 - `.cursor-plugin/plugin.json` — plugin identity and component paths for Cursor plugin packaging
 - `.cursor-plugin/marketplace.json` — Cursor marketplace metadata
+- `skills/agent-chat-history` — optional, read-only local prompt-history extraction skill used by user-initiated profile analysis
+- `skills/user-profile-distillation` — optional user profile distillation skill; disabled by default and only used on explicit request
+- `cursor/skills/`, `openclaw/skills/`, `hermes/plugins/inner-os/skills/`, and `hermes/skills/` — platform-specific distributed skill copies
 - `openclaw.plugin.json` + `package.json#openclaw` — OpenClaw native plugin metadata and entrypoint paths
 - `hermes/plugins/inner-os/plugin.yaml` — Hermes native plugin metadata
 - `plugin.json` — repo-level metadata
 - Version must be bumped across all platform manifests and package metadata for updates to reach installed users: `package.json`, `plugin.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, and `openclaw.plugin.json`
+
+### Optional User Profile Skill
+
+`skills/user-profile-distillation/SKILL.md` analyzes a user's own prompt history only when explicitly requested. It is default-off, must not proactively read history, and must not save a profile unless the user asks. It may reuse `skills/agent-chat-history/scripts/query_history.py --prompts-only --json` after the user confirms the date range and local-history source.
+
+The output must stay non-clinical and work-focused: task types, collaboration preferences, expression patterns, quality standards, and uncertainty. Do not infer protected attributes, quote long sensitive prompts, or turn the profile into persistent memory without explicit consent.
+
+Continuous profile evolution is also opt-in. If the user asks to keep refining the profile, maintain a visible versioned profile within the current conversation, record small evidence-based deltas, and ask for correction on uncertain points. Do not persist the evolved profile unless the user explicitly chooses a storage location and format.
 
 ### Claude Code Plugin Standards
 
@@ -108,7 +119,7 @@ Follow the Claude Code plugin reference when changing Claude plugin packaging:
 This repository also ships Cursor plugin metadata because AI Inner OS is multi-platform:
 
 - Cursor plugin metadata lives in `.cursor-plugin/plugin.json`; `.cursor-plugin/marketplace.json` is the Cursor marketplace metadata entry.
-- The current Cursor design uses `cursor/` as the plugin component directory. `.cursor-plugin/plugin.json` points to `rules: "./cursor/rules/"` and `hooks: "./cursor/hooks.json"`.
+- The current Cursor design uses `cursor/` as the plugin component directory. `.cursor-plugin/plugin.json` points to `rules: "./cursor/rules/"`, `skills: "./cursor/skills/"`, and `hooks: "./cursor/hooks.json"`.
 - Cursor component paths must be relative, stay inside the plugin/repository root, and must not use absolute paths or `..` traversal.
 - Cursor rules are `.mdc` files with YAML frontmatter. `cursor/rules/inner-os-protocol.mdc` must keep `description` and `alwaysApply: true`.
 - Cursor hooks use lowercase event names in this repo's Cursor adapter: `sessionStart`, `postToolUse`, and `stop`. Cursor hook output uses top-level `{ "additional_context": "..." }`.
@@ -121,7 +132,7 @@ This repository ships both legacy Codex adapter files and formal Codex plugin me
 
 - Codex plugin metadata lives in `.codex-plugin/plugin.json`. Only `plugin.json` belongs under `.codex-plugin/`; component files stay at the plugin root.
 - The repo-scoped Codex marketplace lives at `.agents/plugins/marketplace.json`.
-- `.codex-plugin/plugin.json` points to `hooks: "./codex/hooks.json"`. If future Codex skills are added, use root-level `skills/<skill-name>/SKILL.md` or a manifest `skills` path that starts with `./`.
+- `.codex-plugin/plugin.json` points to `hooks: "./codex/hooks.json"` and `skills: "./skills/"` for optional skills such as user profile distillation.
 - Codex manifest component paths and marketplace `source.path` values must be relative, start with `./`, and stay inside the marketplace/plugin root.
 - `codex/hooks.json` commands should use plugin-root relative paths such as `node ./codex/hooks/session-start.js`; the global installer may still generate absolute paths for user-level hook configs.
 - Codex currently uses `SessionStart`, `PostToolUse`, and `Stop` in this repo. Do not document unsupported Codex hooks as active behavior.
@@ -134,7 +145,7 @@ This repository ships both OpenClaw skill content and an OpenClaw extension entr
 - OpenClaw native plugin metadata lives in `openclaw.plugin.json`; keep `id`, `version`, `description`, `configSchema`, `activation`, and `skills` valid for OpenClaw plugin discovery.
 - OpenClaw runtime entrypoints are declared in `package.json#openclaw.extensions` / `runtimeExtensions` and point to `openclaw/index.js`.
 - The plugin entrypoint uses `definePluginEntry` from `openclaw/plugin-sdk/plugin-entry`; keep it covered by `npm run check`.
-- OpenClaw skill content lives under `openclaw/skills/inner-os/SKILL.md` and should remain AgentSkills-compatible.
+- OpenClaw skill content lives under `openclaw/skills/` and should remain AgentSkills-compatible.
 - Plugin-distributed skills are lower precedence than workspace, project, personal, and managed skill locations. Do not assume plugin skills override user/workspace skills.
 - Keep OpenClaw docs in `openclaw/README.md` and `docs/install-openclaw.md` aligned with `openclaw.plugin.json`, `openclaw/index.js`, and `openclaw/skills/inner-os/SKILL.md`.
 
@@ -154,8 +165,8 @@ OpenCode uses a standalone JavaScript plugin plus static instruction files:
 Hermes supports both plugin-style packaging and skills/context-file workflows:
 
 - This repo ships a Hermes native plugin under `hermes/plugins/inner-os/` with `plugin.yaml` and `__init__.py`.
-- The Hermes plugin registers `pre_llm_call`, `on_session_start`, `/inner-os`, and a bundled `plugin:inner-os` skill.
-- The repo also supports standalone Hermes workflows through `hermes/skills/inner-os/SKILL.md` and `hermes/hermes.md`.
+- The Hermes plugin registers `pre_llm_call`, `on_session_start`, `/inner-os`, and bundled plugin skills from `hermes/plugins/inner-os/skills/`.
+- The repo also supports standalone Hermes workflows through `hermes/skills/*/SKILL.md` and `hermes/hermes.md`.
 - Hermes skills should keep Hermes-specific frontmatter such as version/category/tags when present, and remain compatible with the Hermes skills system.
 - `hermes/hermes.md` is the project context-file variant; keep it synchronized with the canonical protocol and persona markers.
 - Do not assume Hermes supports the same JavaScript hook model as Claude Code, Codex, or Cursor.
@@ -173,7 +184,7 @@ Hermes supports both plugin-style packaging and skills/context-file workflows:
 
 ### Global Install Script
 
-`scripts/install.js` handles global installation for all platforms. It copies shared core files (hooks/lib/, protocol/, personas/) to `~/.inner-os/`, writes `~/.inner-os/config.json` with the Inner OS trigger frequency (`low`, `normal`, or `high`), then generates platform-specific config files with absolute paths. After global install, hook-based platforms (Cursor, Codex) read personas dynamically at runtime — no re-copying needed after persona switches.
+`scripts/install.js` handles global installation for all platforms. It copies shared core files (hooks/lib/, protocol/, personas/, skills/) to `~/.inner-os/`, writes `~/.inner-os/config.json` with the Inner OS trigger frequency (`low`, `normal`, or `high`), then generates platform-specific config files with absolute paths. After global install, hook-based platforms (Cursor, Codex) read personas dynamically at runtime — no re-copying needed after persona switches.
 
 ### OpenCode Plugin
 

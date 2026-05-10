@@ -133,6 +133,14 @@ See [openclaw/README.md](openclaw/README.md) | [Detailed installation guide](doc
 
 ---
 
+## Optional User Profile Skill
+
+AI Inner OS includes an opt-in `user-profile-distillation` skill. It can analyze prompts the user pastes, or local prompt history after explicit approval, to summarize work style, communication preferences, and collaboration suggestions.
+
+This skill is disabled by default. It does not proactively read history, does not output long sensitive prompt excerpts, and does not save a profile unless the user explicitly asks. If the user opts into continuous evolution, it keeps a visible versioned profile in the current conversation with a change log, but still does not create persistent memory by default.
+
+---
+
 ## Persona Switching
 
 Inner OS supports setting character personalities and tones for inner monologue. Personas only affect the `▎InnerOS：` prefixed monologue content — they don't affect main task responses.
@@ -192,7 +200,8 @@ Core principles:
 | Compaction continuity | `PreCompact` + `PostCompact` | — | — | — | — | — |
 | Subagent lifecycle | `SubagentStart` + `SubagentStop` | — | — | — | — | — |
 | Persona switching | `/inner-os persona` command | Dynamic (Hook reads) | Dynamic (Hook reads) | Plugin tool | Script injection | Script injection |
-| Installation | Plugin marketplace one-click | `install.js` global | `install.js` global | `install.js` global | `install.js` global | `install.js` global |
+| Installation | Plugin marketplace one-click | Plugin / marketplace | Cursor plugin / marketplace | Plugin package | Plugin | Plugin / ClawHub |
+| Optional Skills | `skills/` | `skills/` | `cursor/skills/` | Explicit prompt only | Plugin skills | Plugin skills |
 | Shared logic | `hooks/lib/` (canonical) | Reuses `hooks/lib/` | Reuses `hooks/lib/` | Standalone Plugin | Static injection only | Static injection only |
 
 ### Claude Code Hook Lifecycle

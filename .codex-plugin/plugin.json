@@ -1,6 +1,6 @@
 {
   "name": "ai-inner-os",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Expose a visible Inner OS monologue layer in Codex sessions with protocol injection and hook-based tool context.",
   "author": {
     "name": "SummerSec",
@@ -17,6 +17,7 @@
     "persona"
   ],
   "hooks": "./codex/hooks.json",
+  "skills": "./skills/",
   "interface": {
     "displayName": "AI Inner OS",
     "shortDescription": "Visible Inner OS monologue for Codex sessions.",

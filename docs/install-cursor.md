@@ -21,6 +21,7 @@
 ```json
 {
   "rules": "./cursor/rules/",
+  "skills": "./cursor/skills/",
   "hooks": "./cursor/hooks.json"
 }
 ```
@@ -65,6 +66,8 @@ alwaysApply: true
 | 文件 | 作用 |
 |------|------|
 | `cursor/rules/inner-os-protocol.mdc` | Cursor 规则文件（`alwaysApply: true`，静态备用） |
+| `cursor/skills/user-profile-distillation/SKILL.md` | 可选用户人物画像 skill，需用户显式调用 |
+| `cursor/skills/agent-chat-history/` | 只读历史提示词查询 skill，供画像分析在获准后复用 |
 | `cursor/hooks.json` | Hook 注册配置（`sessionStart` + `postToolUse` + `stop`） |
 | `cursor/hooks/session-start.js` | 会话启动时注入协议和人设 |
 | `cursor/hooks/post-tool-use.js` | 工具执行后追踪事件 |
@@ -73,6 +76,10 @@ alwaysApply: true
 ## 人设切换（Persona）
 
 正式安装场景下，人设与频率应由插件配置或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本，不作为用户安装流程。
+
+## 可选用户人物画像
+
+`user-profile-distillation` 是默认关闭的 Cursor skill。只有用户明确要求“画像分析 / 历史提示词蒸馏 / 用户特征总结”时才使用；读取本地历史前必须再次确认日期范围和来源，不会自动保存画像。持续进化模式也需显式开启，只在当前对话中维护版本化画像。
 
 ## 故障排查
 

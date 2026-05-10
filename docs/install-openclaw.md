@@ -71,10 +71,16 @@ openclaw plugins inspect ai-inner-os --runtime --json
 | `package.json#openclaw` | OpenClaw entrypoint metadata |
 | `openclaw/index.js` | OpenClaw 插件入口，使用 `definePluginEntry` |
 | `openclaw/skills/inner-os/SKILL.md` | 随插件分发的 OpenClaw 兼容 skill |
+| `openclaw/skills/user-profile-distillation/SKILL.md` | 可选用户人物画像 skill，需用户显式调用 |
+| `openclaw/skills/agent-chat-history/` | 只读历史提示词查询 skill，供画像分析在获准后复用 |
 
 ## 人设切换（Persona）
 
 正式安装场景下，人设与频率应由 OpenClaw 插件配置或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本。
+
+## 可选用户人物画像
+
+OpenClaw 插件通过 `openclaw.plugin.json` 的 `skills` 目录分发 `user-profile-distillation`。该 skill 默认关闭，只在用户明确请求画像分析时使用；本地历史读取必须先确认日期范围和来源，不会自动保存结果。持续进化模式也需显式开启，只在当前对话中维护版本化画像。
 
 ## 故障排查
 

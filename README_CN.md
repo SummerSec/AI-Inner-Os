@@ -133,6 +133,14 @@ openclaw plugins install clawhub:ai-inner-os
 
 ---
 
+## 可选用户人物画像 Skill
+
+AI Inner OS 新增默认关闭的 `user-profile-distillation` skill。它可以分析用户手动粘贴的提示词，或在用户明确同意后读取本地历史提示词，蒸馏工作方式、沟通偏好和协作建议。
+
+该能力不会自动触发，不会主动读取历史，不输出大段敏感原文，也不会把画像写入文件、记忆或配置，除非用户明确要求保存。如果用户开启“持续进化”，它只在当前对话中维护可见的版本化画像和变更记录，默认仍不形成长期记忆。
+
+---
+
 ## 人设切换（Persona）
 
 Inner OS 支持为内心独白设置人物性格和语气。人设仅影响 `▎InnerOS：` 前缀的独白内容，不影响主任务回复。
@@ -192,7 +200,8 @@ Inner OS 的行为协议定义在 [`protocol/SKILL.md`](protocol/SKILL.md)，是
 | 压缩连续性 | `PreCompact` + `PostCompact` | — | — | — | — | — |
 | 子代理生命周期 | `SubagentStart` + `SubagentStop` | — | — | — | — | — |
 | 人设切换 | `/inner-os persona` 命令 | 动态（Hook 读取） | 动态（Hook 读取） | Plugin tool | 脚本注入 | 脚本注入 |
-| 安装方式 | 插件市场一键安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 | `install.js` 全局安装 |
+| 安装方式 | 插件市场一键安装 | Plugin / marketplace | Cursor plugin / marketplace | Plugin package | Plugin | Plugin / ClawHub |
+| 可选 Skills | `skills/` | `skills/` | `cursor/skills/` | 显式请求 | Plugin skills | Plugin skills |
 | 共享逻辑 | `hooks/lib/`（原始实现） | 复用 `hooks/lib/` | 复用 `hooks/lib/` | 独立 Plugin | 纯静态注入 | 纯静态注入 |
 
 ### Claude Code Hook 生命周期

@@ -1,6 +1,6 @@
 {
   "name": "ai-inner-os",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Makes Claude Code sessions expose a visible Inner OS monologue layer in the format ▎InnerOS：...",
   "author": {
     "name": "SummerSec",
@@ -8,6 +8,10 @@
   },
   "commands": [
     "./commands/inner-os.md"
+  ],
+  "skills": [
+    "./skills/agent-chat-history",
+    "./skills/user-profile-distillation"
   ],
   "homepage": "https://github.com/SummerSec/AI-Inner-Os",
   "repository": "https://github.com/SummerSec/AI-Inner-Os",

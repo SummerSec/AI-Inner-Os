@@ -72,7 +72,7 @@ def _handle_inner_os(_raw_args: str) -> str:
             f"Frequency: {frequency}",
             "",
             "本插件通过 Hermes pre_llm_call hook 注入 Inner OS 协议。",
-            "如需查看完整技能，可调用 plugin skill：plugin:inner-os。",
+            "可选 skills：inner-os、agent-chat-history、user-profile-distillation。",
         ]
     )
 

@@ -1,7 +1,7 @@
 {
   "id": "ai-inner-os",
   "name": "AI Inner OS",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Expose the AI's visible inner monologue during work. Captures ▎InnerOS： outputs to structured JSONL logs and supports persona switching for monologue style.",
   "activation": {
     "onStartup": true

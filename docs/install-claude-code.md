@@ -115,8 +115,14 @@ Stop → 清理状态
 | `hooks/stop.js` | 清理会话状态文件 |
 | `hooks/lib/` | 共享逻辑（状态管理、事件归一化、prompt 拼装等） |
 | `protocol/SKILL.md` | Inner OS 行为协议（唯一数据源） |
+| `skills/user-profile-distillation/SKILL.md` | 可选用户人物画像 skill，需用户显式调用 |
+| `skills/agent-chat-history/` | 只读历史提示词查询 skill，供画像分析在获准后复用 |
 | `.claude-plugin/plugin.json` | 插件元信息 |
 | `.claude-plugin/marketplace.json` | 本地 marketplace 注册 |
+
+## 可选用户人物画像
+
+`user-profile-distillation` 默认不自动触发。只有用户明确请求“画像分析 / 历史提示词蒸馏 / 用户特征总结”时才使用；读取本地历史前必须确认日期范围和来源，并通过 `agent-chat-history` 只读脚本导出 prompts。画像不会默认写入文件或长期记忆。若用户开启持续进化，只在当前对话中维护版本化画像和变更记录。
 
 ## 故障排查
 

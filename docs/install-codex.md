@@ -21,7 +21,8 @@
 
 ```json
 {
-  "hooks": "./codex/hooks.json"
+  "hooks": "./codex/hooks.json",
+  "skills": "./skills/"
 }
 ```
 
@@ -65,6 +66,8 @@ Codex 可从 `.agents/plugins/marketplace.json` 发现并安装 `ai-inner-os`。
 | `codex/hooks/session-start.js` | 会话启动：读取协议和人设，输出开发者上下文 |
 | `codex/hooks/post-tool-use.js` | Bash 执行后：追踪事件，输出 JSON 上下文 |
 | `codex/hooks/session-stop.js` | 会话结束：清理状态文件 |
+| `skills/user-profile-distillation/SKILL.md` | 可选用户人物画像 skill，需用户显式调用 |
+| `skills/agent-chat-history/` | 只读历史提示词查询 skill，供画像分析在获准后复用 |
 | `.codex-plugin/plugin.json` | Codex 插件清单 |
 | `.agents/plugins/marketplace.json` | Codex repo-scoped marketplace |
 
@@ -73,6 +76,10 @@ Codex 可从 `.agents/plugins/marketplace.json` 发现并安装 `ai-inner-os`。
 ## 人设切换（Persona）
 
 正式安装场景下，人设与频率应由 Codex 插件配置或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本，不作为用户安装或更新流程。
+
+## 可选用户人物画像
+
+Codex 插件随 `skills/` 分发 `user-profile-distillation`。该 skill 默认不触发；只有用户明确请求画像分析时才可使用。若需要读取本地历史，必须先让用户确认日期范围和客户端来源，并通过 `agent-chat-history` 只读脚本导出 prompts。持续进化模式也需显式开启，只在当前对话中维护版本化画像。
 
 ## 故障排查
 

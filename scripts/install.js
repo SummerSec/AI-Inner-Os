@@ -79,6 +79,9 @@ async function copySharedCore(frequency) {
   // personas/ (all presets + custom dir)
   await copyDir(join(REPO_ROOT, "personas"), join(INNER_OS_HOME, "personas"));
 
+  // skills/ (optional, explicitly invoked capabilities)
+  await copyDir(join(REPO_ROOT, "skills"), join(INNER_OS_HOME, "skills"));
+
   // state/ (create empty)
   await ensureDir(join(INNER_OS_HOME, "state"));
 
@@ -93,7 +96,7 @@ async function copySharedCore(frequency) {
   await ensureDir(join(INNER_OS_HOME, "scripts"));
   await copyFile(join(REPO_ROOT, "scripts", "switch-persona.js"), join(INNER_OS_HOME, "scripts", "switch-persona.js"));
 
-  console.log("  ✓ hooks/lib/, protocol/, personas/, scripts/");
+  console.log("  ✓ hooks/lib/, protocol/, personas/, skills/, scripts/");
   console.log(`  ✓ frequency → ${frequency}`);
 }
 

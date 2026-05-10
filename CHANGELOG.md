@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.4] - 2026-05-10
+
+### Added
+
+- **Optional user profile skill**: Add `user-profile-distillation` as a default-off skill for user-initiated prompt-history profile distillation.
+- **Prompt history extraction skill**: Bundle `agent-chat-history` as a read-only helper skill for extracting local user prompts after explicit approval.
+- **Platform skill distribution**: Ship the optional skills through root `skills/`, Cursor skills, OpenClaw skills, and Hermes bundled/standalone skill directories.
+- **Continuous profile evolution**: Allow the user profile skill to maintain an opt-in, versioned working profile during the current conversation with evidence-based deltas and correction tracking.
+
+### Changed
+
+- **Documentation**: Document opt-in behavior, privacy boundaries, and "do not auto-read history" rules across platform install guides and repository guidance.
+- **Installer**: Copy the new `skills/` directory into `~/.inner-os/` during global install so optional skills follow the same shared core layout as protocol and personas.
+
 ## [0.7.3] - 2026-05-10
 
 ### Added
@@ -84,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Persona system: preset personas, custom template, `/inner-os` command updates, and persona sections in platform adapter docs.
 
+[0.7.4]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.4
 [0.7.3]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.3
 [0.7.2]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.2
 [0.7.1]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.1

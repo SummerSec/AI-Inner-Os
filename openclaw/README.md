@@ -25,7 +25,7 @@ openclaw plugins install .
 |------|------|------|
 | Plugin manifest | `openclaw.plugin.json` | 声明插件身份、配置 schema、skills |
 | Plugin entry | `openclaw/index.js` | 注册 OpenClaw hooks |
-| Skill | `openclaw/skills/inner-os/SKILL.md` | 随插件分发的 AgentSkills 内容 |
+| Skills | `openclaw/skills/*/SKILL.md` | 随插件分发的 AgentSkills 内容 |
 
 ## 配置
 
@@ -46,6 +46,10 @@ openclaw plugins install .
 ## Persona（人设切换）
 
 正式安装场景下，人设与频率应由 OpenClaw 插件配置或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本。
+
+## 可选用户人物画像
+
+`openclaw/skills/user-profile-distillation` 默认不自动触发。只有用户明确请求画像分析时才使用；读取本地历史前必须确认日期范围和来源。持续进化模式也需显式开启，只在当前对话中维护版本化画像。
 
 ## 与其他平台的差异
 
