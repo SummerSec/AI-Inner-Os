@@ -99,10 +99,11 @@ See [codex/README.md](codex/README.md) | [Detailed installation guide](docs/inst
 ### Cursor
 
 ```bash
-# Copy rule file to project
-mkdir -p .cursor/rules
-cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
+# Install Cursor adapter globally
+node scripts/install.js --platform cursor
 ```
+
+The repository also includes `.cursor-plugin/plugin.json`, which packages `cursor/` as a Cursor plugin component directory.
 
 See [cursor/README.md](cursor/README.md) | [Detailed installation guide](docs/install-cursor.md).
 

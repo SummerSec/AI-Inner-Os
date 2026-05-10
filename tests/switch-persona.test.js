@@ -1,7 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { execFile } from "node:child_process";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
@@ -13,6 +15,13 @@ const ACTIVE_FILE = new URL("../personas/_active.json", import.meta.url);
 
 async function runScript(...args) {
   const { stdout, stderr } = await run("node", [SCRIPT, ...args]);
+  return { stdout, stderr };
+}
+
+async function runScriptWithEnv(env, ...args) {
+  const { stdout, stderr } = await run("node", [SCRIPT, ...args], {
+    env: { ...process.env, ...env },
+  });
   return { stdout, stderr };
 }
 
@@ -75,5 +84,28 @@ describe("switch-persona script", () => {
     } catch (err) {
       assert.ok(err.stderr.includes("找不到人设"));
     }
+  });
+
+  it("uses CLAUDE_PLUGIN_DATA without modifying repo files in plugin runtime", async () => {
+    const pluginData = await mkdtemp(join(tmpdir(), "inner-os-switch-"));
+    const codexPath = new URL("../codex/AGENTS.md", import.meta.url);
+    const before = await readFile(codexPath, "utf8");
+
+    const { stdout } = await runScriptWithEnv(
+      { CLAUDE_PLUGIN_DATA: pluginData },
+      "cold",
+    );
+
+    const activeRaw = await readFile(
+      join(pluginData, "personas", "_active.json"),
+      "utf8",
+    );
+    assert.equal(JSON.parse(activeRaw).persona, "cold");
+
+    const after = await readFile(codexPath, "utf8");
+    assert.equal(after, before);
+    assert.ok(stdout.includes("插件数据目录"));
+
+    await rm(pluginData, { recursive: true, force: true });
   });
 });

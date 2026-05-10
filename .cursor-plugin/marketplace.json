@@ -1,0 +1,28 @@
+{
+  "name": "ai-inner-os-cursor",
+  "metadata": {
+    "description": "Cursor plugin packaging for AI Inner OS, exposing a visible Inner OS monologue layer through rules and hooks."
+  },
+  "owner": {
+    "name": "SummerSec",
+    "url": "https://github.com/SummerSec"
+  },
+  "plugins": [
+    {
+      "name": "ai-inner-os",
+      "description": "Visible Inner OS monologue layer for Cursor sessions.",
+      "version": "0.7.2",
+      "source": "./",
+      "author": {
+        "name": "SummerSec",
+        "url": "https://github.com/SummerSec"
+      },
+      "category": "productivity",
+      "tags": [
+        "agent-context",
+        "rules",
+        "hooks"
+      ]
+    }
+  ]
+}

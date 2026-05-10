@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile, readdir } from "node:fs/promises";
+import { mkdir, readFile, writeFile, readdir } from "node:fs/promises";
 
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { isAbsolute, join, resolve, sep } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const REPO_ROOT = new URL("../", import.meta.url);
 const PERSONAS_DIR = new URL("personas/", REPO_ROOT);
-const ACTIVE_PERSONA_FILE = new URL("personas/_active.json", REPO_ROOT);
+const CLAUDE_PLUGIN_DATA = process.env.CLAUDE_PLUGIN_DATA;
+const IS_CLAUDE_PLUGIN_RUNTIME = Boolean(CLAUDE_PLUGIN_DATA);
+const PLUGIN_DATA_DIR = IS_CLAUDE_PLUGIN_RUNTIME
+  ? pathToFileURL(resolve(CLAUDE_PLUGIN_DATA) + sep)
+  : REPO_ROOT;
+const ACTIVE_PERSONA_FILE = new URL("personas/_active.json", PLUGIN_DATA_DIR);
+const DATA_CUSTOM_PERSONAS_DIR = new URL("personas/custom/", PLUGIN_DATA_DIR);
 const HOME = homedir();
 const INNER_OS_HOME = join(HOME, ".inner-os");
 const HAS_GLOBAL_INSTALL = existsSync(INNER_OS_HOME);
@@ -86,6 +93,17 @@ async function getPersonaNames() {
     // custom dir may not exist
   }
 
+  try {
+    const customFiles = await readdir(DATA_CUSTOM_PERSONAS_DIR);
+    for (const f of customFiles) {
+      if (f.endsWith(".md") && f !== "README.md") {
+        names.add(f.replace(/\.md$/, ""));
+      }
+    }
+  } catch {
+    // plugin data custom dir may not exist
+  }
+
   return [...names].sort();
 }
 
@@ -93,6 +111,7 @@ async function readPersona(name) {
   const paths = [
     new URL(`${name}.md`, PERSONAS_DIR),
     new URL(`custom/${name}.md`, PERSONAS_DIR),
+    new URL(`${name}.md`, DATA_CUSTOM_PERSONAS_DIR),
   ];
 
   for (const p of paths) {
@@ -118,9 +137,11 @@ function buildPersonaBlock(name, meta, body) {
  * Supports both URL paths (repo files) and absolute string paths (installed copies).
  */
 async function injectIntoFile(filePath, content) {
-  const isAbsolute = typeof filePath === "string" && filePath.startsWith("/");
-  const fullPath = isAbsolute ? filePath : new URL(filePath, REPO_ROOT);
-  const displayPath = isAbsolute ? filePath : filePath;
+  const fullPath =
+    typeof filePath === "string" && isAbsolute(filePath)
+      ? pathToFileURL(filePath)
+      : new URL(filePath, REPO_ROOT);
+  const displayPath = filePath;
   let raw;
   try {
     raw = await readFile(fullPath, "utf8");
@@ -156,6 +177,7 @@ async function setActivePersona(name) {
     persona: name,
     updatedAt: new Date().toISOString(),
   };
+  await mkdir(new URL("personas/", PLUGIN_DATA_DIR), { recursive: true });
   await writeFile(
     ACTIVE_PERSONA_FILE,
     JSON.stringify(data, null, 2) + "\n",
@@ -194,6 +216,12 @@ async function main() {
   if (name === "default") {
     console.log("恢复自由模式...");
     await setActivePersona("default");
+
+    if (IS_CLAUDE_PLUGIN_RUNTIME) {
+      console.log("已写入插件数据目录，不修改插件源码文件。");
+      process.exit(0);
+    }
+
     let count = 0;
     // Update repo source files
     for (const file of TARGET_FILES) {
@@ -225,6 +253,11 @@ async function main() {
 
   console.log(`切换到人设：${name}（${persona.meta.displayName || name}）...`);
   await setActivePersona(name);
+
+  if (IS_CLAUDE_PLUGIN_RUNTIME) {
+    console.log("已写入插件数据目录，不修改插件源码文件。");
+    process.exit(0);
+  }
 
   let count = 0;
   // Update repo source files

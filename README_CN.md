@@ -99,10 +99,11 @@ cp codex/hooks.json ~/.codex/hooks.json
 ### Cursor
 
 ```bash
-# 复制规则文件到项目
-mkdir -p .cursor/rules
-cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
+# 全局安装 Cursor 适配
+node scripts/install.js --platform cursor
 ```
+
+仓库也包含 `.cursor-plugin/plugin.json`，会将 `cursor/` 目录作为 Cursor 插件组件目录声明。
 
 详见 [cursor/README.md](cursor/README.md) | [详细安装指南](docs/install-cursor.md)。
 

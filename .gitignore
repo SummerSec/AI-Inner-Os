@@ -5,3 +5,4 @@ state/*.log
 .claude/
 personas/_active.json
 docs/superpowers/
+.cursor/

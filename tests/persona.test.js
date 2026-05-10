@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { writeFile, mkdir, rm } from "node:fs/promises";
+import { writeFile, mkdir, rm, mkdtemp, readFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 import {
@@ -13,6 +17,7 @@ import { PERSONAS_DIR, ACTIVE_PERSONA_FILE } from "../hooks/lib/constants.js";
 
 const activePath = fileURLToPath(ACTIVE_PERSONA_FILE);
 const personasDir = fileURLToPath(PERSONAS_DIR);
+const run = promisify(execFile);
 
 test("readActivePersona returns 'default' when _active.json missing", async () => {
   await rm(activePath, { force: true });
@@ -65,6 +70,26 @@ test("setActivePersona writes _active.json", async () => {
   const name = await readActivePersona();
   assert.equal(name, "philosopher");
   await rm(activePath, { force: true });
+});
+
+test("setActivePersona writes active persona under CLAUDE_PLUGIN_DATA", async () => {
+  const pluginData = await mkdtemp(join(tmpdir(), "inner-os-plugin-data-"));
+  const script = `
+    const { setActivePersona, readActivePersona } = await import("./hooks/lib/persona.js");
+    await setActivePersona("cold");
+    const name = await readActivePersona();
+    if (name !== "cold") throw new Error("expected cold, got " + name);
+  `;
+
+  await run("node", ["--input-type=module", "-e", script], {
+    cwd: fileURLToPath(new URL("../", import.meta.url)),
+    env: { ...process.env, CLAUDE_PLUGIN_DATA: pluginData },
+  });
+
+  const raw = await readFile(join(pluginData, "personas", "_active.json"), "utf8");
+  assert.equal(JSON.parse(raw).persona, "cold");
+
+  await rm(pluginData, { recursive: true, force: true });
 });
 
 test("listPersonas returns array of persona names", async () => {

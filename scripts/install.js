@@ -34,6 +34,7 @@ const PLATFORMS = {
   openclaw: {
     name: "OpenClaw",
     skillDir: join(HOME, ".openclaw", "skills", "inner-os"),
+    extensionsDir: join(HOME, ".openclaw", "extensions", "ai-inner-os"),
   },
 };
 
@@ -319,13 +320,26 @@ async function installHermes() {
 async function installOpenClaw() {
   console.log("\n🐾 Installing for OpenClaw ...");
 
+  // Install skill
   await ensureDir(PLATFORMS.openclaw.skillDir);
   await copyFile(
     join(REPO_ROOT, "openclaw", "skills", "inner-os", "SKILL.md"),
     join(PLATFORMS.openclaw.skillDir, "SKILL.md"),
   );
 
+  // Install plugin (extension)
+  await ensureDir(join(PLATFORMS.openclaw.extensionsDir, "openclaw"));
+  await copyFile(
+    join(REPO_ROOT, "openclaw.plugin.json"),
+    join(PLATFORMS.openclaw.extensionsDir, "openclaw.plugin.json"),
+  );
+  await copyFile(
+    join(REPO_ROOT, "openclaw", "index.js"),
+    join(PLATFORMS.openclaw.extensionsDir, "openclaw", "index.js"),
+  );
+
   console.log(`  ✓ SKILL.md → ${PLATFORMS.openclaw.skillDir}/`);
+  console.log(`  ✓ plugin → ${PLATFORMS.openclaw.extensionsDir}/`);
 }
 
 // ── Main ─────────────────────────────────────────────────

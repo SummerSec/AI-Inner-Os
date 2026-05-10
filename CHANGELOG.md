@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.2] - 2026-05-10
+
+### Fixed
+
+- **Claude Code plugin**: Store session state and active persona under `${CLAUDE_PLUGIN_DATA}` so marketplace installs keep persistent data across plugin cache updates.
+- **Persona switching**: Avoid modifying plugin cache source files when `/inner-os persona use` runs inside Claude Code; repository and global-install workflows still update platform adapter files.
+
 ## [0.7.1] - 2026-04-16
 
 ### Fixed
@@ -54,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Persona system: preset personas, custom template, `/inner-os` command updates, and persona sections in platform adapter docs.
 
+[0.7.2]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.2
 [0.7.1]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.1
 [0.7.0]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.7.0
 [0.6.1]: https://github.com/SummerSec/AI-Inner-Os/releases/tag/v0.6.1

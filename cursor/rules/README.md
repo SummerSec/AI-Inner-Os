@@ -1,9 +1,7 @@
-# Cursor Rules Placeholder
+# Cursor Rules
 
-这里预留给 `Cursor` 规则文件。
+这里存放 AI Inner OS 的 Cursor 规则文件。
 
-当前版本只优先实现 `Claude Code`，后续可以在这里放：
+- `inner-os-protocol.mdc`：`alwaysApply: true` 的协议规则，用于在 Cursor 会话中注入 Inner OS 输出约定。
 
-- `.mdc` 规则
-- 自动触发的 Inner OS 说明
-- Cursor 专用安装或使用文档
+该目录由 `.cursor-plugin/plugin.json` 通过 `rules: "./cursor/rules/"` 声明，可作为 Cursor 插件组件被发现。

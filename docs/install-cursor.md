@@ -9,7 +9,26 @@
 
 ## 安装步骤
 
-### 方式一：全局安装脚本（默认）
+### 方式一：Cursor 插件清单
+
+仓库根目录包含 Cursor 插件清单：
+
+```text
+.cursor-plugin/plugin.json
+```
+
+清单直接引用现有 `cursor/` 目录：
+
+```json
+{
+  "rules": "./cursor/rules/",
+  "hooks": "./cursor/hooks.json"
+}
+```
+
+这种布局让 `cursor/` 同时作为 Cursor 适配源码和插件组件目录，适合插件分发或本地插件加载。
+
+### 方式二：全局安装脚本（推荐给普通用户）
 
 ```bash
 git clone https://github.com/SummerSec/AI-Inner-Os.git
@@ -19,10 +38,10 @@ node scripts/install.js --platform cursor
 
 脚本会自动：
 - 复制 hook 脚本和共享逻辑到 `~/.inner-os/`
-- 生成 `~/.cursor/hooks.json`（带绝对路径）
+- 合并写入 `~/.cursor/hooks.json`（带绝对路径，保留已有 hooks）
 - 复制所有预设人设文件
 
-### 方式二：手动安装
+### 方式三：手动安装
 
 **步骤 1：复制 `.mdc` 规则文件**
 
@@ -33,10 +52,10 @@ cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
 
 **步骤 2：配置 Hooks**
 
-将 hooks 配置复制到用户级（全局）或项目级：
+如果需要动态人设和工具事件上下文，建议使用全局安装脚本。手动复制 hooks 配置前，请先备份或合并已有 hooks，避免覆盖用户配置：
 
 ```bash
-# 用户级（推荐，全局生效）
+# 用户级（全局生效，注意会覆盖已有文件）
 cp cursor/hooks.json ~/.cursor/hooks.json
 
 # 或项目级
@@ -90,7 +109,7 @@ alwaysApply: true
 
 ## 团队使用
 
-如果你的团队都想使用 Inner OS，将 `.cursor/rules/inner-os-protocol.mdc` 提交到版本控制：
+如果你的团队只需要静态协议注入，可以将 `.cursor/rules/inner-os-protocol.mdc` 提交到业务项目的版本控制：
 
 ```bash
 # 将规则文件加入 git
@@ -102,24 +121,22 @@ git commit -m "feat: add Inner OS protocol for Cursor"
 
 ## 人设切换（Persona）
 
-切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
+使用全局安装脚本启用 hooks 后，Cursor 会在 `sessionStart` 读取 `~/.inner-os/personas/_active.json` 和对应人设文件。
 
-**第一步：在仓库中切换**
+**全局切换：**
 
 ```bash
-cd /path/to/AI-Inner-Os
-node scripts/switch-persona.js sarcastic   # 切换到指定人设
-node scripts/switch-persona.js default     # 恢复自由模式
-node scripts/switch-persona.js --list      # 列出所有可用人设
+node ~/.inner-os/scripts/switch-persona.js --list      # 列出所有可用人设
+node ~/.inner-os/scripts/switch-persona.js sarcastic   # 切换到指定人设
+node ~/.inner-os/scripts/switch-persona.js default     # 恢复自由模式
 ```
 
-**第二步：重新复制到安装位置**
+如果只复制 `.mdc` 规则而不启用 hooks，则需要切换仓库内协议并重新复制规则文件：
 
 ```bash
+node scripts/switch-persona.js sarcastic
 cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
 ```
-
-> **提示：** 每次切换人设后都需要重新复制规则文件。
 
 ## 故障排查
 

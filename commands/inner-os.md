@@ -15,7 +15,7 @@ argument-hint: "[status|on|off|reload|persona list|persona use <name>|persona sh
 
 1. 确认 Inner OS 协议是否已注入（本命令被加载即表示插件已安装）
 2. 展示当前独白前缀：`▎InnerOS：`
-3. 读取 `personas/_active.json` 展示当前人设名称
+3. 读取插件数据目录中的 `personas/_active.json` 展示当前人设名称；如果不存在，视为 `default`
 4. 用一句 Inner OS 独白证明它正在工作
 
 示例输出：
@@ -58,15 +58,16 @@ Inner OS 状态：已启用
 
 1. 读取 `personas/` 目录下的所有 `.md` 文件（排除 README）
 2. 读取 `personas/custom/` 目录下的所有 `.md` 文件
-3. 从每个文件的 YAML frontmatter 中提取 `name`、`displayName`、`description`
-4. 以表格形式展示，标记当前激活的人设
+3. 读取插件数据目录中 `personas/custom/` 下的自定义 `.md` 文件
+4. 从每个文件的 YAML frontmatter 中提取 `name`、`displayName`、`description`
+5. 以表格形式展示，标记当前激活的人设
 
 ### `persona use <name>`
 
 切换到指定人设：
 
 1. 调用切换脚本：`node "${CLAUDE_PLUGIN_ROOT}/scripts/switch-persona.js" <name>`
-2. 脚本会自动更新 `personas/_active.json` 并将人设内容注入到所有平台适配文件中
+2. 在 Claude Code 插件运行时，脚本会更新 `${CLAUDE_PLUGIN_DATA}/personas/_active.json`，不会修改插件缓存中的源码文件
 3. 如果人设不存在，脚本会报错并提示运行 `--list` 查看可用选项
 4. 切换成功后，立刻用新人设的风格输出一句独白作为确认
 
@@ -74,7 +75,7 @@ Inner OS 状态：已启用
 
 显示当前激活的人设：
 
-1. 读取 `personas/_active.json` 获取当前人设名称
+1. 读取插件数据目录中的 `personas/_active.json` 获取当前人设名称
 2. 如果文件不存在或无法读取，视为 `default`
 3. 读取对应人设文件，展示名称和风格描述
 
@@ -83,6 +84,6 @@ Inner OS 状态：已启用
 恢复到自由模式：
 
 1. 调用切换脚本：`node "${CLAUDE_PLUGIN_ROOT}/scripts/switch-persona.js" default`
-2. 脚本会清空所有平台适配文件中的人设内容，并将 `_active.json` 设为 `default`
+2. 在 Claude Code 插件运行时，脚本会将 `${CLAUDE_PLUGIN_DATA}/personas/_active.json` 设为 `default`，不会修改插件缓存中的源码文件
 3. 确认已恢复自由模式
 4. 用一句自由风格的独白确认

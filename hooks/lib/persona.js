@@ -1,6 +1,7 @@
 import { readFile, writeFile, readdir, mkdir } from "node:fs/promises";
 import {
   PERSONAS_DIR,
+  CUSTOM_PERSONAS_DIR,
   ACTIVE_PERSONA_FILE,
   DEFAULT_PERSONA,
 } from "./constants.js";
@@ -11,7 +12,7 @@ function stripFrontmatter(content) {
 }
 
 export async function ensurePersonasDir() {
-  await mkdir(new URL("custom/", PERSONAS_DIR), { recursive: true });
+  await mkdir(CUSTOM_PERSONAS_DIR, { recursive: true });
 }
 
 export async function readActivePersona() {
@@ -36,9 +37,18 @@ export async function readPersonaContent(name) {
     // fall through to custom/
   }
 
-  // Try personas/custom/
+  // Try bundled personas/custom/
   try {
     const customPath = new URL(`custom/${name}.md`, PERSONAS_DIR);
+    const raw = await readFile(customPath, "utf8");
+    return stripFrontmatter(raw);
+  } catch {
+    // fall through to plugin data custom/
+  }
+
+  // Try persistent custom personas under CLAUDE_PLUGIN_DATA.
+  try {
+    const customPath = new URL(`${name}.md`, CUSTOM_PERSONAS_DIR);
     const raw = await readFile(customPath, "utf8");
     return stripFrontmatter(raw);
   } catch {
@@ -62,7 +72,7 @@ export async function listPersonas() {
   try {
     const rootFiles = await readdir(PERSONAS_DIR);
     for (const f of rootFiles) {
-      if (f.endsWith(".md")) {
+      if (f.endsWith(".md") && f !== "README.md") {
         names.add(f.replace(/\.md$/, ""));
       }
     }
@@ -72,6 +82,17 @@ export async function listPersonas() {
 
   try {
     const customFiles = await readdir(new URL("custom/", PERSONAS_DIR));
+    for (const f of customFiles) {
+      if (f.endsWith(".md") && f !== "README.md") {
+        names.add(f.replace(/\.md$/, ""));
+      }
+    }
+  } catch {
+    // empty
+  }
+
+  try {
+    const customFiles = await readdir(CUSTOM_PERSONAS_DIR);
     for (const f of customFiles) {
       if (f.endsWith(".md") && f !== "README.md") {
         names.add(f.replace(/\.md$/, ""));
