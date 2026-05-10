@@ -2,15 +2,13 @@
 
 在 [OpenAI Codex CLI](https://github.com/openai/codex) 中安装 AI Inner OS。
 
-## 前置条件
+## 安装策略
 
-- Codex CLI 已安装
-- Node.js >= 18
-- Codex hooks 功能已启用
+正式用户只推荐通过 Codex plugin / marketplace 安装。这样 `.codex-plugin/plugin.json` 的 `version` 更新后，Codex 插件缓存才能识别新版内容。
+
+全局安装脚本、手动追加 `AGENTS.md`、手动复制 `hooks.json` 仅用于本仓库开发和本地调试，不作为正式安装路径。
 
 ## 安装步骤
-
-### 方式一：Codex 插件清单
 
 仓库根目录包含 Codex 插件清单和 repo-scoped marketplace：
 
@@ -29,57 +27,7 @@
 
 Codex 可从 `.agents/plugins/marketplace.json` 发现并安装 `ai-inner-os`。修改插件文件后，重启 Codex 以加载更新后的插件缓存。
 
-> 注意：如果当前 `codex --help` 中没有 `plugin` 子命令，说明本机 Codex CLI 版本暂不支持插件管理入口。此时请使用全局安装脚本。
-
-### 方式二：全局安装脚本（推荐给普通用户）
-
-```bash
-git clone https://github.com/SummerSec/AI-Inner-Os.git
-cd AI-Inner-Os
-node scripts/install.js --platform codex
-```
-
-脚本会自动：
-- 复制 hook 脚本和共享逻辑到 `~/.inner-os/`
-- 生成 `~/.codex/hooks.json`（带绝对路径）
-- 复制 `AGENTS.md` 到 `~/.codex/`
-- 复制所有预设人设文件
-- 写入触发频率配置；可用 `--frequency high` 提高独白提醒频率
-
-### 方式三：手动安装
-
-**第一步：注入 Inner OS 协议**
-
-```bash
-# 全局生效
-cat codex/AGENTS.md >> ~/.codex/AGENTS.md
-
-# 或项目级
-cat codex/AGENTS.md >> ./AGENTS.md
-```
-
-> **注意：** 使用 `>>` 追加而非 `>` 覆盖，避免丢失已有内容。
-
-**第二步：配置 Hooks**
-
-```bash
-# 全局配置
-cp codex/hooks.json ~/.codex/hooks.json
-
-# 或项目级配置
-mkdir -p .codex
-cp codex/hooks.json .codex/hooks.json
-```
-
-> **注意：** hooks.json 中的脚本路径使用插件根相对路径。全局安装脚本会自动生成绝对路径。
-
-**第三步：启用 Hooks 功能**
-
-```toml
-# ~/.codex/config.toml 或 .codex/config.toml
-[features]
-codex_hooks = true
-```
+> 注意：如果当前 `codex --help` 中没有 `plugin` 子命令，请先升级 Codex CLI。不要把手动 hooks 配置作为用户更新方案。
 
 ## 安装后验证
 
@@ -105,7 +53,7 @@ codex_hooks = true
 | 失败追踪 | `PostToolUseFailure` 独立 hook | 不支持 |
 | Hook 数量 | 9 个 | 3 个 |
 | 工具覆盖 | 所有工具 | 仅 Bash |
-| 安装方式 | 插件市场一键安装 | 全局安装脚本或手动 |
+| 安装方式 | 插件市场一键安装 | Codex plugin / marketplace |
 | 路径解析 | `${CLAUDE_PLUGIN_ROOT}` 自动解析 | 安装脚本生成绝对路径 |
 
 ## 文件说明
@@ -124,51 +72,16 @@ codex_hooks = true
 
 ## 人设切换（Persona）
 
-切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
-
-**第一步：在仓库中切换**
-
-```bash
-cd /path/to/AI-Inner-Os
-node scripts/switch-persona.js sarcastic   # 切换到指定人设
-node scripts/switch-persona.js default     # 恢复自由模式
-node scripts/switch-persona.js --list      # 列出所有可用人设
-```
-
-**第二步：重新复制到安装位置**
-
-```bash
-# 全局
-cat codex/AGENTS.md >> ~/.codex/AGENTS.md
-
-# 或项目级
-cat codex/AGENTS.md >> ./AGENTS.md
-```
-
-> **注意：** 重新追加前，请先移除 `AGENTS.md` 中旧的 Inner OS 部分，避免重复。每次切换人设后都需要重新复制。
+正式安装场景下，人设与频率应由 Codex 插件配置或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本，不作为用户安装或更新流程。
 
 ## 故障排查
 
 ### 无独白输出
 
-1. 检查 `AGENTS.md` 是否包含 Inner OS 协议内容
-2. 确认 `config.toml` 中 `codex_hooks = true`
-3. 确认 hooks.json 中的脚本路径正确
-
-### Hook 脚本路径错误
-
-Codex hooks 使用插件根相对路径或绝对路径，不支持变量替换。确保路径指向实际的脚本文件：
-
-```bash
-# 验证脚本可执行
-node codex/hooks/session-start.js < /dev/null
-```
+1. 确认 Codex 已安装并启用 `ai-inner-os` 插件
+2. 确认插件版本是最新发布版本
+3. 重启 Codex 以刷新插件缓存
 
 ### 协议更新
 
-当上游 `protocol/SKILL.md` 更新后，需手动同步 `codex/AGENTS.md`：
-
-```bash
-# 重新追加到全局 AGENTS.md
-# 注意：先移除旧的 Inner OS 部分再追加
-```
+协议更新通过 Codex plugin / marketplace 发布。不要通过手动追加 `AGENTS.md` 作为用户更新方式。

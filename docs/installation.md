@@ -2,63 +2,40 @@
 
 AI Inner OS 支持 6 个平台。选择你使用的平台查看详细安装文档：
 
-| 平台 | 安装方式 | 详细指南 |
+| 平台 | 正式安装方式 | 详细指南 |
 |------|---------|---------|
 | **Claude Code** | 插件市场一键安装 | [install-claude-code.md](install-claude-code.md) |
-| **Codex CLI** | AGENTS.md + Hooks | [install-codex.md](install-codex.md) |
-| **Cursor** | `.mdc` 规则文件 | [install-cursor.md](install-cursor.md) |
-| **OpenCode CLI** | instructions 指令文件 | [install-opencode.md](install-opencode.md) |
-| **Hermes Agent** | Skill 或 Context File | [install-hermes.md](install-hermes.md) |
-| **OpenClaw** | Skill（AgentSkills 格式） | [install-openclaw.md](install-openclaw.md) |
+| **Codex CLI** | Codex plugin / marketplace | [install-codex.md](install-codex.md) |
+| **Cursor** | Cursor plugin / marketplace | [install-cursor.md](install-cursor.md) |
+| **OpenCode CLI** | OpenCode plugin package | [install-opencode.md](install-opencode.md) |
+| **Hermes Agent** | Hermes plugin | [install-hermes.md](install-hermes.md) |
+| **OpenClaw** | OpenClaw plugin / ClawHub | [install-openclaw.md](install-openclaw.md) |
 
 ## 快速选择
 
 - **想要最完整的体验？** → [Claude Code](install-claude-code.md)（9 个生命周期 hook，插件市场一键安装）
-- **使用 OpenAI 生态？** → [Codex CLI](install-codex.md)（4 个 hook，手动配置）
-- **用 IDE 写代码？** → [Cursor](install-cursor.md)（规则文件自动生效）
-- **轻量级 CLI？** → [OpenCode CLI](install-opencode.md)（纯静态注入）
-- **自治 AI Agent？** → [Hermes Agent](install-hermes.md) 或 [OpenClaw](install-openclaw.md)（Skill 系统 + `/inner-os` 命令）
+- **使用 OpenAI 生态？** → [Codex CLI](install-codex.md)（通过 Codex plugin/marketplace 安装）
+- **用 IDE 写代码？** → [Cursor](install-cursor.md)（通过 Cursor plugin/marketplace 安装）
+- **轻量级 CLI？** → [OpenCode CLI](install-opencode.md)（通过 OpenCode plugin package 安装）
+- **自治 AI Agent？** → [Hermes Agent](install-hermes.md) 或 [OpenClaw](install-openclaw.md)（通过平台插件系统安装）
 
 ## 平台能力对比
 
 | | Claude Code | Codex CLI | Cursor | OpenCode | Hermes Agent | OpenClaw |
 |---|---|---|---|---|---|---|
-| 协议注入 | Hook 动态读取 | SessionStart Hook | sessionStart Hook | Plugin + instructions | Skill / `.hermes.md` | Skill |
-| Hook 数量 | 9 | 3 | 3 | Plugin | 0 | 0 |
+| 协议注入 | Hook 动态读取 | SessionStart Hook | sessionStart Hook | Plugin + instructions | Plugin hook | Plugin hook + Skill |
+| Hook 数量 | 9 | 3 | 3 | Plugin | Python plugin hooks | OpenClaw plugin hooks |
 | 失败追踪 | 有 | — | — | — | — | — |
 | 斜杠命令 | `/inner-os` | — | — | `inner-os` tool | `/inner-os` | `/inner-os` |
 | 人设切换 | `/inner-os persona` 命令 | 动态（Hook 读取） | 动态（Hook 读取） | Plugin tool | 脚本注入 | 脚本注入 |
 | 共享逻辑 | `hooks/lib/` | 复用 | 复用 | 独立 Plugin | — | — |
-| 安装难度 | 一键 | 插件清单 / 全局脚本 | 全局脚本 | 全局脚本 | 全局脚本 | 全局脚本 |
+| 安装方式 | Marketplace | Plugin / marketplace | Plugin / marketplace | Plugin package | Plugin | Plugin / ClawHub |
 
-## 全局一键安装（默认）
+## 正式安装原则
 
-克隆仓库后，使用安装脚本一键完成全局安装，自动复制所有预设人设：
+面向普通用户的安装文档只提供各平台官方插件机制：marketplace、plugin package、平台插件目录或 ClawHub。这样版本号更新后，平台插件缓存或 marketplace 才能识别新版本并拉取更新。
 
-```bash
-git clone https://github.com/SummerSec/AI-Inner-Os.git
-cd AI-Inner-Os
-
-# 安装到所有平台
-node scripts/install.js --all
-
-# 或只安装指定平台
-node scripts/install.js --platform cursor
-node scripts/install.js --platform codex --platform opencode
-
-# 提高 Inner OS 独白触发频率
-node scripts/install.js --all --frequency high
-```
-
-安装脚本会：
-1. 将共享核心文件（hooks/lib/、protocol/、personas/）复制到 `~/.inner-os/`
-2. 为每个平台生成带绝对路径的 hooks 配置文件
-3. 人设文件自动就位，切换人设无需手动复制
-4. 写入 `~/.inner-os/config.json`，保存 `low` / `normal` / `high` 触发频率
-
-安装后，Hook 类平台（Cursor、Codex）在会话启动时动态读取协议和人设，切换人设后立即生效。
-
-- Claude Code 用户可跳过此步骤，直接通过插件市场安装
+`scripts/install.js`、手动复制 `.mdc` / `AGENTS.md` / `SKILL.md`、以及直接复制 hook 配置，只用于本仓库开发、调试或临时验证；这些方式不会自动更新，发布文档不再作为正式安装路径推荐。
 
 ## 验证安装
 
@@ -137,7 +114,7 @@ GitHub: https://github.com/SummerSec/AI-Inner-Os
 完全开源免费，如果喜欢请给个 ⭐ Star！
 ```
 
-独白是否出现由 AI 自己判断，不保证每次回复都有。如果连续多次对话都没有独白，请参考对应平台指南的故障排查章节。
+默认频率为 `normal`，每个明确任务至少出现一次独白；如需更高频率，请使用各平台插件配置中的 `frequency: "high"` 或对应环境变量。
 
 ## 人设切换（Persona）
 
@@ -153,54 +130,7 @@ GitHub: https://github.com/SummerSec/AI-Inner-Os
 
 ### 其他平台（Codex / Cursor / OpenCode / Hermes / OpenClaw）
 
-> **前置条件：** 人设切换依赖仓库中的 `personas/` 目录和 `scripts/switch-persona.js` 脚本。请确保你已克隆完整仓库，而不是仅复制了单个平台文件。
-
-**第一步：在仓库中切换人设**
-
-```bash
-cd /path/to/AI-Inner-Os
-
-# 切换到指定人设（自动注入到所有平台适配文件）
-node scripts/switch-persona.js sarcastic
-
-# 恢复自由模式
-node scripts/switch-persona.js default
-
-# 列出所有可用人设
-node scripts/switch-persona.js --list
-
-# 也可以通过 npm 运行
-npm run switch-persona -- sarcastic
-```
-
-脚本会自动读取 `personas/<name>.md` 的内容，注入到仓库中所有平台适配文件的 `<!-- ACTIVE_PERSONA_START -->` / `<!-- ACTIVE_PERSONA_END -->` 标记之间。
-
-**第二步：重新复制到安装位置**
-
-脚本修改的是仓库中的源文件，你需要将更新后的文件重新复制到对应平台的安装位置：
-
-```bash
-# Codex CLI
-cat codex/AGENTS.md >> ~/.codex/AGENTS.md
-
-# Cursor
-cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
-
-# OpenCode CLI
-cp opencode/inner-os-rules.md .opencode/
-
-# Hermes Agent（Skill 方式）
-cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.md
-# Hermes Agent（Context File 方式）
-cp hermes/hermes.md ./.hermes.md
-
-# OpenClaw（Workspace Skill）
-cp -r openclaw/skills/inner-os skills/inner-os
-# OpenClaw（Global Skill）
-cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
-```
-
-> **提示：** 每次切换人设后都需要重新复制。各平台详细安装指南中也有对应的人设切换说明。
+请优先使用平台插件配置提供的人设和频率能力。源码脚本 `scripts/switch-persona.js` 仅用于插件开发者同步仓库内静态副本，不作为正式用户安装或更新流程。
 
 ## 协议数据源
 

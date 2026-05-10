@@ -2,14 +2,13 @@
 
 在 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 中安装 AI Inner OS。
 
-## 前置条件
+## 安装策略
 
-- Hermes Agent 已安装并运行
-- `~/.hermes/` 目录已初始化
+正式用户只推荐通过 Hermes plugin 安装。这样 `hermes/plugins/inner-os/plugin.yaml` 的 `version` 更新后，Hermes 插件管理流程才能识别新版内容。
+
+手动复制 Skill、外部 skill 目录、`.hermes.md` context file 仅用于本仓库开发和本地调试，不作为正式安装或更新路径。
 
 ## 安装方式
-
-### 方式一：Hermes Plugin（按官方插件规范）
 
 Hermes 原生插件位于 `hermes/plugins/inner-os/`，包含 `plugin.yaml`、`__init__.py` 和随插件分发的 Skill。
 
@@ -27,137 +26,30 @@ cp -r hermes/plugins/inner-os .hermes/plugins/inner-os
 HERMES_ENABLE_PROJECT_PLUGINS=true hermes
 ```
 
-插件会注册：
-
-- `pre_llm_call` hook：向每轮模型调用注入 Inner OS 协议
-- `on_session_start` hook：会话生命周期占位
-- `/inner-os` slash command：显示插件状态
-- `plugin:inner-os` bundled skill：通过 Hermes plugin skill 机制按需查看完整技能
-
 如需提高频率，可在启动 Hermes 前设置环境变量：
 
 ```bash
 INNER_OS_FREQUENCY=high hermes
 ```
 
-### 方式二：Skill 安装
-
-将 Inner OS 安装为 Hermes 技能，获得 `/inner-os` 斜杠命令支持。
-
-```bash
-# 创建目标目录
-mkdir -p ~/.hermes/skills/personality/inner-os
-
-# 复制技能文件
-cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.md
-```
-
-安装后在会话中使用：
-
-```
-/inner-os
-```
-
-或通过自然语言调用：
-
-```bash
-hermes chat --toolsets skills -q "启用 inner-os 技能"
-```
-
-### 方式三：外部目录引用
-
-避免复制文件，直接引用仓库中的技能目录：
-
-```yaml
-# ~/.hermes/config.yaml
-skills:
-  external_dirs:
-    - /path/to/AI-Inner-Os/hermes/skills
-```
-
-外部目录是只读的——agent 创建或编辑的技能仍然写入 `~/.hermes/skills/`。本地技能同名时优先级更高。
-
-### 方式四：Context File（项目级）
-
-将 Inner OS 协议作为项目上下文文件注入：
-
-```bash
-# 复制到项目根目录
-cp hermes/hermes.md ./.hermes.md
-```
-
-Hermes 启动时自动发现并加载 `.hermes.md`（优先级最高的项目上下文文件）。
-
-> **注意：** `.hermes.md` 和 `HERMES.md` 效果相同，Hermes 优先查找这两个文件，其次是 `AGENTS.md`、`CLAUDE.md`、`.cursorrules`。
-
 ## 安装后验证
 
-### Skill 方式
+插件启用后在 Hermes 会话中执行：
 
-```bash
-# 检查技能是否被发现
-hermes chat --toolsets skills -q "你有哪些技能？"
-
-# 或直接触发
+```text
 /inner-os
 ```
 
-### Context File 方式
-
-1. 在项目目录启动 Hermes 会话
-2. AI 应自然输出 `▎InnerOS：...` 独白
+应看到 Inner OS 状态、独白前缀和当前频率。
 
 ## 工作原理
 
-### Skill 模式
+Hermes 插件注册：
 
-Hermes 技能使用渐进式加载（Progressive Disclosure）来节省 token：
-
-| 层级 | 调用 | 返回内容 | Token 消耗 |
-|------|------|---------|-----------|
-| 0 | `skills_list()` | 名称 + 描述 | ~3k tokens（全部技能） |
-| 1 | `skill_view("inner-os")` | 完整 SKILL.md | 按需 |
-| 2 | `skill_view("inner-os", path)` | 附属文件 | 按需 |
-
-Agent 只在实际需要时才加载完整内容。
-
-### Context File 模式
-
-`.hermes.md` 在每次会话启动时注入系统 prompt，每轮都占用 context。适合需要每次对话都自动启用的场景。
-
-### Skill vs Context File 对比
-
-| | Skill | Context File |
-|---|---|---|
-| 加载方式 | 按需（slash command 或 agent 自行调用） | 每次会话自动加载 |
-| Token 消耗 | 渐进式，仅在需要时注入 | 每轮都占用 context |
-| 适用场景 | 全局启用，跨项目 | 单项目绑定 |
-| 安装位置 | `~/.hermes/skills/` | 项目根目录 `.hermes.md` |
-| 斜杠命令 | `/inner-os` | 无 |
-
-## SKILL.md 格式说明
-
-Hermes 技能使用 AgentSkills 兼容格式，扩展了 YAML frontmatter：
-
-```yaml
----
-name: inner-os
-description: Expose the AI's visible inner monologue...
-version: 0.7.3
-metadata:
-  hermes:
-    tags: [personality, monologue, inner-voice, creative]
-    category: personality
----
-```
-
-| 字段 | 作用 |
-|------|------|
-| `name` | 技能标识符 |
-| `description` | 功能描述 |
-| `version` | 语义化版本号 |
-| `metadata.hermes.tags` | 分类标签 |
-| `metadata.hermes.category` | 技能分类（决定目录位置） |
+- `pre_llm_call` hook：向每轮模型调用注入 Inner OS 协议
+- `on_session_start` hook：会话生命周期占位
+- `/inner-os` slash command：显示插件状态
+- `plugin:inner-os` bundled skill：通过 Hermes plugin skill 机制按需查看完整技能
 
 ## 文件说明
 
@@ -166,70 +58,21 @@ metadata:
 | `hermes/plugins/inner-os/plugin.yaml` | Hermes 原生插件 manifest |
 | `hermes/plugins/inner-os/__init__.py` | Hermes 插件注册入口 |
 | `hermes/plugins/inner-os/skills/inner-os/SKILL.md` | 随插件分发的只读 skill |
-| `hermes/skills/inner-os/SKILL.md` | Hermes 兼容技能文件 |
-| `hermes/hermes.md` | 项目级 Context File |
+| `hermes/skills/inner-os/SKILL.md` | 开发用 standalone skill 副本 |
+| `hermes/hermes.md` | 开发用项目级 context file 副本 |
 
 ## 人设切换（Persona）
 
-切换人设需要完整克隆的仓库（包含 `personas/` 和 `scripts/` 目录）。
-
-**第一步：在仓库中切换**
-
-```bash
-cd /path/to/AI-Inner-Os
-node scripts/switch-persona.js sarcastic   # 切换到指定人设
-node scripts/switch-persona.js default     # 恢复自由模式
-node scripts/switch-persona.js --list      # 列出所有可用人设
-```
-
-**第二步：重新复制到安装位置**
-
-```bash
-# Skill 方式
-cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.md
-
-# Context File 方式
-cp hermes/hermes.md ./.hermes.md
-```
-
-> **提示：** 每次切换人设后都需要重新复制。如果使用外部目录引用方式，脚本直接修改源文件，无需额外复制。
+正式安装场景下，人设与频率应由 Hermes 插件配置、环境变量或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本。
 
 ## 故障排查
 
-### Skill 未被发现
+### Plugin 未被发现
 
-1. 确认文件位于正确路径：
-
-```bash
-ls ~/.hermes/skills/personality/inner-os/SKILL.md
-```
-
-2. 如使用外部目录，确认 `config.yaml` 配置正确：
-
-```bash
-cat ~/.hermes/config.yaml | grep -A 3 external_dirs
-```
-
-3. 不存在的路径会被静默跳过，检查路径拼写
-
-### Context File 不生效
-
-1. 确认 `.hermes.md` 在项目根目录：
-
-```bash
-ls -la .hermes.md
-```
-
-2. Hermes 使用"第一个匹配"策略。如果项目中同时存在 `.hermes.md` 和其他上下文文件，只有 `.hermes.md` 生效
-
-3. 上下文文件有 20,000 字符上限和安全扫描，确保内容未被截断或拦截
+1. 确认 `~/.hermes/plugins/inner-os/plugin.yaml` 存在。
+2. 确认已执行 `hermes plugins enable inner-os`。
+3. 重启 Hermes 会话。
 
 ### 协议更新
 
-```bash
-# Skill 方式
-cp hermes/skills/inner-os/SKILL.md ~/.hermes/skills/personality/inner-os/SKILL.md
-
-# Context File 方式
-cp hermes/hermes.md ./.hermes.md
-```
+协议更新通过 Hermes plugin 版本发布。不要通过手动复制 Skill 或 context file 作为用户更新方式。

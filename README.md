@@ -89,9 +89,6 @@ Run `/reload-plugins` after installation to activate in the current session — 
 ```bash
 # Codex plugin metadata is included at .codex-plugin/plugin.json
 # Repo marketplace metadata is included at .agents/plugins/marketplace.json
-
-# Fallback global install for Codex versions without plugin CLI support
-node scripts/install.js --platform codex
 ```
 
 See [codex/README.md](codex/README.md) | [Detailed installation guide](docs/install-codex.md).
@@ -99,8 +96,8 @@ See [codex/README.md](codex/README.md) | [Detailed installation guide](docs/inst
 ### Cursor
 
 ```bash
-# Install Cursor adapter globally
-node scripts/install.js --platform cursor
+# Install through Cursor plugin / marketplace
+# Plugin metadata is included at .cursor-plugin/plugin.json
 ```
 
 The repository also includes `.cursor-plugin/plugin.json`, which packages `cursor/` as a Cursor plugin component directory.
@@ -110,12 +107,8 @@ See [cursor/README.md](cursor/README.md) | [Detailed installation guide](docs/in
 ### OpenCode CLI
 
 ```bash
-# Copy instruction file
-mkdir -p .opencode
-cp opencode/inner-os-rules.md .opencode/
-
-# Add instructions to opencode.json
-cp opencode/opencode.json ./opencode.json
+# Install through OpenCode plugin package
+# Add the published package to opencode.json: "plugin": ["ai-inner-os"]
 ```
 
 See [opencode/README.md](opencode/README.md) | [Detailed installation guide](docs/install-opencode.md).
@@ -123,11 +116,8 @@ See [opencode/README.md](opencode/README.md) | [Detailed installation guide](doc
 ### Hermes Agent
 
 ```bash
-# Option 1: Install as Skill (recommended, enables /inner-os command)
-cp -r hermes/skills/inner-os ~/.hermes/skills/personality/inner-os
-
-# Option 2: Project-level Context File
-cp hermes/hermes.md ./.hermes.md
+# Install through Hermes plugin
+hermes plugins enable inner-os
 ```
 
 See [hermes/README.md](hermes/README.md) | [Detailed installation guide](docs/install-hermes.md).
@@ -135,12 +125,8 @@ See [hermes/README.md](hermes/README.md) | [Detailed installation guide](docs/in
 ### OpenClaw
 
 ```bash
-# Option 1: Install as Workspace Skill (recommended, enables /inner-os command)
-mkdir -p skills
-cp -r openclaw/skills/inner-os skills/inner-os
-
-# Option 2: Global Skill
-cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
+# Install through OpenClaw plugin / ClawHub
+openclaw plugins install clawhub:ai-inner-os
 ```
 
 See [openclaw/README.md](openclaw/README.md) | [Detailed installation guide](docs/install-openclaw.md).

@@ -89,9 +89,6 @@ Inner OS 状态：已启用
 ```bash
 # Codex 插件元数据位于 .codex-plugin/plugin.json
 # 仓库级 marketplace 位于 .agents/plugins/marketplace.json
-
-# 若当前 Codex 版本没有 plugin CLI，可使用全局安装脚本
-node scripts/install.js --platform codex
 ```
 
 详见 [codex/README.md](codex/README.md) | [详细安装指南](docs/install-codex.md)。
@@ -99,8 +96,8 @@ node scripts/install.js --platform codex
 ### Cursor
 
 ```bash
-# 全局安装 Cursor 适配
-node scripts/install.js --platform cursor
+# 通过 Cursor plugin / marketplace 安装
+# 插件元数据位于 .cursor-plugin/plugin.json
 ```
 
 仓库也包含 `.cursor-plugin/plugin.json`，会将 `cursor/` 目录作为 Cursor 插件组件目录声明。
@@ -110,12 +107,8 @@ node scripts/install.js --platform cursor
 ### OpenCode CLI
 
 ```bash
-# 复制指令文件
-mkdir -p .opencode
-cp opencode/inner-os-rules.md .opencode/
-
-# 在 opencode.json 中添加 instructions
-cp opencode/opencode.json ./opencode.json
+# 通过 OpenCode plugin package 安装
+# 在 opencode.json 中声明已发布插件包："plugin": ["ai-inner-os"]
 ```
 
 详见 [opencode/README.md](opencode/README.md) | [详细安装指南](docs/install-opencode.md)。
@@ -123,11 +116,8 @@ cp opencode/opencode.json ./opencode.json
 ### Hermes Agent
 
 ```bash
-# 方式一：安装为 Skill（推荐，获得 /inner-os 命令）
-cp -r hermes/skills/inner-os ~/.hermes/skills/personality/inner-os
-
-# 方式二：项目级 Context File
-cp hermes/hermes.md ./.hermes.md
+# 通过 Hermes plugin 安装
+hermes plugins enable inner-os
 ```
 
 详见 [hermes/README.md](hermes/README.md) | [详细安装指南](docs/install-hermes.md)。
@@ -135,12 +125,8 @@ cp hermes/hermes.md ./.hermes.md
 ### OpenClaw
 
 ```bash
-# 方式一：安装为 Workspace Skill（推荐，获得 /inner-os 命令）
-mkdir -p skills
-cp -r openclaw/skills/inner-os skills/inner-os
-
-# 方式二：全局 Skill
-cp -r openclaw/skills/inner-os ~/.openclaw/skills/inner-os
+# 通过 OpenClaw plugin / ClawHub 安装
+openclaw plugins install clawhub:ai-inner-os
 ```
 
 详见 [openclaw/README.md](openclaw/README.md) | [详细安装指南](docs/install-openclaw.md)。

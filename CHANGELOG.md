@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **OpenClaw**: Align the plugin entrypoint with `definePluginEntry`, add OpenClaw package metadata, and expose a `frequency` config option.
 - **OpenCode**: Use the official `@opencode-ai/plugin` `tool()` helper and prefer globally installed Inner OS protocol/persona files when available.
-- **Documentation**: Refresh OpenClaw, OpenCode, Hermes, and global installation docs for plugin packaging and frequency configuration.
+- **Documentation**: Refresh installation docs to present platform plugin/marketplace/package installation as the official user path, with script/manual copies limited to development and troubleshooting.
 
 ## [0.7.2] - 2026-05-10
 

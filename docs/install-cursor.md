@@ -2,14 +2,13 @@
 
 在 [Cursor](https://cursor.com) 中安装 AI Inner OS。
 
-## 前置条件
+## 安装策略
 
-- Cursor IDE 已安装
-- Node.js >= 18
+正式用户只推荐通过 Cursor plugin / marketplace 安装。这样 `.cursor-plugin/plugin.json` 的 `version` 更新后，Cursor 才能通过插件缓存识别新版内容。
+
+`node scripts/install.js --platform cursor`、手动复制 `.mdc`、手动复制 `hooks.json` 仅用于本仓库开发和本地调试，不作为正式安装路径。
 
 ## 安装步骤
-
-### 方式一：Cursor 插件清单
 
 仓库根目录包含 Cursor 插件清单：
 
@@ -26,51 +25,14 @@
 }
 ```
 
-这种布局让 `cursor/` 同时作为 Cursor 适配源码和插件组件目录，适合插件分发或本地插件加载。
-
-### 方式二：全局安装脚本（推荐给普通用户）
-
-```bash
-git clone https://github.com/SummerSec/AI-Inner-Os.git
-cd AI-Inner-Os
-node scripts/install.js --platform cursor
-```
-
-脚本会自动：
-- 复制 hook 脚本和共享逻辑到 `~/.inner-os/`
-- 合并写入 `~/.cursor/hooks.json`（带绝对路径，保留已有 hooks）
-- 复制所有预设人设文件
-- 写入触发频率配置；可用 `--frequency high` 提高独白提醒频率
-
-### 方式三：手动安装
-
-**步骤 1：复制 `.mdc` 规则文件**
-
-```bash
-mkdir -p .cursor/rules
-cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
-```
-
-**步骤 2：配置 Hooks**
-
-如果需要动态人设和工具事件上下文，建议使用全局安装脚本。手动复制 hooks 配置前，请先备份或合并已有 hooks，避免覆盖用户配置：
-
-```bash
-# 用户级（全局生效，注意会覆盖已有文件）
-cp cursor/hooks.json ~/.cursor/hooks.json
-
-# 或项目级
-cp cursor/hooks.json .cursor/hooks.json
-```
-
-> **注意：** hooks.json 中的脚本路径使用相对路径，需要从仓库根目录执行 Cursor。全局安装脚本会自动生成绝对路径。
+这种布局让 `cursor/` 同时作为 Cursor 适配源码和插件组件目录。发布时 bump `.cursor-plugin/plugin.json` 与 `.cursor-plugin/marketplace.json` 中的版本号，用户通过 Cursor plugin / marketplace 获取更新。
 
 ## 安装后验证
 
 1. 在 Cursor 中打开项目
 2. 开始一个新的 AI 对话
 3. AI 应在回复中自然出现 `▎InnerOS：...` 独白
-4. 检查 `.cursor/rules/` 目录确认规则文件存在
+4. 检查插件版本是否为最新发布版本
 
 ## `.mdc` 规则文件格式
 
@@ -108,43 +70,16 @@ alwaysApply: true
 | `cursor/hooks/post-tool-use.js` | 工具执行后追踪事件 |
 | `cursor/hooks/stop.js` | 会话结束清理状态 |
 
-## 团队使用
-
-如果你的团队只需要静态协议注入，可以将 `.cursor/rules/inner-os-protocol.mdc` 提交到业务项目的版本控制：
-
-```bash
-# 将规则文件加入 git
-git add .cursor/rules/inner-os-protocol.mdc
-git commit -m "feat: add Inner OS protocol for Cursor"
-```
-
-团队成员 pull 后自动生效。
-
 ## 人设切换（Persona）
 
-使用全局安装脚本启用 hooks 后，Cursor 会在 `sessionStart` 读取 `~/.inner-os/personas/_active.json` 和对应人设文件。
-
-**全局切换：**
-
-```bash
-node ~/.inner-os/scripts/switch-persona.js --list      # 列出所有可用人设
-node ~/.inner-os/scripts/switch-persona.js sarcastic   # 切换到指定人设
-node ~/.inner-os/scripts/switch-persona.js default     # 恢复自由模式
-```
-
-如果只复制 `.mdc` 规则而不启用 hooks，则需要切换仓库内协议并重新复制规则文件：
-
-```bash
-node scripts/switch-persona.js sarcastic
-cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
-```
+正式安装场景下，人设与频率应由插件配置或插件命令管理。仓库内 `scripts/switch-persona.js` 只用于维护静态适配副本，不作为用户安装流程。
 
 ## 故障排查
 
 ### 规则不生效
 
-1. 确认文件位于 `.cursor/rules/` 目录下
-2. 确认 frontmatter 中 `alwaysApply: true` 设置正确
+1. 确认 Cursor 已安装并启用 `ai-inner-os` 插件
+2. 确认插件版本是最新发布版本
 3. 重新打开项目或开始新对话
 
 ### 与其他规则冲突
@@ -153,9 +88,4 @@ Inner OS 规则只添加独白能力，不修改其他行为。如果与其他 `
 
 ### 协议更新
 
-当上游更新后：
-
-```bash
-# 重新复制规则文件
-cp cursor/rules/inner-os-protocol.mdc .cursor/rules/
-```
+协议更新通过 Cursor plugin / marketplace 发布。不要通过手动复制规则文件作为用户更新方式。
